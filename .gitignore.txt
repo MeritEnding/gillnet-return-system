@@ -1,0 +1,17 @@
+# 라이브러리 제외
+node_modules/
+
+# 환경 변수 및 설정 (보안)
+.env
+*.log
+
+# 시스템 파일
+.DS_Store
+Thumbs.db
+
+# 실행 파일 및 대용량 바이너리 (필요시 제외)
+*.exe
+
+MVS EX/
+
+*.zip

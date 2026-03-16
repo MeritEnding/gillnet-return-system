@@ -1,0 +1,35 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+
+# Node.js 의존성 폴더
+kiosk-backend/node_modules
+kiosk-frontend/node_modules
+
+# 기타 민감 정보 및 로그 파일
+.env
+*.log
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# production
+/build
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+
+kiosk-frontend/src/assets/intro.gif

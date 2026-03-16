@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.pyc
+.env
+
+# IDE
+.vscode/
+.idea/
+
+# Node.js
+node_modules/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build outputs
+dist/
+build/
+
+# Local database
+/kiosk-backend/kiosk.db
+
+gear_qr_codes/
+qr_codes/
