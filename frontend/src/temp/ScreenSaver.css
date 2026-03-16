@@ -1,0 +1,67 @@
+.screensaver-container {
+  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+  background-color: rgba(0, 0, 0, 0.9); /* 검은 배경 */
+  z-index: 99999; display: flex; justify-content: center; align-items: center;
+  cursor: pointer; animation: fadeIn 0.5s;
+}
+.screensaver-content { display: flex; flex-direction: column; align-items: center; color: white; }
+/* 로고 컨테이너 (하얀 동그라미) */
+.breathing-logo {
+  width: 250px;  /* 크기 살짝 키움 (기존 200px) */
+  height: 250px;
+  background: white;
+  border-radius: 50%;
+  
+  /* ★ 핵심 1: 안쪽 여백(padding) 제거 */
+  padding: 0; 
+  
+  /* ★ 핵심 2: 넘치는 이미지 숨기기 (이미지를 동그랗게 자름) */
+  overflow: hidden; 
+
+  /* 중앙 정렬 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+  animation: breathe 3s infinite ease-in-out;
+  margin-bottom: 30px;
+  box-shadow: 0 0 30px rgba(255,255,255,0.2);
+}
+
+/* 내부 이미지 */
+.breathing-logo img {
+  width: 100%;
+  height: 100%;
+  
+  /* ★ 핵심 3: 빈 공간 없이 꽉 채우기 (비율 유지하며 자름) */
+  object-fit: cover; 
+}
+/* 1. 제목 (어구보증금 무인 반납기) */
+.screensaver-title {
+  font-size: 5.5rem; /* 기존 3rem -> 5.5rem (약 88px) */
+  font-weight: 900;
+  margin-top: 30px;
+  margin-bottom: 20px;
+  text-shadow: 0 5px 15px rgba(0,0,0,0.5); /* 글씨가 붕 뜨지 않게 그림자 */
+  letter-spacing: -2px; /* 자간을 좁혀서 단단해 보이게 */
+  word-break: keep-all; /* 단어 중간에 줄바꿈 방지 */
+  line-height: 1.2;
+}
+/* 2. 설명 (화면을 터치하면 시작합니다) */
+.screensaver-desc {
+  font-size: 2.8rem; /* 기존 1.8rem -> 2.8rem (약 45px) */
+  font-weight: 600;
+  opacity: 0.9; /* 좀 더 선명하게 */
+  margin-bottom: 50px;
+  color: #eee;
+}
+/* 3. 손가락 이모지 (👆) */
+.touch-guide-box {
+  font-size: 7rem; /* 기존 4rem -> 7rem (약 112px, 엄청 크게) */
+  animation: bounce 1.5s infinite;
+  filter: drop-shadow(0 0 10px rgba(255,255,255,0.3)); /* 빛나는 효과 */
+  cursor: pointer;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes breathe { 0%, 100% { transform: scale(0.95); box-shadow: 0 0 20px rgba(255,255,255,0.2); } 50% { transform: scale(1.05); box-shadow: 0 0 50px rgba(255,255,255,0.5); } }
+@keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }

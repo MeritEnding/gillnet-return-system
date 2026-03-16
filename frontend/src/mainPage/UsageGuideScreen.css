@@ -1,0 +1,145 @@
+/* src/components/UsageGuideScreen.css */
+
+:root {
+  /* 이미지에서 추출한 컬러 팔레트 */
+  --guide-primary-blue: #0085CA;   /* 버튼 배경색 (진한 하늘색) */
+  --guide-light-bg: #EAF8FF;       /* 하단 안내 박스 배경색 */
+  --guide-white: #ffffff;
+  --guide-text-dark: #333333;
+  --guide-shadow: 0 4px 6px rgba(0, 0, 0, 0.15); /* 버튼 그림자 */
+}
+
+/* 전체 컨테이너: 흰색 카드 형태 */
+.guide-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px;
+  max-width: 600px; /* 모바일/키오스크 비율 유지 */
+  margin: 0 auto;
+  height: 100vh; /* 전체 높이 사용 */
+  box-sizing: border-box;
+  background-color: var(--guide-white);
+  border-radius: 20px; /* 전체 화면의 둥근 모서리 */
+  font-family: 'Pretendard', 'Malgun Gothic', sans-serif;
+  overflow-y: auto;
+}
+
+/* --- 1. 상단 헤더 --- */
+.guide-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between; /* 양끝 정렬 */
+  align-items: center;
+  margin-bottom: 40px;
+  padding-top: 10px;
+}
+
+/* 뒤로가기 버튼 스타일 */
+.back-button {
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  color: #333;
+  font-size: 1.4rem;
+  font-weight: 700;
+  padding: 0;
+}
+
+/* 뒤로가기 화살표 아이콘 (파란 동그라미 안에 화살표) */
+.back-icon-circle {
+  width: 36px;
+  height: 36px;
+  background-color: var(--guide-primary-blue);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+/* 우측 타이틀 */
+.guide-title {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--guide-primary-blue); /* 타이틀도 파란색 계열 */
+  margin: 0;
+}
+
+/* --- 2. 버튼 그룹 --- */
+.guide-button-group {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* 버튼 사이 간격 */
+  margin-bottom: 40px;
+}
+
+/* 파란색 메인 버튼 스타일 */
+.guide-menu-button {
+  width: 100%;
+  height: 100px; /* 두툼한 높이 */
+  background-color: var(--guide-primary-blue); /* 배경색 적용 */
+  color: var(--guide-white); /* 흰색 글씨 */
+  border: none;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  padding: 0 40px; /* 내부 여백 */
+  cursor: pointer;
+  box-shadow: var(--guide-shadow); /* 입체감 */
+  transition: transform 0.1s ease-in-out;
+}
+
+.guide-menu-button:active {
+  transform: scale(0.98); /* 클릭 시 살짝 눌림 */
+}
+
+/* 버튼 내부 아이콘 */
+.button-icon {
+  font-size: 3rem; /* 아이콘 크기 */
+  margin-right: 30px;
+  width: 50px;
+  text-align: center;
+  /* 실제 이미지 사용 시 img 태그로 변경하고 object-fit 사용 권장 */
+}
+
+/* 버튼 텍스트 */
+.button-text {
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+/* --- 3. 하단 안내 박스 --- */
+.caution-box {
+  width: 100%;
+  background-color: var(--guide-light-bg); /* 연하늘색 배경 */
+  border-radius: 16px;
+  padding: 30px 20px;
+  text-align: center; /* 텍스트 가운데 정렬 */
+  box-sizing: border-box;
+  margin-top: auto; /* 화면 하단으로 밀기 (필요 시) */
+}
+
+.caution-title {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #000;
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+.caution-text {
+  font-size: 1.1rem;
+  font-weight: 600;
+  line-height: 1.6;
+  color: #000;
+  margin: 0;
+  word-break: keep-all; /* 단어 단위 줄바꿈 */
+}

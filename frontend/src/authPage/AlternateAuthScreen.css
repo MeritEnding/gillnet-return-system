@@ -1,0 +1,318 @@
+/* src/components/AlternateAuthScreen.css */
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+:root {
+  /* 메인 컬러 팔레트 */
+  --color-primary: #0085CA;       /* 메인 파란색 */
+  --color-primary-dark: #006090;  /* 진한 파란색 (테두리용) */
+  --color-secondary: #7CC557;     /* 초록색 (취소 버튼 등) */
+  --color-secondary-dark: #5aa53e; /* 진한 초록색 */
+  --color-bg-light: #EAF8FF;      /* 연한 배경색 */
+  --color-text-label: #226D8A;    /* 라벨 텍스트 색상 */
+}
+
+/* 1. 모달 백그라운드 */
+.alt-modal-backdrop {
+  position: fixed; top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex; justify-content: center; align-items: center;
+  z-index: 9999;
+}
+
+/* 2. 메인 컨테이너 (흰색 카드) */
+.alt-modal-container {
+  width: 90%; 
+  max-width: 580px; 
+  background-color: white; 
+  
+  /* 둥근 모서리와 굵은 테두리 */
+  border-radius: 25px;
+  border: 5px solid var(--color-primary-dark);
+  
+  /* 그림자 효과 */
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+  
+  display: flex; flex-direction: column;
+  overflow: hidden;
+  max-height: 95vh;
+}
+
+/* 헤더 영역 */
+.alt-auth-header {
+  background-color: var(--color-primary-dark); /* 헤더 배경색 (진한 파랑) */
+  padding: 15px 0; 
+  text-align: center;
+  border-bottom: 2px solid var(--color-primary-dark);
+}
+
+.alt-auth-header h1 {
+  color: white; /* 흰색 텍스트 */
+  font-size: 1.6rem; 
+  font-weight: 800; 
+  margin: 0; 
+  letter-spacing: 1px;
+}
+
+/* 바디 영역 */
+.alt-auth-body {
+  flex: 1; 
+  padding: 20px 30px;
+  background-color: #EAF8FF; /* 연한 하늘색 배경 (이미지와 유사하게) */
+  display: flex; flex-direction: column;
+  overflow-y: auto;
+}
+
+/* --- 입력 폼 섹션 --- */
+.form-section { 
+  display: flex; flex-direction: column; 
+  gap: 12px; 
+  margin-bottom: 15px; 
+}
+
+/* 입력 줄 (라벨 + 인풋) */
+.input-row-container { 
+  display: flex; 
+  align-items: center; 
+  gap: 15px; 
+}
+
+.input-label-left {
+  width: 90px; 
+  text-align: justify; /* 양쪽 정렬 느낌 */
+  text-align-last: justify;
+  font-size: 1.15rem; 
+  font-weight: 800; 
+  color: var(--color-primary-dark);
+  white-space: nowrap;
+}
+
+/* 입력 박스 */
+.input-box-right {
+  flex: 1; 
+  background-color: white; 
+  border-radius: 8px; 
+  height: 48px;
+  display: flex; align-items: center; 
+  padding: 0 15px;
+  font-size: 1.1rem; 
+  color: #333; 
+  font-weight: 600; 
+  border: 1px solid #ccc; /* 얇은 테두리 */
+  cursor: pointer;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); /* 내부 그림자 */
+}
+
+/* 활성화된 입력 박스 */
+.input-box-right.active { 
+  border: 2px solid var(--color-primary); 
+  background-color: #fff; 
+  box-shadow: 0 0 0 2px rgba(0,133,202,0.1);
+}
+
+.input-box-right .placeholder { 
+  color: #aaa; 
+  font-weight: 500; 
+  font-size: 0.95rem; 
+}
+
+/* 은행/계좌번호 행 */
+.bank-section-row { 
+  display: flex; 
+  gap: 10px; 
+  align-items: flex-end; /* 아래쪽 정렬 */
+}
+
+.bank-col { flex: 0 0 35%; } /* 은행 선택 버튼 너비 */
+.account-col { flex: 1; }
+
+.top-label { 
+  text-align: center; 
+  font-size: 1rem; 
+  font-weight: 800; 
+  color: var(--color-primary-dark); 
+  margin-bottom: 5px;
+}
+
+.bank-select-trigger {
+  width: 100%;
+  height: 48px; 
+  background-color: var(--color-primary); 
+  color: white;
+  border: none; 
+  border-radius: 8px; 
+  font-size: 1.1rem; 
+  font-weight: 700;
+  cursor: pointer; 
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+}
+
+/* --- 키패드 섹션 --- */
+.keypad-section {
+  flex: 1; 
+  background-color: white; /* 키패드 배경은 흰색 */
+  border-radius: 15px; 
+  padding: 10px;
+  display: flex; flex-direction: column; justify-content: center; 
+  margin-bottom: 15px; 
+  min-height: 220px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.char-keypad { display: flex; flex-direction: column; gap: 6px; height: 100%; }
+.key-row { display: flex; gap: 6px; flex: 1; }
+
+.num-keypad-full { display: flex; flex-direction: column; gap: 8px; justify-content: center; height: 100%; }
+.num-row { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+.num-row .key-btn { flex: 0 0 18%; height: 55px; } /* 숫자 키 크기 */
+
+.num-func-row { display: flex; gap: 10px; justify-content: center; }
+.num-func-row .key-btn { 
+  flex: 0 0 30%; 
+  height: 50px; 
+  background-color: #FFC107; /* 노란색 (지우기 등) */
+  color: #333;
+}
+
+.key-btn {
+  flex: 1; 
+  background-color: #f0f4f8; 
+  border: 1px solid #ddd; 
+  border-radius: 8px;
+  font-size: 1.2rem; 
+  font-weight: 700; 
+  color: #333; 
+  cursor: pointer; 
+  box-shadow: 0 2px 0 #ccc; /* 입체 버튼 효과 */
+  transition: all 0.1s;
+}
+.key-btn:active { 
+  transform: translateY(2px); 
+  box-shadow: none; 
+}
+.key-btn.special { background-color: #FFC107; border-color: #e0a800; box-shadow: 0 2px 0 #c69500; }
+.key-btn.active { background-color: #333; color: white; border-color: #000; }
+
+/* --- 하단 액션 버튼 --- */
+.action-buttons { 
+  display: flex; 
+  gap: 15px; 
+  height: 65px; 
+  flex-shrink: 0; 
+}
+
+.action-btn {
+  flex: 1; 
+  border: none; 
+  border-radius: 12px; 
+  font-size: 1.5rem; 
+  font-weight: 800;
+  color: white; 
+  cursor: pointer; 
+  box-shadow: 0 4px 0 rgba(0,0,0,0.2); /* 입체감 */
+  transition: transform 0.1s;
+}
+.action-btn:active { 
+  transform: translateY(4px); 
+  box-shadow: none; 
+}
+
+.auth-btn { 
+  background-color: var(--color-primary); 
+  /* 그라데이션 제거하고 깔끔한 단색 추천 (이미지 참고) */
+}
+.cancel-btn { 
+  background-color: var(--color-secondary); 
+}
+
+/* === 팝업 (은행선택, 실패, 성공) 공통 오버레이 === */
+.inner-overlay {
+  position: absolute; top: 0; left: 0; 
+  width: 100%; height: 100%;
+  background-color: rgba(0,0,0,0.5); /* 반투명 검정 */
+  display: flex; justify-content: center; align-items: center; 
+  z-index: 100;
+  border-radius: 20px; /* 부모 컨테이너 모서리에 맞춤 */
+}
+
+/* 은행 선택 팝업 */
+.bank-select-content {
+  background-color: white; 
+  border-radius: 20px; 
+  padding: 20px; 
+  width: 85%; 
+  max-width: 400px; 
+  text-align: center;
+  border: 4px solid var(--color-primary);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+.bank-select-title { font-size: 1.4rem; color: #333; margin-bottom: 20px; font-weight: 800; }
+.bank-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; }
+.bank-btn {
+  padding: 15px; font-size: 1.1rem; font-weight: 700; color: #333;
+  background-color: #f9f9f9; border: 2px solid #eee; border-radius: 10px; cursor: pointer;
+}
+.bank-btn:hover { border-color: var(--color-primary); color: var(--color-primary); background-color: #EAF8FF; }
+.bank-close-btn {
+  width: 100%; padding: 12px; font-size: 1.2rem; font-weight: 800; color: white;
+  background-color: #666; border: none; border-radius: 10px; cursor: pointer;
+}
+
+/* 실패/성공 팝업 공통 */
+.fail-popup-content, .success-popup-content {
+  background-color: white; 
+  border: 5px solid var(--color-primary-dark); 
+  border-radius: 20px;
+  width: 90%; max-width: 450px; 
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.fail-popup-header, .success-popup-header { 
+  background-color: var(--color-primary-dark); 
+  padding: 15px; 
+  text-align: center; 
+}
+.fail-popup-title, .success-popup-title { 
+  color: white; margin: 0; font-size: 1.5rem; font-weight: 800; 
+}
+
+.fail-popup-body, .success-popup-body { 
+  padding: 30px 20px; 
+  display: flex; flex-direction: column; align-items: center; 
+  text-align: center;
+}
+
+.fail-popup-message { 
+  font-size: 1.2rem; font-weight: 700; color: #333; margin-bottom: 25px; line-height: 1.5; 
+}
+.success-message { 
+  font-size: 1.3rem; font-weight: 600; color: #333; line-height: 1.5; 
+}
+
+.fail-popup-actions { display: flex; gap: 10px; width: 100%; }
+.fail-popup-btn { 
+  flex: 1; height: 50px; font-size: 1.2rem; font-weight: 800; color: white; 
+  border: none; border-radius: 10px; cursor: pointer; 
+}
+.fail-popup-btn.retry { background-color: var(--color-primary); }
+.fail-popup-btn.cancel { background-color: var(--color-secondary); }
+
+/* 로딩 스피너 */
+.loading-spinner {
+  width: 60px; height: 60px; 
+  border: 6px solid #f3f3f3; 
+  border-top: 6px solid var(--color-primary);
+  border-radius: 50%; 
+  animation: spin 1s linear infinite;
+}
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+/* 반응형 (작은 화면 대응) */
+@media screen and (max-height: 700px) {
+  .alt-auth-body { padding: 10px 20px; }
+  .input-box-right { height: 40px; font-size: 1rem; }
+  .keypad-section { min-height: 180px; }
+  .action-buttons { height: 50px; }
+  .action-btn { font-size: 1.2rem; }
+}

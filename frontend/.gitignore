@@ -33,3 +33,5 @@ yarn-error.log*
 
 
 kiosk-frontend/src/assets/intro.gif
+# Media files
+*.mp4
