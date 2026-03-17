@@ -12,7 +12,7 @@ function App() {
 
   // ★ 설정: 60초(60000ms) 동안 입력 없으면 절전 모드
   // const IDLE_TIMEOUT = 600000; 10분
-  const IDLE_TIMEOUT = 60000; // 60초
+  const IDLE_TIMEOUT = 600000; // 60초
 
   // 2. 타이머 초기화 함수 (사용자가 움직일 때마다 호출)
   const resetIdleTimer = () => {

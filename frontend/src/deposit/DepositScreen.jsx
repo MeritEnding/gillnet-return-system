@@ -35,6 +35,12 @@ const LoadingOverlay = ({ text }) => {
   );
 };
 
+const SafetyWarningIcon = () => (
+  <svg width="120" height="120" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" stroke="#DC3545" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
 const DepositScreen = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -58,6 +64,8 @@ const DepositScreen = () => {
   const [scannedList, setScannedList] = useState([]);
   const [totalDeposit, setTotalDeposit] = useState(0);
   const [totalPoint, setTotalPoint] = useState(0);
+
+  const [showSafetyWarning, setShowSafetyWarning] = useState(false);
 
   const [capturedImages, setCapturedImages] = useState([]);
   const [returnMngNos, setReturnMngNos] = useState({ remg: '', romg: '' });
@@ -115,7 +123,7 @@ const DepositScreen = () => {
 
       setCapturedImages(prev => [...prev, imageFile]);
       setDepositSubState('WAITING_CLOSE');
-      showMessage("촬영되었습니다. 폐어구를 넣고 [투입구 닫힘] 버튼을 눌러주세요.");
+      showMessage("어구가 확인되었습니다. [투입구 닫기] 버튼을 눌러주세요.");
 
     } catch (error) {
       showMessage(`카메라 연결 오류. [건너뛰기] 버튼을 사용해주세요.`, true);
@@ -141,9 +149,13 @@ const DepositScreen = () => {
     if (isLoading) return;
     setIsLoading(true);
 
+    // 안전 경고 켜고 음성 재생
+    setShowSafetyWarning(true);
+    speakSafetyWarning();
+
     if (isTestMode) {
       setLoadingText("테스트 모드: 하드웨어 제어 건너뛰는 중...");
-      await new Promise(res => setTimeout(res, 1500)); // UI 전환을 위한 짧은 대기
+      await new Promise(res => setTimeout(res, 2000)); // 경고를 볼 수 있도록 대기 시간 늘림
     } else {
       setLoadingText("어구를 처리하고 컨베이어를 작동합니다... (8초)");
       try {
@@ -154,6 +166,8 @@ const DepositScreen = () => {
         console.log("하드웨어 통신 에러 무시");
       }
     }
+    // 동작이 끝나면 안전 경고 끄기
+    setShowSafetyWarning(false);
 
     try {
       const nextIndex = currentItemIndex + 1;
@@ -173,117 +187,16 @@ const DepositScreen = () => {
       setIsLoading(false);
     }
   };
-
-  // // DepositScreen.jsx의 handleProcessScans 함수 내부 수정
-  // const handleProcessScans = async () => {
-  //   setIsLoading(true);
-  //   setLoadingText("반환 정보를 서버에 등록하는 중입니다...");
-
-  //   const fishermanId = localStorage.getItem('fisherman_id') || 'B00001DK';
-  //   const fishermanName = localStorage.getItem('fisherman_name') || '홍길동';
-
-  //   // 새로 추가된 화면에서 저장한 데이터 불러오기
-  //   const bankCd = localStorage.getItem('bank_cd') || '004';
-  //   const actno = localStorage.getItem('actno') || '123456789012';
-  //   const acctNm = localStorage.getItem('acct_nm') || fishermanName;
-  //   const selectedClsfCd = localStorage.getItem('selected_fsgr_clsf_cd') || 'FISGE'; // 선택한 어구 종류
-
-  //   // API v1.2 시작(start)을 위한 필수 파라미터 셋업
-  //   const basePayload = {
-  //     user_fshnd_no: fishermanId,
-  //     korn_flnm: fishermanName,
-  //     brdt: "1980-01-01", // (실제로는 회원정보/비회원정보 입력값 필요)
-  //     telno: "010-1234-5678",
-  //     mbl_telno: "010-1234-5678",
-  //     bank_cd: bankCd,
-  //     actno: actno,
-  //     acct_nm: acctNm,
-  //     kiosk_no: "KIOSK-001"
-  //   };
-
-  //   const depositGears = scannedGears.filter(g => g.gvbk_type.includes('보증금'));
-  //   const existingGears = scannedGears.filter(g => g.gvbk_type.includes('기존'));
-
-  //   let remgMngNo = '';
-  //   let romgMngNo = '';
-  //   const successfulReturns = [];
-  //   let calcDeposit = 0;
-  //   let calcPoint = 0;
-
-  //   try {
-  //     // 1. 보증금 어구(REMG) 반환
-  //     if (depositGears.length > 0) {
-  //       // 필수 파라미터 전송
-  //       const startRes = await axios.post(`${PROXY_API_URL}/deposit/return/remg/start`, {
-  //         ...basePayload,
-  //         fsgr_clsf_cd: selectedClsfCd
-  //       });
-  //       remgMngNo = startRes.data?.data?.gvbk_mng_no;
-
-  //       if (remgMngNo) {
-  //         for (const gear of depositGears) {
-  //           const retRes = await axios.post(`${PROXY_API_URL}/deposit/return/remg`, {
-  //             bacod_nm: gear.bacod_nm,
-  //             gvbk_mng_no: remgMngNo
-  //           });
-  //           if (retRes.data?.status === "200" || retRes.data?.message === "OK") {
-  //             const data = retRes.data.data || { gvbk_type: '보증금어구', gvbk_amt: gear.gvbk_amt };
-  //             successfulReturns.push({ code: gear.bacod_nm, type: data.gvbk_type, reward: data.gvbk_amt, point: 0 });
-  //             calcDeposit += (Number(data.gvbk_amt) || 0);
-  //           }
-  //         }
-  //       }
-  //     }
-
-  //     // 2. 기존 어구(ROMG) 반환
-  //     if (existingGears.length > 0) {
-  //       // 필수 파라미터 전송
-  //       const startRes = await axios.post(`${PROXY_API_URL}/deposit/return/romg/start`, basePayload);
-  //       romgMngNo = startRes.data?.data?.bfr_fsgr_gvbk_no;
-
-  //       if (romgMngNo) {
-  //         for (const gear of existingGears) {
-  //           const retRes = await axios.post(`${PROXY_API_URL}/deposit/return/romg`, {
-  //             bacod_nm: gear.bacod_nm,
-  //             bfr_fsgr_gvbk_no: romgMngNo
-  //           });
-  //           if (retRes.data?.status === "200" || retRes.data?.message === "OK") {
-  //             const data = retRes.data.data || { gvbk_type: '기존어구', gvbk_pnt: gear.gvbk_pnt };
-  //             successfulReturns.push({ code: gear.bacod_nm, type: data.gvbk_type, reward: 0, point: data.gvbk_pnt });
-  //             calcPoint += (Number(data.gvbk_pnt) || 0);
-  //           }
-  //         }
-  //       }
-  //     }
-
-  //     setReturnMngNos({ remg: remgMngNo, romg: romgMngNo });
-
-  //     // API 응답에 실패해도 앱 흐름을 강제로 확인하기 위한 보호 로직
-  //     if (successfulReturns.length === 0 && scannedGears.length > 0) {
-  //       console.warn("API 정상 응답이 없어 스캔된 데이터를 기반으로 강제 UI를 표시합니다.");
-  //       scannedGears.forEach(g => {
-  //         successfulReturns.push({ code: g.bacod_nm, type: g.gvbk_type, reward: g.gvbk_amt || 0, point: g.gvbk_pnt || 0 });
-  //         calcDeposit += (Number(g.gvbk_amt) || 0);
-  //         calcPoint += (Number(g.gvbk_pnt) || 0);
-  //       });
-  //     }
-
-  //     setScannedList(successfulReturns);
-  //     setTotalDeposit(calcDeposit);
-  //     setTotalPoint(calcPoint);
-  //     setViewState('CONFIRMING');
-
-  //   } catch (err) {
-  //     console.error("API 처리 에러:", err);
-  //     showMessage("서버 통신 실패. 화면 넘기기를 시도합니다.", true);
-  //     // 에러가 나도 테스트 진행을 위해 강제 렌더링
-  //     setScannedList(scannedGears.map(g => ({ code: g.bacod_nm, type: g.gvbk_type, reward: g.gvbk_amt || 0, point: g.gvbk_pnt || 0 })));
-  //     setViewState('CONFIRMING');
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
-
+  const speakSafetyWarning = () => {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel(); // 기존 음성 취소
+      const utterance = new SpeechSynthesisUtterance("위험하오니 한 걸음 뒤로 물러서 주세요. 투입구가 닫힙니다.");
+      utterance.lang = 'ko-KR';
+      utterance.rate = 1.0; // 말하기 속도
+      window.speechSynthesis.speak(utterance);
+    }
+  };
+ 
   // 1. [추가] 컴포넌트 내부(또는 바깥)에 포맷 변환 함수 추가
   const formatPhone = (phone) => {
     if (!phone) return "010-0000-0000"; // 데이터가 없을 때 백엔드 에러 방지용
@@ -301,7 +214,7 @@ const DepositScreen = () => {
     }
     return brdt;
   };
- 
+
   const handleProcessScans = async () => {
     setIsLoading(true);
     setLoadingText("반환 정보를 서버에 등록하는 중입니다...");
@@ -321,10 +234,10 @@ const DepositScreen = () => {
     // 1. 공통 필수 데이터 (보증금/기존어구 공통)
     const commonPayload = {
       korn_flnm: fishermanName,
-      brdt: formatBrdt(rawBrdt),         
-      mbl_telno: formatPhone(rawPhone),  
+      brdt: formatBrdt(rawBrdt),
+      mbl_telno: formatPhone(rawPhone),
       bank_cd: bankCd,
-      actno: actno ? actno.replace(/-/g, '') : '', 
+      actno: actno ? actno.replace(/-/g, '') : '',
       acct_nm: acctNm,
     };
 
@@ -385,15 +298,15 @@ const DepositScreen = () => {
         const romgPayload = {
           ...commonPayload,
           telno: formatPhone(rawPhone),
-          kiosk_no: "KIOSK-001" 
+          kiosk_no: "KIOSK-001"
         };
 
         const startRes = await axios.post(`${PROXY_API_URL}/deposit/return/romg/start`, romgPayload);
-        
+
         if (startRes.data?.status === "400" || startRes.data?.status === "500") {
           throw new Error(`[기존어구 시작 거부] ${startRes.data?.message}`);
         }
-        
+
         romgMngNo = startRes.data?.data?.bfr_fsgr_gvbk_no;
 
         if (romgMngNo) {
@@ -435,16 +348,22 @@ const DepositScreen = () => {
   const handleCloseDoors = async () => {
     setIsLoading(true);
     setLoadingText("투입구를 닫고 있습니다...");
+
+    setShowSafetyWarning(true);
+    speakSafetyWarning();
+
     try {
       if (!isTestMode) await axios.post(`${LOCAL_API_URL}/api/deposit/action/close-doors`, { isLast: true });
-      await new Promise(res => setTimeout(res, 1000));
+      await new Promise(res => setTimeout(res, 2500)); // 문 닫히는 동안 경고 유지
       setIsDoorClosed(true);
       showMessage("투입구가 닫혔습니다. 확인 완료를 눌러주세요.");
     } catch (e) {
-      setIsDoorClosed(true); // 에러나도 테스트 진행을 위해 열어줌
+      setIsDoorClosed(true); 
       showMessage("테스트: 투입구 닫힘 처리 완료", true);
     } finally {
       setIsLoading(false);
+      // ★ 동작이 끝나면 안전 경고 끄기
+      setShowSafetyWarning(false);
     }
   };
 
@@ -530,9 +449,10 @@ const DepositScreen = () => {
                     </div>
                   ) : (
                     <p className="instruction-text">
+                      {/* 변경 후 ('촬영' -> '투입 확인') */}
                       {depositSubState === 'READY_CAPTURE' ?
-                        "폐어구를 투입구에 넣고 [촬영] 버튼을 눌러주세요." :
-                        "폐어구를 투입구에 넣으셨다면 [투입구 닫힘] 버튼을 눌러주세요."
+                        "폐어구를 투입구에 넣고 [투입 확인] 버튼을 눌러주세요." :
+                        "어구 확인이 완료되었습니다. [투입구 닫기] 버튼을 눌러주세요."
                       }
                     </p>
                   )}
@@ -541,7 +461,7 @@ const DepositScreen = () => {
                     {depositSubState === 'READY_CAPTURE' ? (
                       <div style={{ display: 'flex', gap: '15px', width: '100%', maxWidth: '400px' }}>
                         <button className="deposit-action-btn primary" onClick={handleCapture} disabled={isLoading} style={{ flex: 1, backgroundColor: '#007BFF' }}>
-                          촬영
+                          투입 확인
                         </button>
                         <button
                           className="deposit-action-btn"
@@ -618,6 +538,19 @@ const DepositScreen = () => {
         </div>
       </div>
       {isLoading && <LoadingOverlay text={loadingText} />}
+
+      {showSafetyWarning && (
+        <div className="safety-warning-overlay">
+          <div className="safety-warning-box">
+            <SafetyWarningIcon />
+            <h1 className="safety-warning-title">위험! 투입구 작동 중</h1>
+            <p className="safety-warning-text">
+              안전을 위해 한 걸음<br/>
+              뒤로 <strong>물러서 주세요!</strong>
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
