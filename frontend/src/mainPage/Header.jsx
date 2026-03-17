@@ -26,11 +26,22 @@ const WarningIcon = () => (
   </svg>
 );
 
+// ★ [추가됨] 범용 언어 선택 아이콘 (지구본)
+const GlobeIcon = () => (
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="12" cy="12" r="10" stroke="#6CC24A" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" stroke="#6CC24A" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M2 12h20" stroke="#6CC24A" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
 const Header = () => {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [showLangMenu, setShowLangMenu] = useState(false);
+  
+  // ★ 드롭다운 대신 모달 상태로 변경
+  const [showLangModal, setShowLangModal] = useState(false);
   const [showHomeModal, setShowHomeModal] = useState(false);
 
   const languages = [
@@ -41,8 +52,6 @@ const Header = () => {
     { code: 'id', label: 'Indonesia', flag: FlagID },
     { code: 'my', label: 'Myanmar', flag: FlagMM },
   ];
-
-  const currentLangObj = languages.find(l => i18n.language.includes(l.code)) || languages[0];
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
@@ -61,7 +70,7 @@ const Header = () => {
 
   const changeLanguage = (langCode) => {
     i18n.changeLanguage(langCode);
-    setShowLangMenu(false);
+    setShowLangModal(false); // 선택 후 모달 닫기
   };
 
   const handleHomeBtnClick = () => {
@@ -111,31 +120,48 @@ const Header = () => {
             </span>
           </button>
 
-          <div className="lang-container" style={{ position: 'relative' }}>
-            <button className="header-btn header-lang-btn" onClick={() => setShowLangMenu(!showLangMenu)}>
+          <div className="lang-container">
+            {/* ★ 특정 국기 대신 지구본 아이콘 렌더링 */}
+            <button className="header-btn header-lang-btn" onClick={() => setShowLangModal(true)}>
               <div className="header-btn-icon">
-                 <img src={currentLangObj.flag} alt="current language" />
+                 <GlobeIcon />
               </div>
               <span className="header-btn-text">
                 {t('header_lang_select') || "언어선택"}
               </span>
             </button>
-
-            {showLangMenu && (
-              <div className="lang-dropdown">
-                {languages.map((lang) => (
-                  <button key={lang.code} onClick={() => changeLanguage(lang.code)} className="lang-option-btn">
-                    <img src={lang.flag} alt={lang.code} className="lang-option-flag" />
-                    <span className="lang-option-text">{lang.label}</span>
-                  </button>
-                ))}
-              </div>
-            )}
           </div>
         </div>
       </header>
 
-      {/* 홈 이동 확인 모달 */}
+      {/* ★ [추가됨] 대형 언어 선택 모달 */}
+      {showLangModal && (
+        <div className="header-modal-overlay" onClick={() => setShowLangModal(false)}>
+          <div className="lang-modal-box" onClick={(e) => e.stopPropagation()}>
+            <h3 className="lang-modal-title">
+              {t('header_lang_select') || "언어 선택 (Language)"}
+            </h3>
+            <div className="lang-modal-grid">
+              {languages.map((lang) => (
+                <button 
+                  key={lang.code} 
+                  onClick={() => changeLanguage(lang.code)} 
+                  // 현재 선택된 언어일 경우 강조 표시
+                  className={`lang-grid-btn ${i18n.language.includes(lang.code) ? 'active' : ''}`}
+                >
+                  <img src={lang.flag} alt={lang.code} className="lang-grid-flag" />
+                  <span className="lang-grid-text">{lang.label}</span>
+                </button>
+              ))}
+            </div>
+            <button className="lang-modal-close-btn" onClick={() => setShowLangModal(false)}>
+              {t('btn_cancel') || "닫기 (Close)"}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* 홈 이동 확인 모달 (기존과 동일) */}
       {showHomeModal && (
         <div className="header-modal-overlay">
           <div className="header-modal-box">
@@ -151,7 +177,6 @@ const Header = () => {
               ))}
             </p>
             <div className="header-modal-actions">
-              {/* ★ [수정] 예(Confirm)를 왼쪽, 아니요(Cancel)를 오른쪽으로 배치 */}
               <button className="header-modal-btn confirm" onClick={confirmGoHome}>
                 {t('btn_yes') || "예"}
               </button>
