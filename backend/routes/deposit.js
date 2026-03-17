@@ -49,6 +49,27 @@ router.post('/action/close-doors', async (req, res) => {
         res.status(500).json({ status: 'FAILURE' });
     }
 });
+
+// 4. 클리닝 시퀀스 (확인 완료 시 잔류 어구 완전 적재)
+router.post('/action/cleaning', async (req, res) => {
+    try {
+        console.log("-> PLC: 클리닝 시퀀스 가동 (투입구 닫힘 재확인 및 컨베이어 추가 구동)");
+        
+        // 안전을 위해 문이 닫혔는지 다시 한번 확실히 제어
+        await plc.setWasteDoor(false);
+        await plc.setBarcodeDoor(false);
+        
+        // 벨트 위에 남은 마지막 어구가 적재함으로 완전히 떨어지도록 10초간 추가 구동
+        plc.runConveyor(10000); 
+        
+        res.status(200).json({ status: 'SUCCESS', message: 'Cleaning Sequence Started' });
+    } catch(e) {
+        console.error("클리닝 시퀀스 실패:", e);
+        res.status(500).json({ status: 'FAILURE' });
+    }
+});
+
+
 // ----------------------------------------
 
 const verifySessionToken = (req, res, next) => {

@@ -1,0 +1,505 @@
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+:root {
+  --tab-active-bg: #009CDA; 
+  --tab-inactive-bg: #7CC557; 
+  --card-border-blue: #006090; 
+  --inst-bg: #EAF8FF;
+  --text-dark: #333;
+}
+
+/* ========================================= */
+/* 1. 공통 및 가로 모드 (기본) 스타일 */
+/* ========================================= */
+
+.tag-wrapper {
+  display: flex; flex-direction: column;
+  width: 100%; height: 100vh;
+  background-color: #f0f4f8;
+  font-family: 'Pretendard', sans-serif;
+  overflow: hidden;
+  max-width: 600px; margin: 0 auto; 
+  box-shadow: 0 0 50px rgba(0,0,0,0.1);
+  position: relative;
+}
+
+.tag-body {
+  flex: 1; display: flex; flex-direction: column;
+  overflow: hidden; position: relative;
+  width: 100%;
+}
+
+/* 카메라 영역 */
+.camera-box {
+  flex: 1.2; 
+  background-color: #000; 
+  display: flex; justify-content: center; align-items: center;
+  position: relative; overflow: hidden;
+}
+.camera-text {
+  /* 영상이 아닌 텍스트가 표시될 때 */
+  color: white; font-size: 2.2rem; font-weight: 800; 
+  white-space: pre-line; text-align: center;
+  z-index: 10; text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+}
+
+/* ★ [추가] 뒤로가기 버튼 스타일 */
+.tag-back-btn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  /* z-index를 높게 설정하여 영상 위에 표시 */
+  z-index: 1000; 
+  
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  
+  background-color: rgba(0, 0, 0, 0.5); /* 반투명 배경 */
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  border-radius: 30px;
+  padding: 10px 20px;
+  
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tag-back-btn:active {
+  background-color: rgba(0, 0, 0, 0.7);
+  transform: scale(0.95);
+}
+
+.tag-back-text {
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 700;
+  padding-bottom: 2px;
+}
+
+/* 하단 카드 컨테이너 */
+.tag-card-container {
+  flex: 1; display: flex; justify-content: center; align-items: center;
+  padding: 10px; background-color: #29C2F5; position: relative;
+}
+
+/* 정보 카드 */
+.tag-info-card {
+  background-color: rgba(255, 255, 255, 0.98);
+  width: 95%; height: 96%; 
+  border-radius: 25px;
+  border: 6px solid var(--card-border-blue);
+  padding: 20px;
+  display: flex; flex-direction: column; 
+  align-items: center; justify-content: space-between; 
+  box-shadow: 0 20px 50px rgba(0, 70, 120, 0.4); 
+  animation: popUp 0.3s ease-out;
+}
+@keyframes popUp { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+/* 단계 탭 */
+.step-tabs {
+  display: flex; width: 100%; gap: 10px; margin-bottom: 10px; flex-shrink: 0;
+  height: 60px;
+}
+.step-tab {
+  flex: 1; height: 100%;
+  border-radius: 12px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  color: white; font-weight: 900; border: 3px solid #fff;
+  background: linear-gradient(180deg, #8EDA6D 0%, #6CC24A 100%); 
+  position: relative; opacity: 0.9;
+}
+.step-tab.active {
+  background: linear-gradient(180deg, #29C2F5 0%, #0085CA 100%);
+  transform: scale(1.02); z-index: 2; opacity: 1; border-color: white;
+}
+.step-num-circle {
+  width: 26px; height: 26px; background-color: white; border-radius: 50%;
+  color: #555; font-size: 1.1rem; font-weight: 900;
+  display: flex; justify-content: center; align-items: center; margin-bottom: 4px;
+}
+.step-tab.active .step-num-circle { color: var(--card-border-blue); }
+.step-label { font-size: 1rem; letter-spacing: -0.5px; }
+
+/* 메인 타이틀 */
+.step-main-title {
+  color: var(--card-border-blue);
+  font-size: 1.8rem; font-weight: 900;
+  margin: 5px 0 15px 0; text-align: center; flex-shrink: 0;
+}
+
+/* 컨텐츠 박스 */
+.tag-content-box {
+  width: 100%; flex: 1;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+
+/* 안내 박스 */
+.instruction-box {
+  background-color: var(--inst-bg);
+  width: 100%; border-radius: 15px; padding: 20px;
+  text-align: center; flex: 1; 
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+}
+.instruction-box p {
+  font-size: 1.5rem; color: #333; line-height: 1.4; margin: 0; font-weight: 800;
+}
+.instruction-box strong { font-weight: 900; color: #000; }
+
+/* ★ [수정] 성공 화면 폰트 확대 */
+.tag-content-box.success { text-align: center; justify-content: center; }
+.success-message {
+  font-size: 2.4rem; /* 기존 1.6rem -> 2.4rem 확대 */
+  color: #000; 
+  font-weight: 900; 
+  line-height: 1.6; 
+  margin-bottom: 30px;
+  word-break: keep-all;
+}
+.success-footer { display: flex; align-items: center; gap: 15px; }
+.spin-icon { width: 50px; height: 50px; animation: spin 1s linear infinite; }
+.success-footer-text { 
+  text-align: left; 
+  font-size: 1.8rem; /* 기존 1.2rem -> 1.8rem 확대 */
+  font-weight: 800; 
+  color: var(--card-border-blue); 
+}
+
+/* ★ [수정] 실패 화면 폰트 확대 */
+.fail-msg-box {
+  background-color: #EBF7FF; border-radius: 15px;
+  width: 100%; padding: 30px; margin-bottom: 20px;
+  display: flex; align-items: center; justify-content: center; flex: 1;
+}
+.fail-msg-box p {
+  font-size: 2.2rem; /* 기존 1.4rem -> 2.2rem 확대 */
+  font-weight: 800; 
+  color: #333; 
+  text-align: center; 
+  line-height: 1.6; 
+  margin: 0;
+  word-break: keep-all;
+}
+.fail-buttons-row { display: flex; gap: 15px; width: 100%; height: 70px; margin-top: auto; }
+.fail-btn {
+  flex: 1; border: none; border-radius: 12px;
+  font-size: 1.5rem; font-weight: 900; color: white; cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+}
+.fail-btn:active { transform: translateY(2px); }
+.fail-btn.retry { background: linear-gradient(180deg, #36C8F9 0%, #0093D7 100%); }
+.fail-btn.confirm { background: linear-gradient(180deg, #8FE472 0%, #7AC943 100%); }
+
+
+/* ========================================= */
+/* 2. 세로 모드 (키오스크 전용) 오버라이드 */
+/* ========================================= */
+@media (orientation: portrait) {
+
+  /* 1. 전체 래퍼 꽉 채우기 */
+  .tag-wrapper {
+    max-width: 100%;
+    width: 100vw;
+    height: 100vh;
+    box-shadow: none;
+  }
+
+  /* 2. 카메라 영역 비율 50%로 확대 */
+  .camera-box {
+    flex: 1; /* 화면의 50% */
+    border-bottom: 4px solid #fff;
+  }
+
+  /* ★ [추가] 뒤로가기 버튼 확대 */
+  .tag-back-btn {
+    top: 30px;
+    left: 30px;
+    padding: 15px 30px;
+    border-radius: 40px;
+    border-width: 3px;
+  }
+  .tag-back-text {
+    font-size: 1.6rem; /* 폰트 확대 */
+  }
+  .tag-back-btn svg {
+    width: 32px; height: 32px;
+  }
+
+  /* 3. 하단 카드 컨테이너 비율 50% */
+  .tag-card-container {
+    flex: 1; 
+    padding: 30px; 
+    background: linear-gradient(180deg, #29C2F5 0%, #0093D7 100%);
+  }
+
+  /* 4. 정보 카드 스타일 */
+  .tag-info-card {
+    width: 100%; height: 100%;
+    border-width: 8px; 
+    padding: 40px; 
+    gap: 30px;
+    justify-content: space-between;
+  }
+
+  /* 5. 단계 탭 확대 */
+  .step-tabs { height: 110px; gap: 15px; margin-bottom: 25px; }
+  .step-tab { border-width: 4px; border-radius: 20px; }
+  .step-num-circle { width: 40px; height: 40px; font-size: 1.8rem !important; }
+  .step-label { font-size: 1.5rem !important; }
+
+  /* 6. 메인 타이틀 확대 */
+  .step-main-title { font-size: 3.2rem !important; margin: 10px 0 30px 0; }
+
+  /* 7. 안내 박스 확대 */
+  .instruction-box { padding: 40px; }
+  .instruction-box p { font-size: 2.8rem !important; font-weight: 900; line-height: 1.5; }
+
+  /* 8. ★ [수정] 성공 화면 폰트 대폭 확대 (세로 모드) */
+  .success-message { 
+    font-size: 3.2rem !important; 
+    margin-bottom: 60px; 
+    line-height: 1.5;
+  }
+  .spin-icon { width: 80px; height: 80px; }
+  .success-footer-text { font-size: 2.2rem !important; }
+
+  /* 9. ★ [수정] 실패 화면 폰트 대폭 확대 (세로 모드) */
+  .fail-msg-box { padding: 50px; }
+  .fail-msg-box p { 
+    font-size: 3rem !important; 
+    line-height: 1.5;
+  }
+  .fail-buttons-row { height: 100px; gap: 20px; }
+  .fail-btn { font-size: 2.2rem !important; border-radius: 20px; }
+}
+
+
+/* ========================================= */
+/* 3. 로딩 및 테스트 버튼 (공통) */
+/* ========================================= */
+
+.tag-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background-color: rgba(0,0,0,0.6); z-index: 2000;
+  display: flex; justify-content: center; align-items: center;
+}
+.loading-spinner {
+  width: 70px; height: 70px;
+  border: 8px solid #f3f3f3; border-top: 8px solid var(--tab-active-bg);
+  border-radius: 50%; animation: spin 1s linear infinite;
+}
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+/* 테스트용 버튼 (필요 시 숨김 가능) */
+.test-btn-group { margin-top: 15px; display: flex; gap: 8px; }
+.test-btn { padding: 12px 18px; border: none; border-radius: 8px; color: white; cursor: pointer; font-weight: 900; font-size: 1.1rem; }
+.test-btn.success { background-color: #28a745; }
+.test-btn.fail { background-color: #dc3545; }
+
+/* ... (애니메이션 관련 코드는 기존 그대로 유지) ... */
+
+/* ========================================= */
+/* ★ 태그 스캔 애니메이션 (막대 리더기) 스타일 */
+/* ========================================= */
+
+.tag-scan-animation {
+  width: 100%;
+  height: 180px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px; /* 태그에 가까이 붙는 느낌 */
+  margin-bottom: 15px;
+}
+
+/* 1. 스캐너 (왼쪽 - 막대형) */
+.tag-scanner-part {
+  position: relative;
+  width: 120px; 
+  height: 120px;
+  display: flex; 
+  justify-content: center; 
+  align-items: center;
+  z-index: 10;
+  
+  /* 리더기가 태그 쪽으로 콕 찍는 애니메이션 */
+  animation: tagScannerTouch 2s infinite ease-in-out;
+}
+
+@keyframes tagScannerTouch {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(15px, -15px); } /* 대각선으로 가까이 이동 */
+}
+
+/* 태깅 파동 (동그란 전파) */
+.tag-scanner-wave {
+  position: absolute;
+  top: 15px;    /* 리더기 상단부 위치 */
+  left: 60px;   /* 리더기 상단부 위치 */
+  
+  width: 20px; 
+  height: 20px;
+  border-radius: 50%;
+  border: 3px solid rgba(46, 204, 113, 0.8); /* 초록색 파장 */
+  background-color: transparent;
+  opacity: 0;
+  
+  /* 파동이 퍼지는 효과 */
+  animation: tagWavePulse 1s infinite linear;
+  pointer-events: none;
+}
+
+@keyframes tagWavePulse {
+  0% { transform: scale(0.5); opacity: 1; }
+  100% { transform: scale(2.5); opacity: 0; }
+}
+
+/* 2. 태그 (오른쪽 - 주황색) */
+.tag-target-part {
+  width: 80px; 
+  height: 120px;
+  display: flex; 
+  justify-content: center; 
+  align-items: center;
+  
+  /* 태그가 인식될 때 살짝 반응하는 효과 */
+  animation: tagShake 2s infinite ease-in-out;
+}
+
+@keyframes tagShake {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(5deg); } /* 스캐너가 다가올 때 살짝 흔들림 */
+}
+
+/* 안내 박스 스타일 */
+.instruction-box {
+  background-color: var(--inst-bg);
+  width: 100%; 
+  border-radius: 15px; 
+  padding: 20px;
+  text-align: center; 
+  flex: 1; 
+  display: flex; 
+  flex-direction: column; 
+  justify-content: center; 
+  align-items: center;
+  gap: 10px;
+}
+
+/* 세로 모드 대응 */
+@media (orientation: portrait) {
+  
+  /* 애니메이션 영역 확대 */
+  .tag-scan-animation {
+    height: 250px;
+    gap: 20px;
+  }
+  
+  /* 스캐너 크기 확대 */
+  .tag-scanner-part {
+    width: 160px; height: 160px;
+  }
+  .tag-scanner-part svg {
+    width: 100%; height: 100%;
+  }
+  
+  /* 파동 위치 조정 */
+  .tag-scanner-wave {
+    top: 20px; left: 80px;
+    border-width: 4px;
+  }
+  
+  /* 태그 크기 확대 */
+  .tag-target-part {
+    width: 110px; height: 160px;
+  }
+  .tag-target-part svg {
+    width: 100%; height: 100%;
+  }
+
+  /* 안내 텍스트 확대 */
+  .instruction-box { padding: 30px; }
+  .instruction-text { font-size: 2rem !important; }
+}
+
+/* ========================================= */
+/* 성공 화면 (21인치 모니터 - AuthScreen과 동일 스타일 적용) */
+/* ========================================= */
+
+.success-content { 
+  width: 100%; 
+  height: 100%; 
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  justify-content: center; 
+}
+
+/* 1. 타이틀: 적당히 큰 사이즈 (약 50px) */
+.success-title { 
+  color: var(--card-border-blue); 
+  font-size: 3.2rem;  
+  font-weight: 900; 
+  margin-bottom: 25px; 
+  letter-spacing: -1.5px; 
+  text-align: center;
+}
+
+/* 2. 메시지 박스 (흰색 카드) */
+.success-msg-box { 
+  width: 95%; 
+  background-color: white; 
+  border: 4px solid #eee; 
+  border-radius: 20px; 
+  padding: 30px; 
+  margin-bottom: 25px; 
+  text-align: center; 
+  box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+  
+  flex: 1; /* 남은 공간 채우기 */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 안내 멘트: 부담스럽지 않게 잘 보이는 크기 (약 45px) */
+.success-msg-box p { 
+  font-size: 2.8rem; 
+  font-weight: 800; 
+  color: #333; 
+  line-height: 1.4; 
+  margin: 0; 
+  word-break: keep-all; 
+}
+
+/* 3. 하단 (다음 단계 준비 중) */
+.success-footer { 
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
+  gap: 15px; 
+  width: 100%;
+  padding-bottom: 10px;
+}
+
+.spin-icon { 
+  width: 60px; 
+  height: 60px; 
+  animation: spin 1s linear infinite; 
+}
+
+.success-footer-text { 
+  font-size: 2.0rem; 
+  font-weight: 700; 
+  color: var(--card-border-blue); 
+  text-align: left; 
+}
+
+/* 세로 모드(키오스크) 대응 */
+@media (orientation: portrait) {
+  .success-title { font-size: 3.8rem; }
+  .success-msg-box p { font-size: 3.2rem; }
+  .success-footer-text { font-size: 2.4rem; }
+  .spin-icon { width: 75px; height: 75px; }
+}
