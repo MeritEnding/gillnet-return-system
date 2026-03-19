@@ -1,0 +1,374 @@
+/* src/rentalPage/MyRentalsScreen.css */
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+:root {
+  --primary-blue: #006090;   
+  --active-blue: #009CDA;    
+  --active-green: #27ae60;   
+  --inactive-gray: #94a3b8;  
+  --bg-light-blue: #F0F8FF;  
+}
+
+/* ========================================= */
+/* 1. 공통 레이아웃 (스크롤 구조 수정) */
+/* ========================================= */
+
+.rentals-page-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100vh; /* 화면 전체 높이 고정 */
+  background-size: cover;
+  background-position: center;
+  font-family: 'Pretendard', sans-serif;
+  overflow: hidden; /* 전체 페이지 스크롤 방지 */
+  max-width: 600px;
+  margin: 0 auto;
+  position: relative;
+}
+
+/* 메인 컨테이너: 상하 꽉 채우고 내부 요소 배치 */
+.rentals-main-container {
+  flex: 1; /* 남은 공간 모두 차지 */
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  margin-top: 30px; 
+  background-color: rgba(255, 255, 255, 0.6);
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  overflow: hidden; /* 내부 스크롤 영역 분리를 위해 hidden */
+}
+
+/* ★ 스크롤 영역: 리스트만 여기서 스크롤 됨 */
+.rentals-scroll-area {
+  flex: 1; /* 버튼 위 남은 공간 모두 차지 */
+  overflow-y: auto; /* 세로 스크롤 활성화 */
+  padding-bottom: 20px;
+  /* 스크롤바 커스터마이징 */
+  scrollbar-width: thin;
+  scrollbar-color: #ccc transparent;
+}
+.rentals-scroll-area::-webkit-scrollbar { width: 6px; }
+.rentals-scroll-area::-webkit-scrollbar-thumb { background-color: #ccc; border-radius: 3px; }
+
+/* ... (기존 헤더, 탭 버튼 스타일 유지) ... */
+.rentals-page-title {
+  color: var(--primary-blue);
+  font-size: 2.2rem;
+  font-weight: 900;
+  text-align: center;
+  margin: 1rem 0 1rem 0;
+  text-shadow: 1px 1px 0px white;
+  flex-shrink: 0; /* 제목이 찌그러지지 않게 */
+}
+
+.rentals-tab-group {
+  display: flex;
+  width: 100%;
+  gap: 12px;
+  margin-bottom: 1rem;
+  height: 60px;
+  flex-shrink: 0; /* 탭 버튼 높이 고정 */
+}
+
+.rentals-tab-item {
+  flex: 1;
+  border-radius: 12px;
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: white;
+  background: #a0a0a0; 
+  border: 3px solid white;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  cursor: pointer;
+  opacity: 0.7;
+  transition: all 0.2s;
+}
+
+.rentals-tab-item.active {
+  opacity: 1;
+  transform: scale(1.02);
+  border-color: var(--primary-blue);
+  background: linear-gradient(180deg, #29C2F5 0%, #0085CA 100%);
+}
+
+/* 뒤로가기 버튼 */
+.rentals-back-btn {
+  position: absolute;
+  top: 790px; 
+  left: 20px;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #009BD9 0%, #007bb5 100%);
+  border: 2px solid white;
+  border-radius: 30px;
+  padding: 8px 16px;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+}
+.rentals-back-text { color: white; font-weight: 700; padding-bottom: 2px; }
+
+
+/* ========================================= */
+/* 2. 어구 카드 (고정형 스타일) */
+/* ========================================= */
+.rentals-gear-list { display: flex; flex-direction: column; gap: 15px; }
+
+.rentals-gear-card {
+  border: 3px solid var(--primary-blue);
+  background-color: white;
+  border-radius: 16px;
+  overflow: hidden; 
+  box-shadow: 0 4px 0px rgba(0, 96, 144, 0.2);
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px; /* 카드 간 간격 */
+}
+
+/* 헤더 */
+.rentals-gear-header {
+  padding: 1.2rem;
+  background-color: #f0f9ff; /* 헤더 배경색 약하게 추가 */
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.rentals-gear-info .gear-name { font-size: 1.3rem; font-weight: 800; color: var(--primary-blue); margin: 0 0 6px 0; }
+.rentals-gear-info .gear-qty { font-size: 1.2rem; font-weight: 600; color: #333; margin: 0; }
+.rentals-gear-info strong { color: #333; font-size: 1.3rem; }
+
+/* 상세 내용 (애니메이션 제거) */
+.rentals-card-content {
+  background-color: #fff;
+  padding-bottom: 10px;
+}
+
+.rentals-divider { height: 0; } /* 구분선 제거 (헤더 보더로 대체) */
+
+/* 내부 탭 (인라인) */
+.rentals-inline-tabs {
+  display: flex;
+  padding: 15px 15px 0 15px;
+  gap: 8px;
+}
+
+.rentals-inline-tab-btn {
+  flex: 1;
+  padding: 10px 0;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid #e2e8f0;
+  border-bottom: 2px solid #e2e8f0; /* 비활성 상태 */
+  background-color: #f8f9fa;
+  color: #94a3b8;
+  transition: all 0.2s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+}
+
+.rentals-inline-tab-btn.active.possible {
+  background-color: white;
+  color: #006090;
+  border: 2px solid #006090;
+  border-bottom: none; /* 아래쪽 뚫림 효과 */
+  transform: translateY(2px); /* 탭 연결 느낌 */
+  z-index: 2;
+}
+.rentals-inline-tab-btn.active.completed {
+  background-color: white;
+  color: #64748b;
+  border: 2px solid #64748b;
+  border-bottom: none;
+  transform: translateY(2px);
+  z-index: 2;
+}
+
+.rentals-tab-count {
+  background: rgba(0,0,0,0.1); padding: 2px 6px; border-radius: 8px; font-size: 0.8rem;
+}
+.rentals-inline-tab-btn.active .rentals-tab-count { background: var(--primary-blue); color: white; }
+.rentals-inline-tab-btn.active.completed .rentals-tab-count { background: #64748b; }
+
+/* 내부 바코드 리스트 */
+.rentals-inline-list {
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-top: 2px solid #e2e8f0; /* 탭과 내용 구분선 */
+  margin-top: -2px; /* 탭과 겹치게 */
+  z-index: 1;
+}
+
+.rentals-barcode-item {
+  display: flex;
+  justify-content: space-between; 
+  align-items: center; 
+  padding: 1rem; 
+  background: white;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.rentals-barcode-item.possible { border-left: 5px solid #8EDA6D; background-color: #fafff9; }
+.rentals-barcode-item.completed { border-left: 5px solid #e2e8f0; background-color: white; }
+
+.rentals-barcode-info { display: flex; flex-direction: column; gap: 4px; flex-grow: 1; }
+.info-row { display: flex; align-items: center; gap: 8px; }
+
+.rentals-label, .rentals-label-sub { font-size: 0.9rem; color: #64748b; font-weight: 600; min-width: 50px; }
+.rentals-value-code { font-size: 1.2rem; font-weight: 800; color: #1e293b; letter-spacing: 0.5px; }
+.rentals-value-money { font-size: 1.1rem; font-weight: 700; color: var(--active-blue); }
+.rentals-barcode-item.completed .rentals-value-money { color: #94a3b8; }
+
+.rentals-status-badge {
+  padding: 6px 10px; border-radius: 6px; font-size: 0.9rem; font-weight: 800; min-width: 80px; text-align: center; margin-left: 10px;
+}
+.rentals-status-badge.possible { background-color: #e6fffa; color: #059669; border: 1px solid #059669; }
+.rentals-status-badge.completed { color: #94a3b8; border: 1px solid #cbd5e1; }
+
+
+/* 하단 버튼 컨테이너 (고정) */
+.rentals-btn-container {
+  margin-top: 10px;
+  flex-shrink: 0; /* 버튼 크기 고정 */
+}
+
+.rentals-proceed-btn {
+  width: 100%; height: 70px; border-radius: 15px; border: none;
+  font-size: 1.6rem; font-weight: 900; color: white;
+  background: linear-gradient(180deg, #8FE472 0%, #6BCB4B 100%);
+  border-bottom: 6px solid #5aa53e;
+}
+
+/* 로딩 & 에러 */
+.rentals-loading-overlay {
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(255, 255, 255, 0.8);
+  display: flex; align-items: center; justify-content: center; z-index: 10;
+}
+.rentals-inline-loading { padding: 20px; display: flex; justify-content: center; }
+.rentals-spinner {
+  border: 6px solid #f3f3f3; border-top: 6px solid var(--active-blue);
+  border-radius: 50%; width: 60px; height: 60px; animation: spin 1s linear infinite;
+}
+.rentals-spinner.small { width: 40px; height: 40px; border-width: 4px; }
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+.rentals-error-message, .rentals-error-msg-inline {
+  color: #d9534f; background-color: #f2dede; border: 1px solid #ebccd1;
+  padding: 1.5rem; border-radius: 12px; margin: 1rem auto; text-align: center; font-weight: 700;
+}
+.rentals-empty-inline, .rentals-no-data-msg {
+  text-align: center; padding: 20px; color: #94a3b8; font-weight: 600;
+}
+
+
+/* 미디어 쿼리 (세로 모드 키오스크) */
+@media (orientation: portrait) {
+  .rentals-page-wrapper { max-width: 100%; box-shadow: none; }
+  .rentals-back-btn { top: 135px; left: 30px; padding: 12px 24px; border-width: 3px; }
+  .rentals-back-text { font-size: 1.4rem; }
+  .rentals-back-btn svg { width: 28px; height: 28px; }
+
+  .rentals-main-container { margin-top: -40px; padding: 25px; }
+  .rentals-page-title { font-size: 2.8rem; margin: 2rem 0; }
+  
+  .rentals-tab-group { height: 80px; }
+  .rentals-tab-item { font-size: 1.8rem; border-width: 4px; }
+
+  /* 카드 크기 증가 */
+  .rentals-gear-header { padding: 1.5rem; }
+  .rentals-gear-info .gear-name { font-size: 1.8rem; }
+  .rentals-gear-info .gear-qty { font-size: 1.6rem; }
+  
+  /* 내부 리스트 크기 증가 */
+  .rentals-inline-tab-btn { font-size: 1.5rem; padding: 15px 0; }
+  .rentals-barcode-item { padding: 1.5rem; }
+  .rentals-value-code { font-size: 1.8rem; }
+  .rentals-value-money { font-size: 1.6rem; }
+  .rentals-label, .rentals-label-sub { font-size: 1.2rem; min-width: 70px; }
+  .rentals-status-badge { font-size: 1.3rem; padding: 10px 16px; }
+
+  .rentals-proceed-btn { height: 90px; font-size: 2.2rem; }
+}
+/* src/rentalPage/MyRentalsScreen.css */
+
+/* ... (이전 코드와 동일, 아래 부분을 '로딩 & 에러' 섹션에 덮어쓰거나 추가하세요) ... */
+
+/* ========================================= */
+/* 3. 로딩 & 에러 & 메시지 */
+/* ========================================= */
+
+.rentals-loading-overlay {
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(255, 255, 255, 0.9); /* 배경을 좀 더 불투명하게 */
+  display: flex; align-items: center; justify-content: center; z-index: 10;
+  flex-direction: column; /* 세로 정렬 */
+}
+
+/* 전체 로딩 컨텐츠 래퍼 */
+.rentals-loading-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+/* 전체 로딩 텍스트 */
+.rentals-loading-text-main {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--primary-blue);
+  margin: 0;
+  animation: pulseText 1.5s infinite ease-in-out;
+}
+
+/* 인라인 로딩 (카드 내부) */
+.rentals-inline-loading {
+  padding: 30px 20px;
+  display: flex;
+  flex-direction: column; /* 세로 정렬 */
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+}
+
+/* 인라인 로딩 텍스트 */
+.rentals-loading-text-inline {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #64748b;
+  margin: 0;
+}
+
+/* 스피너 스타일 */
+.rentals-spinner {
+  border: 6px solid #f3f3f3; border-top: 6px solid var(--active-blue);
+  border-radius: 50%; width: 60px; height: 60px; animation: spin 1s linear infinite;
+}
+.rentals-spinner.small { width: 40px; height: 40px; border-width: 4px; }
+
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+@keyframes pulseText { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
+
+/* 에러 메시지 */
+.rentals-error-message, .rentals-error-msg-inline {
+  color: #d9534f; background-color: #f2dede; border: 1px solid #ebccd1;
+  padding: 1.5rem; border-radius: 12px; margin: 1rem auto; text-align: center; font-weight: 700;
+}
+
+/* 데이터 없음 메시지 */
+.rentals-empty-inline, .rentals-no-data-msg {
+  text-align: center; padding: 20px; color: #94a3b8; font-weight: 600; font-size: 1.1rem;
+}
+
+/* ... (미디어 쿼리 등 나머지 유지) ... */
