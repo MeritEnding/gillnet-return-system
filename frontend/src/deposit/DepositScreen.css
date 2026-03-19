@@ -1,0 +1,809 @@
+/* src/certificationPage/DepositScreen.css */
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+:root {
+  --tab-active-bg: #009CDA;
+  --tab-inactive-bg: #8EDA6D;
+  --card-border-blue: #006090;
+  --inst-bg: #EAF8FF;
+  --text-dark: #333;
+}
+
+/* ========================================= */
+/* 1. 공통 및 가로 모드 (기본) 스타일 */
+/* ========================================= */
+
+.deposit-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100vh;
+  background-color: #f0f4f8;
+  font-family: 'Pretendard', sans-serif;
+  overflow: hidden;
+  max-width: 600px;
+  margin: 0 auto;
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.1);
+}
+
+.deposit-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+/* 상단 카메라 영역 */
+.camera-box {
+  flex: 0.6;
+  max-height: 35vh;
+  background-color: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 비디오 태그 스타일 */
+.camera-box video,
+.fill-video {
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+}
+
+/* ★ [추가] 뒤로가기 버튼 스타일 */
+.deposit-back-btn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 1000;
+  /* 영상 위에 표시 */
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  background-color: rgba(0, 0, 0, 0.5);
+  /* 반투명 배경 */
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  border-radius: 30px;
+  padding: 10px 20px;
+
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.deposit-back-btn:active {
+  background-color: rgba(0, 0, 0, 0.7);
+  transform: scale(0.95);
+}
+
+.deposit-back-text {
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 700;
+  padding-bottom: 2px;
+}
+
+/* 하단 카드 컨테이너 */
+.deposit-card-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  background-color: #29C2F5;
+}
+
+/* 흰색 정보 카드 */
+.deposit-info-card {
+  background-color: rgba(255, 255, 255, 0.98);
+  width: 95%;
+  max-width: 650px;
+  height: 95%;
+  border-radius: 25px;
+  border: 6px solid var(--card-border-blue);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 20px 50px rgba(0, 70, 120, 0.4);
+  animation: popUp 0.3s ease-out;
+}
+
+@keyframes popUp {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* 단계 탭 */
+.step-tabs {
+  display: flex;
+  width: 100%;
+  gap: 8px;
+  margin-bottom: 15px;
+  flex-shrink: 0;
+  height: 50px;
+}
+
+.step-tab {
+  flex: 1;
+  height: 100%;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  position: relative;
+  background: linear-gradient(180deg, #8EDA6D 0%, #6CC24A 100%);
+  opacity: 0.9;
+}
+
+.step-tab.active {
+  background: linear-gradient(180deg, #29C2F5 0%, #0085CA 100%);
+  z-index: 2;
+  transform: scale(1.02);
+  opacity: 1;
+}
+
+.step-num-circle {
+  width: 16px;
+  height: 16px;
+  background-color: white;
+  border-radius: 50%;
+  color: #555;
+  font-size: 0.7rem;
+  font-weight: 800;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 2px;
+}
+
+.step-tab.active .step-num-circle {
+  color: var(--card-border-blue);
+}
+
+.step-label {
+  font-size: 0.8rem;
+  letter-spacing: -0.5px;
+}
+
+/* 메인 타이틀 */
+.step-main-title {
+  color: var(--card-border-blue);
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin: 10px 0 15px 0;
+  text-align: center;
+}
+
+/* 컨텐츠 박스 */
+.deposit-content-box {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* 안내 박스 */
+.instruction-box {
+  background-color: var(--inst-bg);
+  width: 100%;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+
+  /* ★ 핵심: 수직 중앙 정렬 */
+  justify-content: center;
+  align-items: center;
+
+  /* ★ 박스 자체도 남은 공간을 꽉 채우도록 */
+  flex: 1;
+  margin-bottom: 10px;
+  /* 약간의 여백 */
+}
+
+.instruction-text {
+  font-size: 1.3rem;
+  color: #333;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* 테이블 스타일 */
+.deposit-table-scroll-wrapper {
+  width: 100%;
+  flex: 1;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  background-color: #fff;
+  scrollbar-width: thin;
+}
+
+.deposit-table-scroll-wrapper::-webkit-scrollbar {
+  width: 8px;
+}
+
+.deposit-table-scroll-wrapper::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+
+.deposit-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 1rem;
+}
+
+.deposit-table th,
+.deposit-table td {
+  padding: 12px 8px;
+  text-align: center;
+  border-bottom: 1px solid #eee;
+}
+
+.deposit-table th {
+  position: sticky;
+  top: 0;
+  background-color: #f8f9fa;
+  color: #333;
+  font-weight: 700;
+  z-index: 5;
+  border-bottom: 2px solid #ddd;
+}
+
+.deposit-table tfoot td {
+  background-color: #f0f8ff;
+  font-weight: 800;
+  color: #006090;
+  border-top: 2px solid #009BD9;
+  position: sticky;
+  bottom: 0;
+}
+
+/* 완료 버튼 */
+.deposit-confirm-btn {
+  width: 100%;
+  padding: 15px;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: white;
+  background-color: #18C2F3;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+/* 눌렀을 때 효과 */
+.deposit-confirm-btn:active {
+  transform: translateY(4px); /* 버튼이 눌리는 느낌 */
+  border-bottom-width: 2px;   /* 테두리 얇아짐 */
+  box-shadow: none;
+}
+.deposit-confirm-btn:disabled {
+  background: #bdc3c7;
+  border-bottom: 6px solid #95a5a6;
+  color: #eee;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* 액션 버튼 */
+.deposit-action-buttons-row {
+  display: flex;
+  gap: 15px;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.deposit-action-btn {
+  flex: 1;
+  height: 70px;
+  border-radius: 10px;
+  border: none;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+.deposit-action-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+}
+
+.deposit-action-btn.primary {
+  background: linear-gradient(180deg, #36C8F9 0%, #0093D7 100%);
+  border-bottom: 4px solid #007bb5;
+}
+
+.deposit-action-btn.secondary {
+  background: linear-gradient(180deg, #95a5a6 0%, #7f8c8d 100%);
+  border-bottom: 4px solid #6c7a7b;
+}
+
+
+/* ========================================= */
+/* 2. 세로 모드 (키오스크 전용) 오버라이드 */
+/* ========================================= */
+@media (orientation: portrait) {
+
+  /* 1. 전체 래퍼 꽉 채우기 */
+  .deposit-wrapper {
+    max-width: 100%;
+    width: 100vw;
+    height: 100vh;
+    box-shadow: none;
+  }
+
+  /* 2. 카메라/영상 영역 */
+  .camera-box {
+    flex: 0.8;
+    max-height: 40vh;
+    border-bottom: 4px solid #fff;
+  }
+
+  .camera-box video,
+  .fill-video {
+    object-fit: cover !important;
+  }
+
+  /* ★ [추가] 뒤로가기 버튼 확대 */
+  .deposit-back-btn {
+    top: 30px;
+    left: 30px;
+    padding: 15px 30px;
+    border-radius: 40px;
+    border-width: 3px;
+  }
+
+  .deposit-back-text {
+    font-size: 1.6rem;
+  }
+
+  .deposit-back-btn svg {
+    width: 32px;
+    height: 32px;
+  }
+
+  /* 3. 하단 카드 컨테이너 */
+  .deposit-card-container {
+    flex: 1.2;
+    padding: 20px;
+    background: linear-gradient(180deg, #29C2F5 0%, #0093D7 100%);
+  }
+
+
+  /* 4. 정보 카드 (옆으로 넓게) */
+  .deposit-info-card {
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    border-width: 6px;
+    padding: 30px;
+
+    /* ★ 수정: 위쪽만 둥글게(30px 30px 0 0) -> 전체 둥글게(30px) 또는 상단 둥글게 유지 */
+    /* 만약 화면 하단에 딱 붙는 디자인이라면 위쪽만 둥글게 하는 것이 자연스럽습니다. */
+    /* 하지만 "위에처럼 둥그렇게" 요청에 따라 전체 둥글게 변경해 봅니다. */
+    border-radius: 30px;
+
+    justify-content: space-between;
+
+    /* 그림자 효과 강화 */
+    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.15);
+  }
+  .deposit-confirm-btn { 
+    height: 110px;        /* 버튼 높이 확대 */
+    font-size: 2.4rem;    /* 글자 크기 확대 */
+    border-radius: 25px;  /* 둥근 모서리 확대 */
+    border-bottom-width: 8px; /* 입체 두께 확대 */
+    margin-top: 10px;
+  }
+  
+  .deposit-confirm-btn:active {
+    border-bottom-width: 3px;
+  }
+
+  /* 5. 단계 탭 확대 */
+  .step-tabs {
+    height: 90px;
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+
+  .step-tab {
+    border-width: 4px;
+    border-radius: 20px;
+  }
+
+  .step-num-circle {
+    width: 34px;
+    height: 34px;
+    font-size: 1.4rem;
+  }
+
+  .step-label {
+    font-size: 1.2rem;
+  }
+
+  /* 6. 타이틀 확대 */
+  .step-main-title {
+    font-size: 2.6rem;
+    margin: 10px 0 20px 0;
+  }
+
+  /* 7. 안내 박스 확대 및 둥글게 처리 */
+  .instruction-box {
+    padding: 30px;
+    width: 100%;
+    border-radius: 20px;
+    justify-content: space-between;
+  }
+
+  .instruction-text {
+    font-size: 2rem;
+    line-height: 1.6;
+  }
+
+  /* 8. 버튼 크기 확대 */
+  .deposit-action-buttons-row {
+    margin-top: 30px;
+    gap: 20px;
+  }
+
+  .deposit-action-btn {
+    height: 120px;
+    font-size: 2.4rem;
+    border-radius: 25px;
+    border-bottom-width: 8px;
+  }
+
+  .deposit-confirm-btn {
+    width: 100%;
+    height: 80px;
+    /* 높이 고정 */
+    border-radius: 15px;
+    border: none;
+
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: white;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.1s;
+
+    /* ★ 파란색 그라데이션 및 입체 테두리 적용 */
+    background: linear-gradient(180deg, #36C8F9 0%, #0093D7 100%);
+    border-bottom: 6px solid #007bb5;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+
+    /* 텍스트 그림자 */
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  /* 9. 테이블 폰트 확대 */
+  .deposit-table th,
+  .deposit-table td {
+    font-size: 1.6rem;
+    padding: 15px;
+  }
+
+  .instruction-box {
+    padding: 40px;
+    /* 패딩을 좀 더 넉넉하게 */
+    width: 100%;
+    border-radius: 20px;
+    justify-content: center;
+    /* 세로 중앙 정렬 확실하게 */
+    gap: 30px;
+    /* 텍스트와 버튼 사이 간격 */
+  }
+}
+
+
+/* ========================================= */
+/* 3. 팝업 및 로딩 (공통) */
+/* ========================================= */
+.deposit-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 2000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loading-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.deposit-spinner {
+  width: 60px;
+  height: 60px;
+  animation: spin 1s infinite linear;
+  margin-bottom: 15px;
+}
+
+.loading-text {
+  font-size: 1.3rem;
+  color: white;
+  font-weight: 700;
+}
+
+/* --- DepositScreen.css 맨 아래에 추가 --- */
+
+/* 상태 메시지 박스 (Alert 대체) */
+.status-message-box {
+  width: 100%;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  margin-bottom: 20px;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.status-text {
+  font-size: 1.6rem;
+  font-weight: 800;
+  line-height: 1.4;
+  margin: 0;
+  white-space: pre-wrap; /* 줄바꿈 지원 */
+}
+
+/* 에러 메시지 스타일 (빨간색) */
+.status-message-box.error {
+  background-color: #FDECEA;
+  border: 2px solid #E53935;
+  color: #C62828;
+}
+
+/* 성공/알림 메시지 스타일 (파란색) */
+.status-message-box.success {
+  background-color: #E3F2FD;
+  border: 2px solid #1E88E5;
+  color: #1565C0;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 세로 모드 대응 */
+@media (orientation: portrait) {
+  .status-text {
+    font-size: 2.2rem; /* 키오스크에서 더 잘 보이게 키움 */
+  }
+  
+  .status-message-box {
+    padding: 30px;
+  }
+}
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* --- 기존 파일 맨 아래에 추가 --- */
+
+/* 스트리밍 화면 플레이스홀더 */
+.stream-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #222;
+  color: white;
+  font-size: 1.5rem;
+}
+
+/* LIVE 상태 표시기 */
+.status-indicator {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-weight: 800;
+  font-size: 0.9rem;
+  color: white;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.status-indicator::before {
+  content: '';
+  display: block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.status-indicator.live {
+  background-color: rgba(0, 0, 0, 0.6);
+  border: 1px solid #4CAF50;
+  color: #4CAF50;
+}
+.status-indicator.live::before {
+  background-color: #4CAF50;
+  box-shadow: 0 0 8px #4CAF50;
+}
+
+.status-indicator.offline {
+  background-color: rgba(0, 0, 0, 0.6);
+  border: 1px solid #F44336;
+  color: #F44336;
+}
+.status-indicator.offline::before {
+  background-color: #F44336;
+}
+
+/* ========================================= */
+/* 2. 세로 모드 (키오스크 전용) 오버라이드 - 확대 적용 */
+/* ========================================= */
+@media (orientation: portrait) {
+
+  /* ... (기존 레이아웃 스타일 유지) ... */
+
+  /* ★ [수정] 정보 카드 스타일 */
+  .deposit-info-card {
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    border-width: 8px; /* 테두리 더 두껍게 */
+    padding: 30px;
+    border-radius: 30px;
+    justify-content: space-between;
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.2);
+  }
+
+  /* ★ [수정] 메인 타이틀 확대 */
+  .step-main-title {
+    font-size: 3rem !important; /* 2.6rem -> 3rem */
+    margin: 15px 0 25px 0;
+    font-weight: 900;
+  }
+
+  /* ★ [수정] 테이블 폰트 대폭 확대 */
+  .deposit-table th {
+    font-size: 1.8rem !important; /* 헤더 폰트 확대 */
+    padding: 18px 10px !important;
+    background-color: #e9ecef; /* 헤더 배경 조금 진하게 */
+  }
+  
+  .deposit-table td {
+    font-size: 2rem !important; /* 내용 폰트 대폭 확대 */
+    padding: 20px 10px !important;
+    font-weight: 700;
+  }
+
+  .deposit-table tfoot td {
+    font-size: 2.2rem !important; /* 총계 폰트 더 크게 */
+    padding: 25px 10px !important;
+    color: #007bff; /* 파란색 강조 */
+  }
+
+  /* ★ [수정] 안내 문구 확대 */
+  .instruction-text {
+    font-size: 2.4rem !important; /* 2rem -> 2.4rem */
+    line-height: 1.5;
+    font-weight: 800;
+  }
+
+  /* ★ [수정] 하단 버튼(투입구 닫기, 반납 완료) 대폭 확대 */
+  .deposit-confirm-btn {
+    height: 120px !important; /* 110px -> 120px */
+    font-size: 2.8rem !important; /* 2.4rem -> 2.8rem */
+    border-radius: 20px;
+    border-bottom-width: 10px !important; /* 입체감 강화 */
+    margin-top: 15px;
+    box-shadow: 0 8px 15px rgba(0,0,0,0.3);
+  }
+
+  /* 빨간색 안내 문구 확대 */
+  p[style*="color: #d9534f"] {
+    font-size: 1.8rem !important; /* 1.1rem -> 1.8rem */
+    margin: 20px 0 10px 0 !important;
+  }
+}
+
+/* ========================================= */
+/* [추가됨] 투입구 작동 시 안전 경고 오버레이 */
+/* ========================================= */
+
+.safety-warning-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* 빨간색 반투명 배경 */
+  background-color: rgba(220, 53, 69, 0.85); 
+  z-index: 10000; /* 가장 최상단에 노출 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* 시선을 끄는 깜빡임 애니메이션 */
+  animation: flashWarning 1s infinite alternate; 
+}
+
+@keyframes flashWarning {
+  from { background-color: rgba(220, 53, 69, 0.7); }
+  to { background-color: rgba(220, 53, 69, 0.95); }
+}
+
+.safety-warning-box {
+  background-color: white;
+  width: 80%;
+  max-width: 800px;
+  border-radius: 40px;
+  padding: 60px;
+  text-align: center;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+  border: 12px solid #DC3545; /* 빨간색 굵은 테두리 */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: popUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.safety-warning-title {
+  font-size: 4rem;
+  color: #DC3545;
+  font-weight: 900;
+  margin: 30px 0 20px 0;
+  letter-spacing: -1.5px;
+}
+
+.safety-warning-text {
+  font-size: 2.8rem;
+  color: #333;
+  font-weight: 800;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.safety-warning-text strong {
+  color: #DC3545;
+  font-size: 3.2rem;
+}
