@@ -1,0 +1,153 @@
+/* src/mainPage/modals/LoginModal.css */
+
+.login-modal-backdrop {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.login-modal-content {
+  background: #fff;
+  border-radius: 16px;
+  padding: 30px 40px;
+  width: 90%;
+  max-width: 650px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.login-modal-title {
+  text-align: center;
+  font-size: 1.6rem;
+  color: #333;
+  font-weight: bold;
+  margin-top: 0;
+  margin-bottom: 25px;
+}
+
+/* 입력창 좌우 배치 */
+.login-input-row {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.login-input-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* 라벨 가운데 정렬 */
+  gap: 8px;
+}
+
+.login-input-group label {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #495057;
+}
+
+.login-input {
+  width: 100%;
+  padding: 15px;
+  font-size: 1.1rem;
+  border: 1px solid #ced4da;
+  border-radius: 8px;
+  text-align: left;
+  outline: none;
+  cursor: pointer;
+  background-color: #fff;
+  color: #333;
+}
+
+.login-input.active {
+  border: 2px solid #007BFF;
+}
+
+/* 가상 키보드 영역 */
+.vkb-container {
+  background: #f4f5f7;
+  padding: 15px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.vkb-row {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.vkb-key {
+  flex: 1;
+  padding: 12px 0;
+  font-size: 1.2rem;
+  font-weight: bold;
+  background-color: #fff;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  color: #333;
+  cursor: pointer;
+  box-shadow: 0 2px 2px rgba(0,0,0,0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.1s, background-color 0.1s;
+}
+
+.vkb-key:active {
+  background-color: #e9ecef;
+  transform: scale(0.95);
+}
+
+.vkb-key.special {
+  background-color: #f8f9fa;
+  font-size: 1rem;
+}
+
+.vkb-key.wide {
+  flex: 1.5;
+}
+
+.vkb-key.space {
+  flex: 3;
+}
+
+.vkb-key.shift-active {
+  background-color: #dee2e6;
+}
+
+/* 하단 버튼 */
+.login-actions {
+  display: flex;
+  gap: 15px;
+  margin-top: 25px;
+}
+
+.login-btn-submit, .login-btn-cancel {
+  padding: 15px;
+  font-size: 1.3rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  color: white;
+}
+
+.login-btn-submit {
+  flex: 1.5;
+  background-color: #007BFF;
+}
+
+.login-btn-submit:disabled {
+  background-color: #a5c8ff;
+}
+
+.login-btn-cancel {
+  flex: 1;
+  background-color: #6c757d;
+}
