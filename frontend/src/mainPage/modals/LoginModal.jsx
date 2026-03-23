@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './LoginModal.css';
-import AccountInputModal from './AccountInputModal'; // ★ 계좌 모달 컴포넌트 불러오기
+import AccountInputModal from './AccountInputModal'; 
 
 const LoginModal = ({ onClose }) => {
   const navigate = useNavigate();
@@ -11,11 +11,9 @@ const LoginModal = ({ onClose }) => {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  // 처음부터 'userId'가 선택된 상태로 시작 (키보드 항상 노출)
+  // 처음부터 'userId'가 선택된 상태로 시작
   const [activeField, setActiveField] = useState('userId'); 
   const [isShift, setIsShift] = useState(false);
-  
-  // ★ 로그인 성공 후 계좌 모달을 띄우기 위한 상태
   const [showAccountModal, setShowAccountModal] = useState(false);
 
   const handleLoginSubmit = async (e) => {
@@ -46,7 +44,6 @@ const LoginModal = ({ onClose }) => {
           localStorage.setItem('acct_nm', userData.dpstr_nm || userData.mbr_nm || '');
         }
 
-        // ★ [변경됨] 로그인 성공 알림 후, 페이지 이동 대신 계좌 모달 띄우기
         alert(`${userData.mbr_nm}님 환영합니다!`);
         setShowAccountModal(true); 
 
@@ -79,13 +76,13 @@ const LoginModal = ({ onClose }) => {
   };
 
   const renderKeyboard = () => {
-    // 사진과 동일한 키보드 배열
+    // ★ 언더바(_) 추가됨
     const layoutNormal = [
       ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'],
       ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
       ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'],
       ['SHIFT', 'z', 'x', 'c', 'v', 'b', 'n', 'm', 'DEL'],
-      ['!', '@', '#', '$', '%', '^', '&', '*', 'SPACE', 'CLEAR']
+      ['!', '@', '#', '$', '%', '^', '&', '*', '_', 'SPACE', 'CLEAR'] 
     ];
     
     const layoutShift = [
@@ -93,7 +90,7 @@ const LoginModal = ({ onClose }) => {
       ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
       ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'],
       ['SHIFT', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', 'DEL'],
-      ['!', '@', '#', '$', '%', '^', '&', '*', 'SPACE', 'CLEAR'] // 특수문자는 그대로
+      ['!', '@', '#', '$', '%', '^', '&', '*', '_', 'SPACE', 'CLEAR'] 
     ];
 
     const currentLayout = isShift ? layoutShift : layoutNormal;
@@ -107,16 +104,16 @@ const LoginModal = ({ onClose }) => {
               let displayKey = key;
 
               if (key === 'SHIFT') {
-                keyClass += isShift ? ' special wide shift-active' : ' special wide';
+                keyClass += isShift ? ' wide action-key shift-active' : ' wide action-key';
                 displayKey = '⇧ Shift';
               } else if (key === 'DEL') {
-                keyClass += ' special wide';
+                keyClass += ' wide action-key';
                 displayKey = '⌫ 지우기';
               } else if (key === 'CLEAR') {
-                keyClass += ' special wide';
+                keyClass += ' wide action-key';
                 displayKey = '초기화';
               } else if (key === 'SPACE') {
-                keyClass += ' space';
+                keyClass += ' space action-key';
                 displayKey = '공백';
               }
 
@@ -137,9 +134,7 @@ const LoginModal = ({ onClose }) => {
     );
   };
 
-  // ★ 로그인 성공 시, 로그인 폼 대신 계좌 확인 모달을 렌더링합니다.
   if (showAccountModal) {
-    // AccountInputModal이 끝나면 onClose를 호출해 전체 모달을 닫습니다.
     return <AccountInputModal onClose={onClose} />;
   }
 
@@ -149,7 +144,6 @@ const LoginModal = ({ onClose }) => {
         <h2 className="login-modal-title">사용자 로그인</h2>
         
         <form onSubmit={handleLoginSubmit}>
-          
           <div className="login-input-row">
             <div className="login-input-group">
               <label>아이디</label>
@@ -176,7 +170,6 @@ const LoginModal = ({ onClose }) => {
             </div>
           </div>
 
-          {/* 사진처럼 항상 키보드가 보여집니다 */}
           {renderKeyboard()}
           
           <div className="login-actions">
@@ -187,7 +180,6 @@ const LoginModal = ({ onClose }) => {
               취소
             </button>
           </div>
-          
         </form>
       </div>
     </div>
