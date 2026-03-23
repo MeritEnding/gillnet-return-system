@@ -5,8 +5,9 @@ const router = express.Router();
 const axios = require('axios');
 
 // 외부 API의 기본 URL
-const EXTERNAL_API_URL = 'http://221.143.131:8080/api/v1';
-
+// const EXTERNAL_API_URL = 'http://221.143.131:8080/api/v1';
+// 외부 API의 기본 URL (환경 변수 우선 적용, 없으면 배포 서버 도메인 사용)
+const EXTERNAL_API_URL = process.env.EXTERNAL_API_URL || 'https://fdp.or.kr/api/v1';
 /**
  * 1. 서버 시스템 상태
  * [GET] /api/v1/health.json
