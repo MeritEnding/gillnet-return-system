@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import './LoginModal.css'; // 기존 로그인 성공 스타일 재사용
 
 const PassModal = ({ onClose, onNonMember }) => {
   const { t } = useTranslation();
@@ -11,47 +12,61 @@ const PassModal = ({ onClose, onNonMember }) => {
   const popupRef = useRef(null);
 
   const [alertInfo, setAlertInfo] = useState({ show: false, message: '' });
+  
+  // ★ 성공 알림창 상태 추가
+  const [successInfo, setSuccessInfo] = useState({ 
+    show: false, 
+    name: '', 
+    isMember: false 
+  });
 
   useEffect(() => {
     if (isRunRef.current) return;
     isRunRef.current = true;
     handleStartPass();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // 1. 비회원 전용 다이렉트 처리 함수
-  const processNonMember = (fallbackUser) => {
-    console.log('-> 비회원 플로우 다이렉트 진입', fallbackUser);
-    if (fallbackUser) {
-      localStorage.setItem('fisherman_name', fallbackUser.name || '');
-      localStorage.setItem('fisherman_phone', fallbackUser.phone || '');
-
-      // ★ 추가: 백엔드에서 넘겨준 PASS 생년월일을 로컬 스토리지에 저장
-      if (fallbackUser.birthdate) {
-        localStorage.setItem('birthdate', fallbackUser.birthdate);
-      } else {
-        // 만약 백엔드에서 못 받았을 경우를 대비한 보험용 기본값
-        localStorage.setItem('birthdate', '19900101');
-      }
-    }
-
-    localStorage.setItem('is_member', 'false');
-    localStorage.setItem('fisherman_id', 'NON_MEMBER');
-
-    // 팝업 강제 닫기
+  // 팝업 닫기 공통 함수
+  const closeNicePopup = () => {
     if (popupRef.current && !popupRef.current.closed) {
       popupRef.current.close();
     }
-
-    // Home.jsx로 비회원 신호 전달하여 계좌 모달 띄우기
-    if (onNonMember) {
-      onNonMember();
-    } else {
-      if (onClose) onClose();
-      navigate('/auth/alternate-auth');
-    }
   };
 
+  // 성공 알림 노출 및 자동 이동 로직
+  const showSuccessAndRedirect = (name, isMember, redirectFn) => {
+    setSuccessInfo({ show: true, name, isMember });
+    
+    // 2초 뒤 자동 이동
+    setTimeout(() => {
+      setSuccessInfo({ show: false, name: '', isMember: false });
+      redirectFn();
+    }, 2000);
+  };
+
+  // 1. 비회원 전용 다이렉트 처리 함수
+  const processNonMember = (fallbackUser) => {
+    const userName = fallbackUser?.name || '고객';
+    if (fallbackUser) {
+      localStorage.setItem('fisherman_name', userName);
+      localStorage.setItem('fisherman_phone', fallbackUser.phone || '');
+      localStorage.setItem('birthdate', fallbackUser.birthdate || '19900101');
+    }
+    localStorage.setItem('is_member', 'false');
+    localStorage.setItem('fisherman_id', 'NON_MEMBER');
+
+    closeNicePopup();
+
+    // ★ 비회원 성공 알림창 띄우기
+    showSuccessAndRedirect(userName, false, () => {
+      if (onNonMember) {
+        onNonMember();
+      } else {
+        if (onClose) onClose();
+        navigate('/auth/alternate-auth');
+      }
+    });
+  };
 
   const handlePassVerification = async (diValue, fallbackUser) => {
     try {
@@ -59,7 +74,6 @@ const PassModal = ({ onClose, onNonMember }) => {
         di: diValue
       });
 
-      // 1. 서버 응답이 200이면서 데이터가 명확히 있는 경우만 '회원'으로 처리
       if (response.data.status == 200 && response.data.data && response.data.data.mbr_no) {
         const userData = response.data.data;
 
@@ -68,46 +82,40 @@ const PassModal = ({ onClose, onNonMember }) => {
         localStorage.setItem('mbr_no', userData.mbr_no || '');
         localStorage.setItem('is_member', 'true');
 
-        // 계좌 정보가 있다면 저장 (회원용 STEP 2: 기존 계좌 사용)
         if (userData.actno) {
           localStorage.setItem('bank_cd', userData.bank_cd || '');
           localStorage.setItem('actno', userData.actno);
           localStorage.setItem('acct_nm', userData.dpstr_nm || userData.mbr_nm);
         }
 
-        console.log('-> 회원 확인 완료: 어구 선택으로 이동');
-        if (onClose) onClose();
-        navigate('/select-gear');
+        closeNicePopup();
+
+        // ★ 회원 성공 알림창 띄우기
+        showSuccessAndRedirect(userData.mbr_nm, true, () => {
+          if (onClose) onClose();
+          navigate('/select-gear');
+        });
+
       } else {
-        // 2. 응답은 성공이나 회원이 아닌 경우 (데이터가 비어있음) -> 비회원 처리
-        console.log('-> 서버 응답 성공이나 회원이 아님: 비회원 로직 시작');
         processNonMember(fallbackUser);
       }
     } catch (error) {
-      // 3. 404 에러(회원 없음)인 경우 확실하게 비회원 처리로 유도
       if (error.response && error.response.status === 404) {
-        console.log('-> 외부 API: 비회원 확인됨 (404)');
         processNonMember(fallbackUser);
       } else {
-        console.error("인증 에러:", error);
         showAlert("회원 확인 중 오류가 발생했습니다.");
       }
     }
   };
 
-  // --- 2. 메시지 수신 로직 수정 ---
   useEffect(() => {
     const handleMessage = (event) => {
       if (!event.data || typeof event.data !== 'object' || !event.data.type) return;
       const { type, payload } = event.data;
 
-      // 백엔드 DB 로직이 사라졌으므로, 이제 PASS_AUTH_SUCCESS 하나만 들어옵니다!
       if (type === 'PASS_AUTH_SUCCESS') {
-        console.log(`[프론트] PASS 인증 성공. 외부 파란샘 API에 회원 여부를 묻습니다.`);
-        // ★ 외부 API 찔러보기 (DI값과 비회원 대비용 백업 데이터를 함께 넘김)
         handlePassVerification(payload.di, payload.user);
-      }
-      else if (type === 'FAIL' || type === 'SYSTEM_ERROR') {
+      } else if (type === 'FAIL' || type === 'SYSTEM_ERROR') {
         showAlert(payload.message || t('pass_alert_auth_fail'));
       }
     };
@@ -123,14 +131,10 @@ const PassModal = ({ onClose, onNonMember }) => {
         const encData = response.data.encData;
         const popupName = 'nicePopup';
         const popupWidth = 800; const popupHeight = 900;
-        const screenLeft = window.screenLeft !== undefined ? window.screenLeft : window.screenX;
-        const screenTop = window.screenTop !== undefined ? window.screenTop : window.screenY;
-        const innerWidth = window.innerWidth ? window.innerWidth : document.documentElement.clientWidth ? document.documentElement.clientWidth : screen.width;
-        const innerHeight = window.innerHeight ? window.innerHeight : document.documentElement.clientHeight ? document.documentElement.clientHeight : screen.height;
-        const left = screenLeft + (innerWidth / 2) - (popupWidth / 2);
-        const top = screenTop + (innerHeight / 2) - (popupHeight / 2);
+        const left = (window.screen.width / 2) - (popupWidth / 2);
+        const top = (window.screen.height / 2) - (popupHeight / 2);
 
-        popupRef.current = window.open('', popupName, `width=${popupWidth}, height=${popupHeight}, top=${top}, left=${left}, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no, resizable=yes`);
+        popupRef.current = window.open('', popupName, `width=${popupWidth}, height=${popupHeight}, top=${top}, left=${left}, resizable=yes`);
 
         const form = document.createElement('form');
         form.action = 'https://nice.checkplus.co.kr/CheckPlusSafeModel/checkplus.cb';
@@ -144,7 +148,6 @@ const PassModal = ({ onClose, onNonMember }) => {
         showAlert(t('pass_alert_request_fail'));
       }
     } catch (error) {
-      console.error('PASS Request Error:', error);
       showAlert(t('pass_alert_server_error'));
     }
   };
@@ -169,6 +172,33 @@ const PassModal = ({ onClose, onNonMember }) => {
           <button className="privacy-action-btn-xl btn-agree-blue" onClick={handleStartPass}>{t('pass_modal_btn_retry') || '재시도'}</button>
           <button className="privacy-action-btn-xl btn-cancel-green" onClick={onClose}>{t('btn_cancel') || '취소'}</button>
         </div>
+
+        {/* PASS 인증 성공 알림창 (LoginModal 디자인과 동일) */}
+        {successInfo.show && (
+          <div className="alert-overlay">
+            <div className="alert-content success-box-v2">
+              <div className="alert-header-success-v2" style={{ backgroundColor: successInfo.isMember ? '#00A0E9' : '#28a745' }}>
+                {successInfo.isMember ? '회원 인증 성공' : '비회원 인증 성공'}
+              </div>
+              <div className="alert-body-v2">
+                <div className="success-icon-circle">
+                  <svg viewBox="0 0 24 24" fill="none" stroke={successInfo.isMember ? '#00A0E9' : '#28a745'} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                </div>
+                <p className="alert-msg-v2">
+                  <strong>{successInfo.name}</strong>님<br/>
+                  인증되었습니다!
+                </p>
+                <div className="loading-bar-container">
+                  <div className="loading-bar-fill" style={{ backgroundColor: successInfo.isMember ? '#00A0E9' : '#28a745' }}></div>
+                </div>
+                <p className="auto-move-text">잠시 후 다음 화면으로 이동합니다...</p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {alertInfo.show && (
           <div className="custom-alert-backdrop">
             <div className="custom-alert-box">
