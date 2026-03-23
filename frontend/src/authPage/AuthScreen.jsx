@@ -158,6 +158,8 @@ const AuthScreen = () => {
         localStorage.setItem('fisherman_name', userData.mbr_nm || '');
         localStorage.setItem('fisherman_id', userData.user_fshnd_no || '');
         localStorage.setItem('mbr_no', userData.mbr_no || '');
+        localStorage.setItem('is_member', 'true');
+
 
         if (userData.actno && userData.actno !== "") {
           setBankCd(userData.bank_cd || '');
@@ -205,7 +207,7 @@ const AuthScreen = () => {
 
   useEffect(() => {
     if (authState === 'success') {
-      const timer = setTimeout(() => setShowAccountModal(true), 3000);
+      const timer = setTimeout(() => setShowAccountModal(true), 1000);
       return () => clearTimeout(timer);
     }
   }, [authState]);
@@ -255,7 +257,7 @@ const AuthScreen = () => {
           setKioskAlert({ show: false, message: '', type: 'success', onConfirm: null });
           setShowAccountModal(false);
           navigate('/select-gear'); 
-        }, 2500);
+        }, 1000);
 
       } else {
         setKioskAlert({

@@ -218,11 +218,11 @@ const DepositScreen = () => {
   const handleProcessScans = async () => {
     setIsLoading(true);
     setLoadingText("반환 정보를 서버에 등록하는 중입니다...");
-
-    const isMember = localStorage.getItem('is_member') === 'true';
+    const mbrNo = localStorage.getItem('mbr_no') || '';
+    const isMember = localStorage.getItem('is_member') === 'true' || (mbrNo && mbrNo.trim() !== '');
     const fishermanId = localStorage.getItem('fisherman_id');
     const fishermanName = localStorage.getItem('fisherman_name') || '비회원';
-
+   
     // 저장된 사용자/계좌 정보 가져오기
     const rawPhone = localStorage.getItem('fisherman_phone') || localStorage.getItem('mbl_telno');
     const rawBrdt = localStorage.getItem('brdt') || localStorage.getItem('birthdate');
@@ -231,16 +231,20 @@ const DepositScreen = () => {
     const acctNm = localStorage.getItem('acct_nm') || fishermanName;
     const selectedClsfCd = localStorage.getItem('selected_fsgr_clsf_cd') || 'FISGE';
 
-    // 1. 공통 필수 데이터 (보증금/기존어구 공통)
+    // ★ API 문서 완벽 준수 페이로드
     const commonPayload = {
+      user_fshnd_no: fishermanId === 'NON_MEMBER' ? '' : fishermanId,
+      fsgr_clsf_cd: selectedClsfCd,
       korn_flnm: fishermanName,
       brdt: formatBrdt(rawBrdt),
+      telno: formatPhone(rawPhone),
       mbl_telno: formatPhone(rawPhone),
       bank_cd: bankCd,
-      actno: actno ? actno.replace(/-/g, '') : '',
+      actno: actno.replace(/-/g, ''),
       acct_nm: acctNm,
+      kiosk_no: "K001",
+      mbr_no: mbrNo
     };
-
     // 회원이면 어업인코드 추가
     if (isMember && fishermanId && fishermanId !== 'NON_MEMBER') {
       commonPayload.user_fshnd_no = fishermanId;
@@ -284,7 +288,8 @@ const DepositScreen = () => {
             });
 
             if (retRes.data?.status === "200" || retRes.data?.status === 200 || retRes.data?.message === "OK") {
-              const realAmount = Number(retRes.data.data?.gvbk_amt) || 0;
+              // ★ 수정: API 응답 누적값이 아닌, 기존에 알고 있는 개별 어구의 단가 사용
+              const realAmount = gear.gvbk_amt || 0; 
               successfulReturns.push({ code: gear.bacod_nm, type: '보증금어구', reward: realAmount, point: 0 });
               calcDeposit += realAmount;
 
@@ -301,6 +306,9 @@ const DepositScreen = () => {
       // 3. 기존 어구(ROMG) 반환 시작 (회원 전용)
       if (existingGears.length > 0 && isMember) {
         // 기존어구용 페이로드: kiosk_no 필수, fsgr_clsf_cd 없음
+        if (!isMember) {
+          throw new Error("기존어구는 회원만 반납할 수 있습니다. (회원 정보 누락)");
+        }
         const romgPayload = {
           ...commonPayload,
           telno: formatPhone(rawPhone),
@@ -322,7 +330,8 @@ const DepositScreen = () => {
               bfr_fsgr_gvbk_no: romgMngNo
             });
             if (retRes.data?.status === "200" || retRes.data?.status === 200 || retRes.data?.message === "OK") {
-              const realPoint = Number(retRes.data.data?.gvbk_pnt) || 0;
+              // ★ 수정: API 응답 누적값이 아닌, 기존에 알고 있는 개별 어구의 포인트 단가 사용
+              const realPoint = gear.gvbk_pnt || 0;
               successfulReturns.push({ code: gear.bacod_nm, type: '기존어구', reward: 0, point: realPoint });
               calcPoint += realPoint;
             }
@@ -542,8 +551,10 @@ const DepositScreen = () => {
                       <tr>
                         <td colSpan="2">총계</td>
                         <td>
-                          {totalDeposit > 0 && `${totalDeposit.toLocaleString()} 원 `}
-                          {totalPoint > 0 && `/ ${totalPoint.toLocaleString()} P`}
+                          {totalDeposit > 0 && <span>{totalDeposit.toLocaleString()} 원</span>}
+                          {/* 보증금과 포인트가 둘 다 있을 때만 콤마(,)나 슬래시(/)로 구분해줍니다 */}
+                          {totalDeposit > 0 && totalPoint > 0 && <span style={{ margin: '0 5px' }}>/</span>}
+                          {totalPoint > 0 && <span>{totalPoint.toLocaleString()} P</span>}
                         </td>
                       </tr>
                     </tfoot>
