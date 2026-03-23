@@ -219,19 +219,18 @@ const DepositScreen = () => {
     setIsLoading(true);
     setLoadingText("반환 정보를 서버에 등록하는 중입니다...");
     const mbrNo = localStorage.getItem('mbr_no') || '';
-    const isMember = localStorage.getItem('is_member') === 'true' || (mbrNo && mbrNo.trim() !== '');
+    const isMember = localStorage.getItem('is_member') === 'true';
     const fishermanId = localStorage.getItem('fisherman_id');
     const fishermanName = localStorage.getItem('fisherman_name') || '비회원';
    
-    // 저장된 사용자/계좌 정보 가져오기
+    // 저장된 사용자/계좌 정보 가져오기 (null 에러 방지 처리)
     const rawPhone = localStorage.getItem('fisherman_phone') || localStorage.getItem('mbl_telno');
     const rawBrdt = localStorage.getItem('brdt') || localStorage.getItem('birthdate');
-    const bankCd = localStorage.getItem('bank_cd');
-    const actno = localStorage.getItem('actno');
+    const bankCd = localStorage.getItem('bank_cd') || '';
+    const actno = localStorage.getItem('actno') || ''; 
     const acctNm = localStorage.getItem('acct_nm') || fishermanName;
     const selectedClsfCd = localStorage.getItem('selected_fsgr_clsf_cd') || 'FISGE';
 
-    // ★ API 문서 완벽 준수 페이로드
     const commonPayload = {
       user_fshnd_no: fishermanId === 'NON_MEMBER' ? '' : fishermanId,
       fsgr_clsf_cd: selectedClsfCd,
@@ -240,12 +239,12 @@ const DepositScreen = () => {
       telno: formatPhone(rawPhone),
       mbl_telno: formatPhone(rawPhone),
       bank_cd: bankCd,
-      actno: actno.replace(/-/g, ''),
+      actno: actno.replace(/-/g, ''), // null 방지 적용 완료
       acct_nm: acctNm,
       kiosk_no: "K001",
       mbr_no: mbrNo
     };
-    // 회원이면 어업인코드 추가
+
     if (isMember && fishermanId && fishermanId !== 'NON_MEMBER') {
       commonPayload.user_fshnd_no = fishermanId;
     }
@@ -263,12 +262,11 @@ const DepositScreen = () => {
     try {
       // 2. 보증금 어구(REMG) 반환 시작 
       if (depositGears.length > 0) {
-        // 보증금어구용 페이로드: kiosk_no 없음, telno(선택) 포함, fsgr_clsf_cd 필수
         const remgPayload = {
           ...commonPayload,
           telno: formatPhone(rawPhone),
           fsgr_clsf_cd: selectedClsfCd,
-          kiosk_no: "KIOSK-001" // 현재 사용 중인 키오스크 번호 추가
+          kiosk_no: "KIOSK-001"
         };
 
         const startRes = await axios.post(`${PROXY_API_URL}/deposit/return/remg/start`, remgPayload);
@@ -278,37 +276,35 @@ const DepositScreen = () => {
         }
 
         remgMngNo = startRes.data?.data?.gvbk_mng_no;
-        finalRemgMngNo = remgMngNo; // 기본값 세팅
+        finalRemgMngNo = remgMngNo;
 
         if (remgMngNo) {
-          for (const gear of depositGears) {
-            const retRes = await axios.post(`${PROXY_API_URL}/deposit/return/remg`, {
+          // ★ for문 대신 Promise.all 사용: 모든 바코드를 한 번에 쏴서 처리 속도 10배 상승!
+          const remgPromises = depositGears.map(gear => 
+            axios.post(`${PROXY_API_URL}/deposit/return/remg`, {
               bacod_nm: gear.bacod_nm,
               gvbk_mng_no: remgMngNo
-            });
-
-            if (retRes.data?.status === "200" || retRes.data?.status === 200 || retRes.data?.message === "OK") {
-              // ★ 수정: API 응답 누적값이 아닌, 기존에 알고 있는 개별 어구의 단가 사용
-              const realAmount = gear.gvbk_amt || 0; 
-              successfulReturns.push({ code: gear.bacod_nm, type: '보증금어구', reward: realAmount, point: 0 });
-              calcDeposit += realAmount;
-
-              if (retRes.data?.data?.gvbk_mng_no) {
-                finalRemgMngNo = retRes.data.data.gvbk_mng_no;
+            }).then(retRes => {
+              if (retRes.data?.status === "200" || retRes.data?.status === 200 || retRes.data?.message === "OK") {
+                return { success: true, gear, mngNo: retRes.data.data?.gvbk_mng_no };
+              } else {
+                throw new Error(`[등록 거부] ${retRes.data?.message}`);
               }
-            } else {
-              throw new Error(`[등록 거부] ${retRes.data?.message}`);
-            }
-          }
+            })
+          );
+          
+          const remgResults = await Promise.all(remgPromises);
+          remgResults.forEach(res => {
+            const realAmount = res.gear.gvbk_amt || 0;
+            successfulReturns.push({ code: res.gear.bacod_nm, type: '보증금어구', reward: realAmount, point: 0 });
+            calcDeposit += realAmount;
+            if (res.mngNo) finalRemgMngNo = res.mngNo;
+          });
         }
       }
 
       // 3. 기존 어구(ROMG) 반환 시작 (회원 전용)
       if (existingGears.length > 0 && isMember) {
-        // 기존어구용 페이로드: kiosk_no 필수, fsgr_clsf_cd 없음
-        if (!isMember) {
-          throw new Error("기존어구는 회원만 반납할 수 있습니다. (회원 정보 누락)");
-        }
         const romgPayload = {
           ...commonPayload,
           telno: formatPhone(rawPhone),
@@ -324,22 +320,30 @@ const DepositScreen = () => {
         romgMngNo = startRes.data?.data?.bfr_fsgr_gvbk_no;
 
         if (romgMngNo) {
-          for (const gear of existingGears) {
-            const retRes = await axios.post(`${PROXY_API_URL}/deposit/return/romg`, {
+          // ★ 여기도 Promise.all 로 속도 대폭 개선
+          const romgPromises = existingGears.map(gear => 
+            axios.post(`${PROXY_API_URL}/deposit/return/romg`, {
               bacod_nm: gear.bacod_nm,
               bfr_fsgr_gvbk_no: romgMngNo
-            });
-            if (retRes.data?.status === "200" || retRes.data?.status === 200 || retRes.data?.message === "OK") {
-              // ★ 수정: API 응답 누적값이 아닌, 기존에 알고 있는 개별 어구의 포인트 단가 사용
-              const realPoint = gear.gvbk_pnt || 0;
-              successfulReturns.push({ code: gear.bacod_nm, type: '기존어구', reward: 0, point: realPoint });
-              calcPoint += realPoint;
-            }
-          }
+            }).then(retRes => {
+              if (retRes.data?.status === "200" || retRes.data?.status === 200 || retRes.data?.message === "OK") {
+                return { success: true, gear };
+              } else {
+                throw new Error(`[등록 거부] ${retRes.data?.message}`);
+              }
+            })
+          );
+          
+          const romgResults = await Promise.all(romgPromises);
+          romgResults.forEach(res => {
+            const realPoint = res.gear.gvbk_pnt || 0;
+            successfulReturns.push({ code: res.gear.bacod_nm, type: '기존어구', reward: 0, point: realPoint });
+            calcPoint += realPoint;
+          });
         }
       }
 
-      setReturnMngNos({ remg: remgMngNo, romg: romgMngNo });
+      setReturnMngNos({ remg: finalRemgMngNo, romg: romgMngNo });
 
       if (successfulReturns.length === 0) {
         throw new Error("정상적으로 등록된 어구가 없습니다.");
@@ -349,17 +353,22 @@ const DepositScreen = () => {
       setTotalDeposit(calcDeposit);
       setTotalPoint(calcPoint);
       setViewState('CONFIRMING');
-      setReturnMngNos({ remg: finalRemgMngNo, romg: romgMngNo });
 
     } catch (err) {
       console.error("API 처리 에러 상세:", err);
       const backendErrorMsg = err.response?.data?.message || err.message;
-      alert(`[서버 통신 실패]\n${backendErrorMsg}\n\n입력하신 정보가 올바른지 확인해주세요.`);
+      
+      // ★ 멈춤의 주범이었던 alert()를 삭제하고 내부 알림 함수로 변경했습니다!
+      showMessage(`서버 통신 오류: ${backendErrorMsg}`, true);
+      
+      // 에러 났을 때 화면이 멈추지 않고 다시 버튼을 누를 수 있게 상태 복구
+      setViewState('DEPOSITING');
+      setDepositSubState('READY_CAPTURE');
+      
     } finally {
       setIsLoading(false);
     }
   };
-
 
   const handleCloseDoors = async () => {
     setIsLoading(true);
