@@ -8,8 +8,13 @@ const AuthChoiceModal = ({ onClose, onQr, onPass, onLogin }) => {
 
   return (
     <div className="modal-backdrop" onClick={onClose}>
-      <div className="modal-content auth-choice-modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '1000px' }}>
+      <div className="modal-content auth-choice-modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '1100px' }}>
         <h2 className="modal-title">{t('auth_choice_title') || '사용자 인증 방법 선택'}</h2>
+        
+        {/* ★ 비회원 안내 문구 추가 ★ */}
+        <p className="auth-nonmember-guide">
+          비회원님은 오른쪽의 <strong>'PASS 인증'</strong>으로 진행해 주세요.
+        </p>
         
         <div className="modal-buttons-row">
           
@@ -35,10 +40,9 @@ const AuthChoiceModal = ({ onClose, onQr, onPass, onLogin }) => {
             </div>
           </button>
 
-          {/* 2) 아이디/비밀번호 로그인 (디자인 개편) */}
+          {/* 2) 아이디/비밀번호 로그인 */}
           <button className="modal-btn btn-login-large" onClick={onLogin}>
             <div className="btn-icon-area-large">
-              {/* 깔끔한 유저 SVG 아이콘 적용 */}
               <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="auth-icon-svg" style={{ width: '65%', height: '65%' }}>
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                 <circle cx="12" cy="7" r="4"></circle>

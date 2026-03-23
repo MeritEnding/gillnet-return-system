@@ -162,7 +162,7 @@ const TagScanScreen = () => {
       onEndCallback = () => {
         setTimeout(() => {
           navigate('/certificationPage/gear-scan');
-        }, 3000);
+        }, 50);
       };
     } else if (scanState === 'failed') {
       key = 'AUTH_06';
@@ -172,7 +172,7 @@ const TagScanScreen = () => {
       return;
     }
 
-    const delay = (scanState === 'idle') ? 300 : 0;
+    const delay = (scanState === 'idle') ? 50 : 0;
     const speakTimer = setTimeout(() => {
       if (textToSpeak) {
         speak(textToSpeak, i18n.language, voiceListCache.current, onEndCallback);
@@ -192,10 +192,10 @@ const TagScanScreen = () => {
 
     // [테스트 로직]
     if (scannedData === 'GENUINE_TAG_HW' || scannedData === 'GENUINE') {
-      setTimeout(() => setScanState('success'), 1000);
+      setTimeout(() => setScanState('success'), 50);
       return;
     } else if (scannedData === 'FAKE_TAG_123') {
-      setTimeout(() => setScanState('failed'), 1000);
+      setTimeout(() => setScanState('failed'), 50);
       return;
     }
 

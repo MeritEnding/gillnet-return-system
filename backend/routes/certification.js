@@ -35,10 +35,10 @@ const verifySessionToken = (req, res, next) => {
 // (★수정★) verifySessionToken 미들웨어 추가
 router.post('/start', verifySessionToken, (req, res) => {
   console.log('--- 반납 세션 시작 요청 받음 (1-by-1 Flow) ---');
-  
+
   // (★수정★) fisherman_id를 req.body가 아닌, 토큰에서 검증된 req.user.id 로부터 가져옴
   const { kiosk_id } = req.body;
-  const fisherman_id = req.user.id; 
+  const fisherman_id = req.user.id;
   const session_token = req.headers['authorization'].split(' ')[1]; // 토큰 자체도 저장
 
   if (!fisherman_id) {
@@ -61,7 +61,7 @@ router.post('/start', verifySessionToken, (req, res) => {
     }
     console.log(`-> 반납 세션 생성 성공 (ID: ${newSessionId})`);
     res.status(200).json({
-      status: 'SUCCESS', message: '반납 세션을 시작합니다. 첫 번째 어구 표식을 인증해 주세요.', 
+      status: 'SUCCESS', message: '반납 세션을 시작합니다. 첫 번째 어구 표식을 인증해 주세요.',
       return_session_id: newSessionId,
     });
   });
@@ -76,7 +76,7 @@ router.post('/tag/verify', verifySessionToken, (req, res) => {
   console.log('--- 표식 진위 확인 요청 받음 ---');
   // req.user.id (어부 ID)가 있으므로, 필요시 여기서도 사용자 검증 가능
   console.log(`(인증된 사용자: ${req.user.id})`);
-  
+
   const { tag_sensor_data } = req.body;
 
   if (tag_sensor_data === 'GENUINE_TAG_HW') {
@@ -98,13 +98,13 @@ router.post('/scan', verifySessionToken, async (req, res) => {
   console.log('--- 어구 바코드 스캔 요청 받음 ---');
   console.log('요청 본문 (Body):', req.body);
   const { return_session_id, gear_code } = req.body;
-  
+
   // (★수정★) fishermanId를 토큰에서 가져와서 보안 강화
-  const fishermanId = req.user.id; 
+  const fishermanId = req.user.id;
 
   try {
     // 1. (★삭제★) 세션에서 fishermanId를 가져오는 SQL (더 이상 필요 없음)
-    
+
     // 2. 유효 바코드 확인 (수정 없음)
     const sqlGetItem = "SELECT * FROM gear_master WHERE code = ?";
     const item = await new Promise((resolve, reject) => {
@@ -115,14 +115,25 @@ router.post('/scan', verifySessionToken, async (req, res) => {
       return res.status(400).json({ status: 'FAILURE', error_code: 'SCAN_002', message: '유효하지 않은 어구 바코드입니다.' });
     }
 
-    // 3. (★수정★) 소유권 확인 (DB 대신 토큰 ID와 비교)
+    // 3. 소유권 확인 (기존어구 vs 보증금어구 분기 처리)
+    const isDepositGear = item.reward > 0; // 보증금어구 여부 (DB 구조에 맞게 수정 필요, 예: item.type === '보증금어구')
+
+    // 비회원이거나, 내 어구가 아닌 경우의 처리
+    // [POST] /scan 라우터 내부의 3번 로직(소유권 확인)을 다음과 같이 수정하세요.
+    // 비회원이거나, 내 어구가 아닌 경우의 처리
     if (item.current_fisherman_id !== fishermanId) {
-      console.log(`-> 스캔 실패: 소유권 불일치 (Gear Owner: ${item.current_fisherman_id}, Token User: ${fishermanId})`);
-      return res.status(400).json({
-        status: 'FAILURE',
-        error_code: 'SCAN_004', 
-        message: '이 어구는 현재 회원님이 대여한 어구가 아닙니다.'
-      });
+      if (!isDepositGear) {
+        // 기존 어구는 반드시 본인(회원)만 반납 가능
+        console.log(`-> 스캔 실패: 타인의 기존어구 또는 비회원 스캔 시도`);
+        return res.status(400).json({
+          status: 'FAILURE',
+          error_code: 'SCAN_004',
+          message: '기존 어구는 본인이 대여한 어구만 반납할 수 있습니다.'
+        });
+      } else {
+        // 보증금 어구는 주워서 반납 가능하므로 통과 (로그만 남김)
+        console.log(`-> 타인/비회원 보증금 어구 스캔 허용 (Gear: ${item.code})`);
+      }
     }
 
     // 4. 중복 스캔 확인 (수정 없음)

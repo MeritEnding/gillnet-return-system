@@ -810,3 +810,85 @@
   0% { transform: scale(0.8); opacity: 0; }
   100% { transform: scale(1); opacity: 1; }
 }
+/* ========================================= */
+/* 최적화된 키오스크 계좌 입력 모달 (가로 폭 확장 & 글자 깨짐 방지) */
+/* ========================================= */
+.account-modal-content {
+  background-color: white;
+  border: 8px solid #00A0E9;
+  border-radius: 35px; 
+  width: 95%;
+  max-width: 850px; /* ★ 700px -> 850px로 가로 폭을 시원하게 확장했습니다! */
+  padding: 40px; 
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+  animation: popIn 0.3s ease-out;
+  display: flex;
+  flex-direction: column;
+}
+
+.account-header { text-align: center; margin-bottom: 25px; }
+.account-title { color: #006090; font-size: 2.8rem; font-weight: 900; margin: 0 0 10px 0; letter-spacing: -1.5px; }
+.account-subtitle { color: #009CDA; font-size: 1.8rem; font-weight: 700; margin: 0; }
+
+.account-form-group { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+.account-label { font-size: 2.2rem; font-weight: 900; color: #333; text-align: left; margin-left: 10px; }
+
+/* 공통 인풋 스타일 */
+.account-input-box {
+  width: 100%; height: 75px; 
+  padding: 0 20px; font-size: 2.4rem; font-weight: 800; color: #222;
+  border: 4px solid #ccc; border-radius: 15px; background-color: #f8f9fa; 
+  cursor: pointer; display: flex; align-items: center; justify-content: center; 
+  transition: all 0.2s; box-sizing: border-box;
+}
+.account-input-box:active { transform: scale(0.98); border-color: #00A0E9; }
+.account-input-box.highlight { border: 4px solid #00A0E9; background-color: #EAF8FF; color: #006090; }
+
+/* --- 은행 선택 바둑판 (가로 폭에 맞춰 안정적으로 배치) --- */
+.bank-grid-container {
+  display: grid; grid-template-columns: repeat(4, 1fr); 
+  gap: 12px; /* ★ 버튼 사이 간격을 살짝 넓혔습니다 */
+  background: #f1f3f5; padding: 20px; border-radius: 20px; margin-top: 10px;
+}
+.bank-btn {
+  height: 70px; /* ★ 버튼 높이도 살짝 키웠습니다 */
+  font-size: 1.8rem; font-weight: 900; color: #333;
+  background: white; border: 3px solid #ddd; border-radius: 12px; cursor: pointer;
+  word-break: keep-all; /* ★ 핵심! 글자가 중간에 이상하게 깨지지 않도록 방지합니다 */
+  padding: 0 5px; /* 좌우 여백을 줄여서 글자가 들어갈 공간 확보 */
+}
+.bank-btn:active { background: #00A0E9; color: white; border-color: #00A0E9; transform: scale(0.95); }
+
+/* --- 공통 키패드 컨테이너 --- */
+.account-keypad-container { background: #f1f3f5; padding: 20px; border-radius: 20px; border: 4px solid #dee2e6; margin-bottom: 15px; }
+
+/* --- 숫자 키패드 --- */
+.account-keypad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.account-keypad-btn {
+  height: 75px; font-size: 3rem; font-weight: 900; color: #333; background-color: #fff;
+  border: 3px solid #ced4da; border-radius: 15px; box-shadow: 0 5px 0 #ced4da; cursor: pointer;
+}
+.account-keypad-btn:active { transform: translateY(5px); box-shadow: 0 0 0 #ced4da; }
+
+/* --- 한글 가상 키보드 그리드 --- */
+.hangul-keypad-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+.hangul-btn {
+  height: 65px; font-size: 2.2rem; font-weight: 900; color: #333; background-color: #fff;
+  border: 3px solid #ced4da; border-radius: 12px; box-shadow: 0 4px 0 #ced4da; cursor: pointer;
+}
+.hangul-btn:active { transform: translateY(4px); box-shadow: 0 0 0 #ced4da; }
+.hangul-action-btn { background-color: #e9ecef; font-size: 1.8rem; color: #555; }
+
+/* --- 키패드 닫기 버튼 --- */
+.account-keypad-close { 
+  width: 100%; height: 70px; margin-top: 15px; 
+  font-size: 2.2rem; font-weight: 900; background-color: #495057; 
+  color: white; border: none; border-radius: 15px; box-shadow: 0 5px 0 #343a40; cursor: pointer; transition: all 0.1s; 
+}
+.account-keypad-close:active { transform: translateY(5px); box-shadow: 0 0 0 #343a40; }
+
+/* --- 하단 액션 버튼 --- */
+.account-action-group { display: flex; gap: 15px; margin-top: 10px; }
+.account-btn { flex: 1; height: 90px; font-size: 2.6rem; font-weight: 900; color: white; border: none; border-radius: 20px; cursor: pointer; }
+.account-btn-confirm { flex: 2; background-color: #009CDA; box-shadow: 0 6px 0 #007bb5; }
+.account-btn-cancel { flex: 1; background-color: #888; box-shadow: 0 6px 0 #666; }

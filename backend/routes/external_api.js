@@ -71,4 +71,22 @@ router.post('/deposit/return.json', async (req, res) => {
     }
 });
 
+// external_api.js에 문자 발송 함수 추가
+router.post('/send-sms', async (req, res) => {
+    const { return_no, isDeposit } = req.body;
+    // 보증금어구인지 기존어구인지에 따라 엔드포인트 분기
+    const endpoint = isDeposit ? '/deposit/return/remg/sms.json' : '/deposit/return/romg/sms.json';
+    
+    try {
+        const payload = isDeposit ? { gvbk_mng_no: return_no } : { bfr_fsgr_gvbk_no: return_no };
+        const response = await axios.post(`${EXTERNAL_API_URL}${endpoint}`, payload);
+        res.status(200).json(response.data);
+    } catch (error) {
+        console.error('SMS 발송 실패:', error.message);
+        res.status(500).json({ message: 'SMS failed' });
+    }
+});
+
+
+
 module.exports = router;

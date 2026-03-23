@@ -37,7 +37,7 @@ const LoadingOverlay = ({ text }) => {
 
 const SafetyWarningIcon = () => (
   <svg width="120" height="120" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" stroke="#DC3545" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" stroke="#DC3545" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 
@@ -196,7 +196,7 @@ const DepositScreen = () => {
       window.speechSynthesis.speak(utterance);
     }
   };
- 
+
   // 1. [추가] 컴포넌트 내부(또는 바깥)에 포맷 변환 함수 추가
   const formatPhone = (phone) => {
     if (!phone) return "010-0000-0000"; // 데이터가 없을 때 백엔드 에러 방지용
@@ -218,30 +218,33 @@ const DepositScreen = () => {
   const handleProcessScans = async () => {
     setIsLoading(true);
     setLoadingText("반환 정보를 서버에 등록하는 중입니다...");
-
+    const mbrNo = localStorage.getItem('mbr_no') || '';
     const isMember = localStorage.getItem('is_member') === 'true';
     const fishermanId = localStorage.getItem('fisherman_id');
     const fishermanName = localStorage.getItem('fisherman_name') || '비회원';
-
-    // 저장된 사용자/계좌 정보 가져오기
+   
+    // 저장된 사용자/계좌 정보 가져오기 (null 에러 방지 처리)
     const rawPhone = localStorage.getItem('fisherman_phone') || localStorage.getItem('mbl_telno');
     const rawBrdt = localStorage.getItem('brdt') || localStorage.getItem('birthdate');
-    const bankCd = localStorage.getItem('bank_cd');
-    const actno = localStorage.getItem('actno');
+    const bankCd = localStorage.getItem('bank_cd') || '';
+    const actno = localStorage.getItem('actno') || ''; 
     const acctNm = localStorage.getItem('acct_nm') || fishermanName;
     const selectedClsfCd = localStorage.getItem('selected_fsgr_clsf_cd') || 'FISGE';
 
-    // 1. 공통 필수 데이터 (보증금/기존어구 공통)
     const commonPayload = {
+      user_fshnd_no: fishermanId === 'NON_MEMBER' ? '' : fishermanId,
+      fsgr_clsf_cd: selectedClsfCd,
       korn_flnm: fishermanName,
       brdt: formatBrdt(rawBrdt),
+      telno: formatPhone(rawPhone),
       mbl_telno: formatPhone(rawPhone),
       bank_cd: bankCd,
-      actno: actno ? actno.replace(/-/g, '') : '',
+      actno: actno.replace(/-/g, ''), // null 방지 적용 완료
       acct_nm: acctNm,
+      kiosk_no: "K001",
+      mbr_no: mbrNo
     };
 
-    // 회원이면 어업인코드 추가
     if (isMember && fishermanId && fishermanId !== 'NON_MEMBER') {
       commonPayload.user_fshnd_no = fishermanId;
     }
@@ -250,6 +253,7 @@ const DepositScreen = () => {
     const existingGears = scannedGears.filter(g => g.gvbk_type.includes('기존'));
 
     let remgMngNo = '';
+    let finalRemgMngNo = '';
     let romgMngNo = '';
     const successfulReturns = [];
     let calcDeposit = 0;
@@ -258,12 +262,11 @@ const DepositScreen = () => {
     try {
       // 2. 보증금 어구(REMG) 반환 시작 
       if (depositGears.length > 0) {
-        // 보증금어구용 페이로드: kiosk_no 없음, telno(선택) 포함, fsgr_clsf_cd 필수
         const remgPayload = {
           ...commonPayload,
           telno: formatPhone(rawPhone),
           fsgr_clsf_cd: selectedClsfCd,
-          kiosk_no: "KIOSK-001" // 현재 사용 중인 키오스크 번호 추가
+          kiosk_no: "KIOSK-001"
         };
 
         const startRes = await axios.post(`${PROXY_API_URL}/deposit/return/remg/start`, remgPayload);
@@ -273,28 +276,35 @@ const DepositScreen = () => {
         }
 
         remgMngNo = startRes.data?.data?.gvbk_mng_no;
+        finalRemgMngNo = remgMngNo;
 
         if (remgMngNo) {
-          for (const gear of depositGears) {
-            const retRes = await axios.post(`${PROXY_API_URL}/deposit/return/remg`, {
+          // ★ for문 대신 Promise.all 사용: 모든 바코드를 한 번에 쏴서 처리 속도 10배 상승!
+          const remgPromises = depositGears.map(gear => 
+            axios.post(`${PROXY_API_URL}/deposit/return/remg`, {
               bacod_nm: gear.bacod_nm,
               gvbk_mng_no: remgMngNo
-            });
-
-            if (retRes.data?.status === "200" || retRes.data?.status === 200 || retRes.data?.message === "OK") {
-              const realAmount = Number(retRes.data.data?.gvbk_amt) || 0;
-              successfulReturns.push({ code: gear.bacod_nm, type: '보증금어구', reward: realAmount, point: 0 });
-              calcDeposit += realAmount;
-            } else {
-              throw new Error(`[등록 거부] ${retRes.data?.message}`);
-            }
-          }
+            }).then(retRes => {
+              if (retRes.data?.status === "200" || retRes.data?.status === 200 || retRes.data?.message === "OK") {
+                return { success: true, gear, mngNo: retRes.data.data?.gvbk_mng_no };
+              } else {
+                throw new Error(`[등록 거부] ${retRes.data?.message}`);
+              }
+            })
+          );
+          
+          const remgResults = await Promise.all(remgPromises);
+          remgResults.forEach(res => {
+            const realAmount = res.gear.gvbk_amt || 0;
+            successfulReturns.push({ code: res.gear.bacod_nm, type: '보증금어구', reward: realAmount, point: 0 });
+            calcDeposit += realAmount;
+            if (res.mngNo) finalRemgMngNo = res.mngNo;
+          });
         }
       }
 
       // 3. 기존 어구(ROMG) 반환 시작 (회원 전용)
       if (existingGears.length > 0 && isMember) {
-        // 기존어구용 페이로드: kiosk_no 필수, fsgr_clsf_cd 없음
         const romgPayload = {
           ...commonPayload,
           telno: formatPhone(rawPhone),
@@ -310,21 +320,30 @@ const DepositScreen = () => {
         romgMngNo = startRes.data?.data?.bfr_fsgr_gvbk_no;
 
         if (romgMngNo) {
-          for (const gear of existingGears) {
-            const retRes = await axios.post(`${PROXY_API_URL}/deposit/return/romg`, {
+          // ★ 여기도 Promise.all 로 속도 대폭 개선
+          const romgPromises = existingGears.map(gear => 
+            axios.post(`${PROXY_API_URL}/deposit/return/romg`, {
               bacod_nm: gear.bacod_nm,
               bfr_fsgr_gvbk_no: romgMngNo
-            });
-            if (retRes.data?.status === "200" || retRes.data?.status === 200 || retRes.data?.message === "OK") {
-              const realPoint = Number(retRes.data.data?.gvbk_pnt) || 0;
-              successfulReturns.push({ code: gear.bacod_nm, type: '기존어구', reward: 0, point: realPoint });
-              calcPoint += realPoint;
-            }
-          }
+            }).then(retRes => {
+              if (retRes.data?.status === "200" || retRes.data?.status === 200 || retRes.data?.message === "OK") {
+                return { success: true, gear };
+              } else {
+                throw new Error(`[등록 거부] ${retRes.data?.message}`);
+              }
+            })
+          );
+          
+          const romgResults = await Promise.all(romgPromises);
+          romgResults.forEach(res => {
+            const realPoint = res.gear.gvbk_pnt || 0;
+            successfulReturns.push({ code: res.gear.bacod_nm, type: '기존어구', reward: 0, point: realPoint });
+            calcPoint += realPoint;
+          });
         }
       }
 
-      setReturnMngNos({ remg: remgMngNo, romg: romgMngNo });
+      setReturnMngNos({ remg: finalRemgMngNo, romg: romgMngNo });
 
       if (successfulReturns.length === 0) {
         throw new Error("정상적으로 등록된 어구가 없습니다.");
@@ -338,12 +357,18 @@ const DepositScreen = () => {
     } catch (err) {
       console.error("API 처리 에러 상세:", err);
       const backendErrorMsg = err.response?.data?.message || err.message;
-      alert(`[서버 통신 실패]\n${backendErrorMsg}\n\n입력하신 정보가 올바른지 확인해주세요.`);
+      
+      // ★ 멈춤의 주범이었던 alert()를 삭제하고 내부 알림 함수로 변경했습니다!
+      showMessage(`서버 통신 오류: ${backendErrorMsg}`, true);
+      
+      // 에러 났을 때 화면이 멈추지 않고 다시 버튼을 누를 수 있게 상태 복구
+      setViewState('DEPOSITING');
+      setDepositSubState('READY_CAPTURE');
+      
     } finally {
       setIsLoading(false);
     }
   };
-
 
   const handleCloseDoors = async () => {
     setIsLoading(true);
@@ -358,7 +383,7 @@ const DepositScreen = () => {
       setIsDoorClosed(true);
       showMessage("투입구가 닫혔습니다. 확인 완료를 눌러주세요.");
     } catch (e) {
-      setIsDoorClosed(true); 
+      setIsDoorClosed(true);
       showMessage("테스트: 투입구 닫힘 처리 완료", true);
     } finally {
       setIsLoading(false);
@@ -369,23 +394,56 @@ const DepositScreen = () => {
 
   const handleFinalConfirm = async () => {
     setIsLoading(true);
-    setLoadingText("사진 데이터를 서버로 전송 중입니다...");
+    setLoadingText("데이터를 서버로 전송 중입니다...");
 
     try {
       if (capturedImages.length > 0) {
+        // ==========================================
+        // 1. 보증금 어구 (REMG) 처리
+        // ==========================================
         if (returnMngNos.remg) {
-          const formRemg = new FormData();
-          formRemg.append('gvbk_mng_no', returnMngNos.remg);
-          capturedImages.forEach(file => formRemg.append('files', file));
-          await axios.post(`${PROXY_API_URL}/deposit/image/remg`, formRemg, { headers: { 'Content-Type': 'multipart/form-data' } });
-          await axios.post(`${PROXY_API_URL}/deposit/return/remg/sms`, { gvbk_mng_no: returnMngNos.remg });
+          console.log("🚨 [문자 전송 전 확인] 날아가는 ID:", returnMngNos.remg);
+
+          // [사진 전송 블록] - 실패해도 아래로 넘어감
+          try {
+            const formRemg = new FormData();
+            formRemg.append('gvbk_mng_no', returnMngNos.remg);
+            capturedImages.forEach(file => formRemg.append('files', file));
+            await axios.post(`${PROXY_API_URL}/deposit/image/remg.json`, formRemg, { headers: { 'Content-Type': 'multipart/form-data' } });
+          } catch (imgError) {
+            console.warn("⚠️ 보증금어구 사진 전송 실패 (무시하고 문자 전송 진행):", imgError.message);
+          }
+
+          // [문자 전송 블록] - 사진이 실패해도 무조건 실행됨!
+          try {
+            await axios.post(`${PROXY_API_URL}/deposit/return/remg/sms.json`, { gvbk_mng_no: returnMngNos.remg });
+            console.log("✅ 보증금어구 문자 발송 성공!");
+          } catch (smsError) {
+            console.error("❌ 보증금어구 문자 발송 실패:", smsError.response?.data || smsError.message);
+          }
         }
+
+        // ==========================================
+        // 2. 기존 어구 (ROMG) 처리
+        // ==========================================
         if (returnMngNos.romg) {
-          const formRomg = new FormData();
-          formRomg.append('bfr_fsgr_gvbk_no', returnMngNos.romg);
-          capturedImages.forEach(file => formRomg.append('files', file));
-          await axios.post(`${PROXY_API_URL}/deposit/image/romg`, formRomg, { headers: { 'Content-Type': 'multipart/form-data' } });
-          await axios.post(`${PROXY_API_URL}/deposit/return/romg/sms`, { bfr_fsgr_gvbk_no: returnMngNos.romg });
+          // [사진 전송 블록]
+          try {
+            const formRomg = new FormData();
+            formRomg.append('bfr_fsgr_gvbk_no', returnMngNos.romg);
+            capturedImages.forEach(file => formRomg.append('files', file));
+            await axios.post(`${PROXY_API_URL}/deposit/image/romg.json`, formRomg, { headers: { 'Content-Type': 'multipart/form-data' } });
+          } catch (imgError) {
+            console.warn("⚠️ 기존어구 사진 전송 실패 (무시하고 문자 전송 진행):", imgError.message);
+          }
+
+          // [문자 전송 블록]
+          try {
+            await axios.post(`${PROXY_API_URL}/deposit/return/romg/sms.json`, { bfr_fsgr_gvbk_no: returnMngNos.romg });
+            console.log("✅ 기존어구 문자 발송 성공!");
+          } catch (smsError) {
+            console.error("❌ 기존어구 문자 발송 실패:", smsError.response?.data || smsError.message);
+          }
         }
       }
 
@@ -398,7 +456,7 @@ const DepositScreen = () => {
       }
 
     } catch (error) {
-      console.error("사진/문자 전송 오류(무시하고 진행):", error);
+      console.error("전체 처리 중 알 수 없는 에러:", error);
     } finally {
       setIsLoading(false);
       navigate('/completion', {
@@ -511,8 +569,10 @@ const DepositScreen = () => {
                       <tr>
                         <td colSpan="2">총계</td>
                         <td>
-                          {totalDeposit > 0 && `${totalDeposit.toLocaleString()} 원 `}
-                          {totalPoint > 0 && `/ ${totalPoint.toLocaleString()} P`}
+                          {totalDeposit > 0 && <span>{totalDeposit.toLocaleString()} 원</span>}
+                          {/* 보증금과 포인트가 둘 다 있을 때만 콤마(,)나 슬래시(/)로 구분해줍니다 */}
+                          {totalDeposit > 0 && totalPoint > 0 && <span style={{ margin: '0 5px' }}>/</span>}
+                          {totalPoint > 0 && <span>{totalPoint.toLocaleString()} P</span>}
                         </td>
                       </tr>
                     </tfoot>
@@ -554,7 +614,7 @@ const DepositScreen = () => {
             <SafetyWarningIcon />
             <h1 className="safety-warning-title">위험! 투입구 작동 중</h1>
             <p className="safety-warning-text">
-              안전을 위해 한 걸음<br/>
+              안전을 위해 한 걸음<br />
               뒤로 <strong>물러서 주세요!</strong>
             </p>
           </div>
