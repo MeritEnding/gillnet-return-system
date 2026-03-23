@@ -5,6 +5,13 @@ import Header from '../mainPage/Header';
 import BgImage from '../assets/bg_all.png';
 import './GearTypeSelectScreen.css';
 
+// ★ 1. 다운받은 실제 어구 이미지들을 import 합니다.
+import ImgHourglass from '../assets/스프링이 설치된 장구형의 통발.png';
+import ImgCylinder from '../assets/장어 통발.png';
+import ImgGillNet from '../assets/자망어구.png';
+import ImgConeSemi from '../assets/원뿔대형(반구형)의 통발.png';
+import ImgConeCrab from '../assets/기존 어구.png';
+
 const GearTypeSelectScreen = () => {
   const navigate = useNavigate();
   const [isMember, setIsMember] = useState(false);
@@ -58,26 +65,26 @@ const GearTypeSelectScreen = () => {
             <div className="gear-grid">
               {/* API 1: FISGE (장구형의통발) */}
               <button className="gear-btn deposit" onClick={() => handleSelect('1', 'FISGE', '장구형의통발')}>
-                <div style={{fontSize: '7rem', margin: '20px 0'}}>🦀</div>
-                <span className="gear-btn-text">장구형의 통발</span>
+                <img src={ImgHourglass} alt="장구형의 통발" className="gear-btn-img" />
+                <div className="gear-btn-text">장구형의 통발</div>
               </button>
 
               {/* API 2: EELTP (장어통발) */}
               <button className="gear-btn deposit" onClick={() => handleSelect('1', 'EELTP', '장어통발')}>
-                <div style={{fontSize: '7rem', margin: '20px 0'}}>🐍</div>
-                <span className="gear-btn-text">장어통발</span>
+                <img src={ImgCylinder} alt="장어통발" className="gear-btn-img" />
+                <div className="gear-btn-text">장어통발</div>
               </button>
 
               {/* API 3: GILNT (자망) */}
               <button className="gear-btn deposit" onClick={() => handleSelect('1', 'GILNT', '자망(그물)')}>
-                <div style={{fontSize: '7rem', margin: '20px 0'}}>🕸️</div>
-                <span className="gear-btn-text">자망 (그물)</span>
+                <img src={ImgGillNet} alt="자망 (그물)" className="gear-btn-img" />
+                <div className="gear-btn-text">자망 (그물)</div>
               </button>
 
-              {/* 수정 후: 코드를 'FISGE'로 변경하여 서버 거절 방지 */}
+              {/* API 4: FISGE (원뿔대형 통발) */}
               <button className="gear-btn deposit" onClick={() => handleSelect('1', 'FISGE', '원뿔대형(반구형)의 통발')}>
-                <div style={{fontSize: '7rem', margin: '20px 0'}}>🎈</div>
-                <span className="gear-btn-text">원뿔대형 통발</span>
+                <img src={ImgConeSemi} alt="원뿔대형 통발" className="gear-btn-img" />
+                <div className="gear-btn-text">원뿔대형 통발</div>
               </button>
             </div>
           </div>
@@ -90,8 +97,8 @@ const GearTypeSelectScreen = () => {
               </h3>
               <div className="gear-grid single">
                 <button className="gear-btn existing" onClick={() => handleSelect('2', 'FISGE', '기존통발어구(바코드)')}>
-                  <div style={{fontSize: '5rem', margin: '10px 0'}}>📦</div>
-                  <span className="gear-btn-text">기존 통발 어구 (포인트)</span>
+                  <img src={ImgConeCrab} alt="기존 통발 어구" className="gear-btn-img" />
+                  <div className="gear-btn-text">기존 통발 어구 (포인트)</div>
                 </button>
               </div>
             </div>
