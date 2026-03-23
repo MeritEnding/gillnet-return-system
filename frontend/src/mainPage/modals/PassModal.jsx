@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './LoginModal.css'; // 기존 로그인 성공 스타일 재사용
+import AccountInputModal from './AccountInputModal';
 
 const PassModal = ({ onClose, onNonMember }) => {
   const { t } = useTranslation();
@@ -13,12 +14,17 @@ const PassModal = ({ onClose, onNonMember }) => {
 
   const [alertInfo, setAlertInfo] = useState({ show: false, message: '' });
   
-  // ★ 성공 알림창 상태 추가
+  // ★ 1. 인증 진행 중(로딩) 상태 추가
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  // 성공 알림창 상태
   const [successInfo, setSuccessInfo] = useState({ 
     show: false, 
     name: '', 
     isMember: false 
   });
+
+  const [showAccountModal, setShowAccountModal] = useState(false);
 
   useEffect(() => {
     if (isRunRef.current) return;
@@ -26,25 +32,21 @@ const PassModal = ({ onClose, onNonMember }) => {
     handleStartPass();
   }, []);
 
-  // 팝업 닫기 공통 함수
   const closeNicePopup = () => {
     if (popupRef.current && !popupRef.current.closed) {
       popupRef.current.close();
     }
   };
 
-  // 성공 알림 노출 및 자동 이동 로직
   const showSuccessAndRedirect = (name, isMember, redirectFn) => {
     setSuccessInfo({ show: true, name, isMember });
     
-    // 2초 뒤 자동 이동
     setTimeout(() => {
       setSuccessInfo({ show: false, name: '', isMember: false });
       redirectFn();
     }, 2000);
   };
 
-  // 1. 비회원 전용 다이렉트 처리 함수
   const processNonMember = (fallbackUser) => {
     const userName = fallbackUser?.name || '고객';
     if (fallbackUser) {
@@ -57,22 +59,26 @@ const PassModal = ({ onClose, onNonMember }) => {
 
     closeNicePopup();
 
-    // ★ 비회원 성공 알림창 띄우기
     showSuccessAndRedirect(userName, false, () => {
       if (onNonMember) {
         onNonMember();
       } else {
-        if (onClose) onClose();
-        navigate('/auth/alternate-auth');
+        setShowAccountModal(true);
       }
     });
   };
 
   const handlePassVerification = async (diValue, fallbackUser) => {
+    // ★ 2. PASS 인증이 끝나고 서버와 통신을 시작할 때 로딩 UI 띄우기
+    setIsProcessing(true);
+
     try {
       const response = await axios.post('http://localhost:8080/api/v1/proxy/user/check-member', {
         di: diValue
       });
+
+      // 통신 완료 후 로딩 UI 닫기
+      setIsProcessing(false);
 
       if (response.data.status == 200 && response.data.data && response.data.data.mbr_no) {
         const userData = response.data.data;
@@ -90,16 +96,16 @@ const PassModal = ({ onClose, onNonMember }) => {
 
         closeNicePopup();
 
-        // ★ 회원 성공 알림창 띄우기
         showSuccessAndRedirect(userData.mbr_nm, true, () => {
-          if (onClose) onClose();
-          navigate('/select-gear');
+          setShowAccountModal(true);
         });
 
       } else {
         processNonMember(fallbackUser);
       }
     } catch (error) {
+      setIsProcessing(false); // 에러 발생 시에도 로딩 UI 닫기
+
       if (error.response && error.response.status === 404) {
         processNonMember(fallbackUser);
       } else {
@@ -130,11 +136,20 @@ const PassModal = ({ onClose, onNonMember }) => {
       if (response.data.status === 'SUCCESS') {
         const encData = response.data.encData;
         const popupName = 'nicePopup';
-        const popupWidth = 800; const popupHeight = 900;
-        const left = (window.screen.width / 2) - (popupWidth / 2);
-        const top = (window.screen.height / 2) - (popupHeight / 2);
+        
+        const popupWidth = 500; 
+        const popupHeight = 800;
 
-        popupRef.current = window.open('', popupName, `width=${popupWidth}, height=${popupHeight}, top=${top}, left=${left}, resizable=yes`);
+        const dualScreenLeft = window.screenLeft !== undefined ? window.screenLeft : window.screenX;
+        const dualScreenTop = window.screenTop !== undefined ? window.screenTop : window.screenY;
+
+        const width = window.innerWidth ? window.innerWidth : document.documentElement.clientWidth ? document.documentElement.clientWidth : window.screen.width;
+        const height = window.innerHeight ? window.innerHeight : document.documentElement.clientHeight ? document.documentElement.clientHeight : window.screen.height;
+
+        const left = dualScreenLeft + (width / 2) - (popupWidth / 2);
+        const top = dualScreenTop + (height / 2) - (popupHeight / 2);
+
+        popupRef.current = window.open('', popupName, `scrollbars=yes, width=${popupWidth}, height=${popupHeight}, top=${top}, left=${left}`);
 
         const form = document.createElement('form');
         form.action = 'https://nice.checkplus.co.kr/CheckPlusSafeModel/checkplus.cb';
@@ -156,61 +171,91 @@ const PassModal = ({ onClose, onNonMember }) => {
   const handleCloseAlert = () => { setAlertInfo({ ...alertInfo, show: false }); if (onClose) onClose(); };
 
   return (
-    <div className="modal-backdrop" onClick={onClose}>
-      <div className="modal-content privacy-consent-modal-xl" onClick={(e) => e.stopPropagation()}>
-        <h2 className="privacy-header-title-xl">{t('pass_modal_title') || 'PASS 본인 인증'}</h2>
-        <div className="privacy-inner-box-xl" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-          <div style={{ fontSize: '6rem', marginBottom: '30px' }}>⏳</div>
-          <p className="privacy-guide-text-xl" style={{ textAlign: 'center', margin: 0 }}>
-            {t('pass_modal_desc_1') || '인증 팝업이 뜨면'}<br />{t('pass_modal_desc_2') || '본인인증을 진행해주세요.'}
-          </p>
-          <div style={{ marginTop: '40px', fontSize: '1.6rem', color: '#666', fontWeight: '600' }}>
-            {t('pass_modal_helper_text') || '※ 팝업이 차단되었다면 다시 시도해주세요.'}
-          </div>
-        </div>
-        <div className="privacy-btn-group-xl">
-          <button className="privacy-action-btn-xl btn-agree-blue" onClick={handleStartPass}>{t('pass_modal_btn_retry') || '재시도'}</button>
-          <button className="privacy-action-btn-xl btn-cancel-green" onClick={onClose}>{t('btn_cancel') || '취소'}</button>
-        </div>
-
-        {/* PASS 인증 성공 알림창 (LoginModal 디자인과 동일) */}
-        {successInfo.show && (
-          <div className="alert-overlay">
-            <div className="alert-content success-box-v2">
-              <div className="alert-header-success-v2" style={{ backgroundColor: successInfo.isMember ? '#00A0E9' : '#28a745' }}>
-                {successInfo.isMember ? '회원 인증 성공' : '비회원 인증 성공'}
-              </div>
-              <div className="alert-body-v2">
-                <div className="success-icon-circle">
-                  <svg viewBox="0 0 24 24" fill="none" stroke={successInfo.isMember ? '#00A0E9' : '#28a745'} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="20 6 9 17 4 12"></polyline>
-                  </svg>
-                </div>
-                <p className="alert-msg-v2">
-                  <strong>{successInfo.name}</strong>님<br/>
-                  인증되었습니다!
-                </p>
-                <div className="loading-bar-container">
-                  <div className="loading-bar-fill" style={{ backgroundColor: successInfo.isMember ? '#00A0E9' : '#28a745' }}></div>
-                </div>
-                <p className="auto-move-text">잠시 후 다음 화면으로 이동합니다...</p>
+    <>
+      {!showAccountModal && (
+        <div className="modal-backdrop" onClick={onClose}>
+          <div className="modal-content privacy-consent-modal-xl" onClick={(e) => e.stopPropagation()}>
+            <h2 className="privacy-header-title-xl">{t('pass_modal_title') || 'PASS 본인 인증'}</h2>
+            <div className="privacy-inner-box-xl" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ fontSize: '6rem', marginBottom: '30px' }}>⏳</div>
+              <p className="privacy-guide-text-xl" style={{ textAlign: 'center', margin: 0 }}>
+                {t('pass_modal_desc_1') || '인증 팝업이 뜨면'}<br />{t('pass_modal_desc_2') || '본인인증을 진행해주세요.'}
+              </p>
+              <div style={{ marginTop: '40px', fontSize: '1.6rem', color: '#666', fontWeight: '600' }}>
+                {t('pass_modal_helper_text') || '※ 팝업이 차단되었다면 다시 시도해주세요.'}
               </div>
             </div>
-          </div>
-        )}
-
-        {alertInfo.show && (
-          <div className="custom-alert-backdrop">
-            <div className="custom-alert-box">
-              <div className="custom-alert-message">
-                {alertInfo.message.split('\n').map((line, idx) => (<React.Fragment key={idx}>{line}<br /></React.Fragment>))}
-              </div>
-              <button className="custom-alert-btn" onClick={handleCloseAlert}>확인</button>
+            <div className="privacy-btn-group-xl">
+              <button className="privacy-action-btn-xl btn-agree-blue" onClick={handleStartPass}>{t('pass_modal_btn_retry') || '재시도'}</button>
+              <button className="privacy-action-btn-xl btn-cancel-green" onClick={onClose}>{t('btn_cancel') || '취소'}</button>
             </div>
+
+            {/* ★ 3. 인증 서버 확인 중(로딩) 알림창 */}
+            {isProcessing && (
+              <div className="alert-overlay">
+                <div className="alert-content success-box-v2">
+                  <div className="alert-header-success-v2" style={{ backgroundColor: '#6c757d' }}>
+                    인증 진행 중
+                  </div>
+                  <div className="alert-body-v2">
+                    <div className="success-icon-circle" style={{ backgroundColor: 'transparent' }}>
+                      <div className="loading-spinner" style={{ width: '80px', height: '80px', borderTopColor: '#6c757d' }}></div>
+                    </div>
+                    <p className="alert-msg-v2">
+                      시스템에서 사용자 정보를<br/>
+                      안전하게 확인하고 있습니다...
+                    </p>
+                    <p className="auto-move-text">잠시만 기다려주세요.</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ★ 4. PASS 인증 성공 알림창 ("환영합니다!" 문구 적용) */}
+            {successInfo.show && (
+              <div className="alert-overlay">
+                <div className="alert-content success-box-v2">
+                  <div className="alert-header-success-v2" style={{ backgroundColor: successInfo.isMember ? '#00A0E9' : '#28a745' }}>
+                    {successInfo.isMember ? '회원 인증 성공' : '비회원 인증 성공'}
+                  </div>
+                  <div className="alert-body-v2">
+                    <div className="success-icon-circle">
+                      <svg viewBox="0 0 24 24" fill="none" stroke={successInfo.isMember ? '#00A0E9' : '#28a745'} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                    </div>
+                    <p className="alert-msg-v2">
+                      <strong>{successInfo.name}</strong>님<br/>
+                      환영합니다!
+                    </p>
+                    <div className="loading-bar-container">
+                      <div className="loading-bar-fill" style={{ backgroundColor: successInfo.isMember ? '#00A0E9' : '#28a745' }}></div>
+                    </div>
+                    <p className="auto-move-text">잠시 후 계좌 확인으로 이동합니다...</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {alertInfo.show && (
+              <div className="custom-alert-backdrop">
+                <div className="custom-alert-box">
+                  <div className="custom-alert-message">
+                    {alertInfo.message.split('\n').map((line, idx) => (<React.Fragment key={idx}>{line}<br /></React.Fragment>))}
+                  </div>
+                  <button className="custom-alert-btn" onClick={handleCloseAlert}>확인</button>
+                </div>
+              </div>
+            )}
           </div>
-        )}
-      </div>
-    </div>
+        </div>
+      )}
+
+      {/* 인증 성공 시 나타나는 계좌 모달 */}
+      {showAccountModal && (
+        <AccountInputModal onClose={onClose} />
+      )}
+    </>
   );
 };
 

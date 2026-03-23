@@ -252,21 +252,23 @@ const AccountInputModal = ({ onClose }) => {
         </div>
       </div>
 
-      {/* ★ 키오스크 전용 커스텀 알림창 (자동 이동 적용) */}
+      {/* ★ 키오스크 전용 커스텀 알림창 (자동 이동 적용) - 큼직하게 확대 */}
       {kioskAlert.show && (
         <div className="alert-overlay" onClick={(e) => e.stopPropagation()}>
           <div className="alert-content">
 
             {/* 상단 헤더 */}
-            <div style={{ backgroundColor: kioskAlert.type === 'success' ? '#009CDA' : '#FF4B4B', padding: '25px', textAlign: 'center' }}>
-              <h2 style={{ color: 'white', margin: 0, fontSize: '3rem', fontWeight: '900' }}>
+            <div style={{ backgroundColor: kioskAlert.type === 'success' ? '#009CDA' : '#FF4B4B', padding: '35px', textAlign: 'center' }}>
+              {/* 타이틀 폰트 크기 3rem -> 4rem 확대 */}
+              <h2 style={{ color: 'white', margin: 0, fontSize: '4rem', fontWeight: '900' }}>
                 {kioskAlert.type === 'success' ? '인증 완료' : '확인 필요'}
               </h2>
             </div>
 
             {/* 본문 내용 */}
-            <div style={{ padding: '40px 30px' }}>
-              <p style={{ fontSize: '2.6rem', marginBottom: kioskAlert.type === 'error' ? '40px' : '0', lineHeight: '1.5', textAlign: 'center', color: '#333', fontWeight: '800' }}>
+            <div style={{ padding: '70px 40px' }}> {/* 위아래 여백 40px -> 70px 확대 */}
+              {/* 메시지 폰트 2.6rem -> 3.4rem 확대, 줄바꿈 방지 적용 */}
+              <p style={{ fontSize: '3.4rem', marginBottom: kioskAlert.type === 'error' ? '50px' : '0', lineHeight: '1.6', textAlign: 'center', color: '#333', fontWeight: '800', wordBreak: 'keep-all' }}>
                 {kioskAlert.message.split('\n').map((line, index) => (
                   <React.Fragment key={index}>
                     {line}
@@ -281,7 +283,8 @@ const AccountInputModal = ({ onClose }) => {
                   <button
                     className="account-btn"
                     onClick={kioskAlert.onConfirm}
-                    style={{ backgroundColor: '#495057', flex: 'none', width: '200px', height: '80px', boxShadow: '0 5px 0 #343a40' }}
+                    /* 버튼 크기 및 폰트 확대 (width: 250px, height: 90px, fontSize: 2.5rem) */
+                    style={{ backgroundColor: '#495057', flex: 'none', width: '250px', height: '90px', fontSize: '2.5rem', boxShadow: '0 5px 0 #343a40' }}
                   >
                     확인
                   </button>

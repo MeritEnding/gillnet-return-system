@@ -450,21 +450,24 @@ const AuthScreen = () => {
      {/* ★ 키오스크 전용 커스텀 알림창 (자동 이동 적용) */}
       {kioskAlert.show && (
         <div className="auth-overlay" style={{ zIndex: 99999 }}>
-          <div className="account-modal-content" style={{ maxWidth: '550px', padding: '0', overflow: 'hidden' }}>
+          {/* 1. maxWidth를 550px에서 800px로 대폭 확장하여 시원하게! */}
+          <div className="account-modal-content" style={{ maxWidth: '800px', padding: '0', overflow: 'hidden' }}>
             
             {/* 상단 헤더 */}
             <div 
               className="fail-popup-header" 
-              style={{ backgroundColor: kioskAlert.type === 'success' ? '#009CDA' : '#FF4B4B', padding: '25px' }}
+              style={{ backgroundColor: kioskAlert.type === 'success' ? '#009CDA' : '#FF4B4B', padding: '35px' }} /* 패딩 확대 */
             >
-              <h2 className="fail-popup-title" style={{ color: 'white', margin: 0, fontSize: '3rem', fontWeight: '900' }}>
+              {/* 2. 타이틀 폰트 크기 3rem -> 4rem 으로 확대 */}
+              <h2 className="fail-popup-title" style={{ color: 'white', margin: 0, fontSize: '4rem', fontWeight: '900' }}>
                 {kioskAlert.type === 'success' ? '인증 완료' : '확인 필요'}
               </h2>
             </div>
 
             {/* 본문 내용 */}
-            <div className="fail-popup-body" style={{ padding: '40px 30px' }}>
-              <p className="fail-popup-message" style={{ fontSize: '2.6rem', marginBottom: kioskAlert.type === 'error' ? '40px' : '0', lineHeight: '1.5', textAlign: 'center', color: '#333', fontWeight: '800' }}>
+            <div className="fail-popup-body" style={{ padding: '70px 40px' }}> {/* 위아래 여백을 대폭 넓힘 */}
+              {/* 3. 본문 폰트 크기 2.6rem -> 3.4rem 으로 확대, 줄간격 1.6으로 조정 */}
+              <p className="fail-popup-message" style={{ fontSize: '3.4rem', marginBottom: kioskAlert.type === 'error' ? '50px' : '0', lineHeight: '1.6', textAlign: 'center', color: '#333', fontWeight: '800', wordBreak: 'keep-all' }}>
                 {kioskAlert.message.split('\n').map((line, index) => (
                   <React.Fragment key={index}>
                     {line}
@@ -479,7 +482,7 @@ const AuthScreen = () => {
                   <button 
                     className="account-btn account-btn-confirm" 
                     onClick={kioskAlert.onConfirm}
-                    style={{ backgroundColor: '#495057', flex: 'none', width: '200px', height: '80px' }}
+                    style={{ backgroundColor: '#495057', flex: 'none', width: '250px', height: '90px', fontSize: '2.5rem' }} /* 버튼 크기도 비례해서 확대 */
                   >
                     확인
                   </button>
