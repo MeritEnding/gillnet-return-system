@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
-
+import * as Hangul from 'hangul-js';
 import './AuthScreen.css';
 import LoadingSpinner from '../assets/loading-spinner.png';
 import QrGuideVideo from '../assets/qr_guide_video.mp4';
@@ -68,7 +68,40 @@ const AuthScreen = () => {
   const [actno, setActno] = useState('');
   const [acctNm, setAcctNm] = useState('');
   const [isAccountLoading, setIsAccountLoading] = useState(false);
-  const [showKeypad, setShowKeypad] = useState(false);
+  const [showKeypad, setShowKeypad] = useState('');
+
+  const [acctNmJamo, setAcctNmJamo] = useState([]);
+
+  // ★ 커스텀 알림창 상태
+  const [kioskAlert, setKioskAlert] = useState({
+    show: false,
+    message: '',
+    type: 'success', // 'success' 또는 'error'
+    onConfirm: null
+  });
+
+  // 이름(문자) 키패드를 열 때, 기존 이름이 있다면 분해(disassemble)해서 배열에 넣습니다.
+  const openTextKeypad = () => {
+    setAcctNmJamo(Hangul.disassemble(acctNm || ''));
+    setShowKeypad('text');
+  };
+
+  // 한글 자음/모음 버튼 클릭 처리
+  const handleHangulClick = (char) => {
+    let newJamo = [...acctNmJamo];
+    
+    if (char === '지우기') {
+      newJamo.pop(); // 맨 마지막 자음/모음 삭제
+    } else if (char === '초기화') {
+      newJamo = []; // 전체 삭제
+    } else {
+      newJamo.push(char); // 입력한 자음/모음 추가
+    }
+    
+    setAcctNmJamo(newJamo);
+    // Hangul.assemble을 사용해 분해된 자음/모음을 완벽한 글자로 조립합니다.
+    setAcctNm(Hangul.assemble(newJamo));
+  };
 
   useEffect(() => {
     localStorage.clear(); sessionStorage.clear();
@@ -114,13 +147,11 @@ const AuthScreen = () => {
       
       const result = await authResponse.json();
       
-      // ★ 디버깅용: 서버가 바코드 인증 시 프론트로 던져주는 진짜 데이터 확인
       console.log("🚨 [디버깅] 바코드 인증 전체 응답:", result);
 
       if (authResponse.status === 200 && result.data) {
         const userData = result.data;
         
-        // ★ 디버깅용: data 안에 계좌번호가 정말 있는지 확인
         console.log("🚨 [디버깅] 추출된 계좌번호(actno):", userData.actno);
         console.log("🚨 [디버깅] 추출된 은행코드(bank_cd):", userData.bank_cd);
 
@@ -182,14 +213,24 @@ const AuthScreen = () => {
   const handleRetry = () => { 
     window.speechSynthesis.cancel();
     setAuthState('idle'); setQrInput(''); setAuthenticatedUser(null); 
-    setShowAccountModal(false); setShowKeypad(false); 
+    setShowAccountModal(false); setShowKeypad(''); 
     setBankCd(''); setActno(''); setAcctNm(''); 
     localStorage.clear(); 
   };
   const handleAlternate = () => navigate('/auth/alternate-auth');
 
+  // ★ 자동 이동이 적용된 계좌 인증 함수
   const handleVerifyAccount = async () => {
-    if (!bankCd || !actno || !acctNm) { alert("모든 항목을 입력해주세요."); return; }
+    if (!bankCd || !actno || !acctNm) {
+      setKioskAlert({
+        show: true,
+        message: '은행, 예금주명, 계좌번호를\n모두 입력해주세요.',
+        type: 'error',
+        onConfirm: () => setKioskAlert({ show: false, message: '', type: 'success', onConfirm: null })
+      });
+      return;
+    }
+    
     setIsAccountLoading(true);
     try {
       const res = await axios.post('http://localhost:8080/api/v1/proxy/account/verify', {
@@ -201,14 +242,39 @@ const AuthScreen = () => {
         localStorage.setItem('actno', res.data.data.actno || actno);
         localStorage.setItem('acct_nm', res.data.data.acct_nm || acctNm);
         
-        alert("계좌 정보가 확인되었습니다.");
-        setShowAccountModal(false);
-        navigate('/select-gear'); 
+        // ★ 성공 알림 띄우기 (버튼 없음)
+        setKioskAlert({
+          show: true,
+          message: '계좌 정보가\n성공적으로 확인되었습니다.\n잠시 후 다음 화면으로 이동합니다.',
+          type: 'success',
+          onConfirm: null
+        });
+
+        // ★ 2.5초(2500ms) 뒤에 자동으로 모달 닫고 다음 화면으로 이동
+        setTimeout(() => {
+          setKioskAlert({ show: false, message: '', type: 'success', onConfirm: null });
+          setShowAccountModal(false);
+          navigate('/select-gear'); 
+        }, 2500);
+
       } else {
-        alert("계좌 인증에 실패했습니다. 정보를 확인해주세요.");
+        setKioskAlert({
+          show: true,
+          message: '계좌 인증에 실패했습니다.\n정보를 다시 확인해주세요.',
+          type: 'error',
+          onConfirm: () => setKioskAlert({ show: false, message: '', type: 'error', onConfirm: null })
+        });
       }
-    } catch (err) { alert("서버 오류로 계좌 인증에 실패했습니다."); } 
-    finally { setIsAccountLoading(false); }
+    } catch (err) { 
+      setKioskAlert({
+        show: true,
+        message: '서버 통신 오류로\n계좌 인증에 실패했습니다.',
+        type: 'error',
+        onConfirm: () => setKioskAlert({ show: false, message: '', type: 'error', onConfirm: null })
+      });
+    } finally { 
+      setIsAccountLoading(false); 
+    }
   };
 
   const handleKeypadClick = (val) => {
@@ -218,22 +284,22 @@ const AuthScreen = () => {
   };
 
   const renderKeypad = () => {
-    const keys = [1, 2, 3, 4, 5, 6, 7, 8, 9, 'CLEAR', 0, 'DEL'];
+    const keys = [1, 2, 3, 4, 5, 6, 7, 8, 9, '초기화', 0, '지우기'];
     return (
-      <div style={{ marginTop: '10px', padding: '15px', background: '#f1f3f5', borderRadius: '10px' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
+      <div className="account-keypad-container">
+        <div className="account-keypad-grid">
           {keys.map((key) => (
-            <button key={key} type="button" onClick={() => handleKeypadClick(key)}
-              style={{
-                padding: '15px', fontSize: '1.5rem', fontWeight: 'bold', cursor: 'pointer', color: '#333',
-                backgroundColor: key === 'DEL' || key === 'CLEAR' ? '#dee2e6' : '#fff',
-                border: '1px solid #ced4da', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
-              }}>
-              {key === 'DEL' ? '지우기' : key === 'CLEAR' ? '초기화' : key}
+            <button 
+              key={key} 
+              type="button" 
+              className={`account-keypad-btn ${typeof key === 'string' ? 'hangul-action-btn' : ''}`}
+              onClick={() => handleKeypadClick(key === '초기화' ? 'CLEAR' : key === '지우기' ? 'DEL' : key)}
+            >
+              {key}
             </button>
           ))}
         </div>
-        <button onClick={() => setShowKeypad(false)} style={{ width: '100%', marginTop: '10px', padding: '12px', backgroundColor: '#495057', color: 'white', border: 'none', borderRadius: '8px', fontSize: '1.2rem' }}>
+        <button className="account-keypad-close" onClick={() => setShowKeypad('')}>
           키패드 닫기
         </button>
       </div>
@@ -282,52 +348,143 @@ const AuthScreen = () => {
       {authState === 'loading' && <LoadingOverlay />}
       {authState === 'failed' && <AuthFailPopup onRetry={handleRetry} onAlternate={handleAlternate} t={t} />}
 
-      {/* ★ 통합된 계좌 확인 모달 (수정 가능 폼) */}
+      {/* ★ 초대형 통합 계좌 확인 모달 (hangul-js 적용) */}
       {showAccountModal && (
         <div className="auth-overlay">
-          <div className="fail-popup-content" style={{ width: '600px', maxWidth: showKeypad ? '95%' : '90%', padding: '40px', background: '#fff', borderRadius: '15px', transition: 'max-width 0.3s' }}>
+          <div className="account-modal-content" onClick={(e) => e.stopPropagation()}>
             
-            <h2 style={{ textAlign: 'center', marginBottom: '30px', fontSize: '1.8rem', color: '#333' }}>
-              환급받을 계좌를 확인해 주세요.<br/><span style={{fontSize: '1.2rem', color: '#007BFF'}}>(다른 계좌로 수정 가능합니다)</span>
-            </h2>
-            
-            <div style={{ textAlign: 'left' }}>
-              <div style={{ marginBottom: '15px' }}>
-                <label style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>은행: (필수)</label>
-                <select value={bankCd} onChange={(e) => setBankCd(e.target.value)} style={{ width: '100%', padding: '15px', marginTop: '10px', fontSize: '1.2rem', border: '1px solid #ccc', borderRadius: '5px' }}>
-                  <option value="">은행 선택</option>
-                  {banks.map(b => <option key={b.bank_cd} value={b.bank_cd}>{b.bank_nm}</option>)}
-                </select>
-              </div>
-
-              <div style={{ marginBottom: '15px' }}>
-                <label style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>예금주명: (필수)</label>
-                <input type="text" value={acctNm} onChange={(e) => setAcctNm(e.target.value)} placeholder="홍길동" style={{ width: '100%', padding: '15px', marginTop: '10px', fontSize: '1.2rem', border: '1px solid #ccc', borderRadius: '5px' }} />
-              </div>
-
-              <div style={{ marginBottom: '20px' }}>
-                <label style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>계좌번호: (터치하여 수정 가능)</label>
-                <input 
-                  type="text" 
-                  readOnly 
-                  value={actno} 
-                  onClick={() => setShowKeypad(true)} 
-                  placeholder="터치하여 계좌번호 입력" 
-                  style={{ width: '100%', padding: '15px', marginTop: '10px', fontSize: '1.3rem', border: '2px solid #007BFF', borderRadius: '5px', cursor: 'pointer', backgroundColor: '#f8f9fa' }} 
-                />
-              </div>
-
-              {showKeypad && renderKeypad()}
-
-              <div style={{ display: 'flex', gap: '15px', marginTop: '20px' }}>
-                <button onClick={handleVerifyAccount} disabled={isAccountLoading} style={{ flex: 2, padding: '20px', backgroundColor: '#000', color: '#fff', fontSize: '1.5rem', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>
-                  {isAccountLoading ? '확인 중...' : '이 계좌로 진행'}
-                </button>
-                <button onClick={handleRetry} style={{ flex: 1, padding: '20px', backgroundColor: '#6c757d', color: '#fff', fontSize: '1.5rem', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>
-                  처음으로
-                </button>
-              </div>
+            <div className="account-header">
+              <h2 className="account-title">환급받을 계좌를 확인해 주세요</h2>
+              <p className="account-subtitle">(항목을 터치하여 수정할 수 있습니다)</p>
             </div>
+            
+            {/* 1. 은행 선택 영역 */}
+            <div className="account-form-group">
+              <label className="account-label">은행 (필수)</label>
+              <div 
+                className={`account-input-box ${showKeypad === 'bank' ? 'highlight' : ''}`}
+                onClick={() => setShowKeypad('bank')}
+              >
+                {bankCd ? banks.find(b => b.bank_cd === bankCd)?.bank_nm || '은행 선택됨' : '터치하여 은행 선택'}
+              </div>
+              
+              {showKeypad === 'bank' && (
+                <div className="bank-grid-container">
+                  {banks.map(b => (
+                    <button 
+                      key={b.bank_cd} 
+                      className="bank-btn"
+                      onClick={() => { setBankCd(b.bank_cd); setShowKeypad(''); }}
+                    >
+                      {b.bank_nm}
+                    </button>
+                  ))}
+                  <button className="bank-btn" onClick={() => setShowKeypad('')} style={{background:'#555', color:'#fff'}}>닫기</button>
+                </div>
+              )}
+            </div>
+
+            {/* 2. 예금주명 입력 영역 (한글 가상 키보드) */}
+            <div className="account-form-group">
+              <label className="account-label">예금주명 (필수)</label>
+              <div 
+                className={`account-input-box ${showKeypad === 'text' ? 'highlight' : ''}`}
+                onClick={openTextKeypad}
+              >
+                {acctNm || '터치하여 이름 입력'}
+              </div>
+
+              {showKeypad === 'text' && (
+                <div className="account-keypad-container">
+                  <div className="hangul-keypad-grid">
+                    {/* 자음 14개, 모음 11개, 기능키 3개 = 총 28개 버튼 (7x4 그리드) */}
+                    {['ㄱ','ㄴ','ㄷ','ㄹ','ㅁ','ㅂ','ㅅ',
+                      'ㅇ','ㅈ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ',
+                      'ㅏ','ㅑ','ㅓ','ㅕ','ㅗ','ㅛ','ㅜ',
+                      'ㅠ','ㅡ','ㅣ','ㅐ','ㅔ','지우기','초기화'].map((char) => (
+                      <button 
+                        key={char} 
+                        className={`hangul-btn ${char.length > 1 ? 'hangul-action-btn' : ''}`}
+                        onClick={() => handleHangulClick(char)}
+                      >
+                        {char}
+                      </button>
+                    ))}
+                  </div>
+                  <button className="account-keypad-close" onClick={() => setShowKeypad('')}>
+                    키패드 닫기
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* 3. 계좌번호 입력 영역 */}
+            <div className="account-form-group">
+              <label className="account-label">계좌번호 (터치하여 수정)</label>
+              <div 
+                className={`account-input-box ${showKeypad === 'number' ? 'highlight' : ''}`}
+                onClick={() => setShowKeypad('number')}
+              >
+                {actno || '터치하여 계좌번호 입력'}
+              </div>
+
+              {showKeypad === 'number' && renderKeypad()}
+            </div>
+
+            {/* 하단 확인/취소 버튼 */}
+            <div className="account-action-group">
+              <button className="account-btn account-btn-confirm" onClick={handleVerifyAccount} disabled={isAccountLoading}>
+                {isAccountLoading ? '확인 중...' : '이 계좌로 진행'}
+              </button>
+              <button className="account-btn account-btn-cancel" onClick={handleRetry}>
+                처음으로
+              </button>
+            </div>
+            
+          </div>
+        </div>
+      )}
+
+     {/* ★ 키오스크 전용 커스텀 알림창 (자동 이동 적용) */}
+      {kioskAlert.show && (
+        <div className="auth-overlay" style={{ zIndex: 99999 }}>
+          <div className="account-modal-content" style={{ maxWidth: '550px', padding: '0', overflow: 'hidden' }}>
+            
+            {/* 상단 헤더 */}
+            <div 
+              className="fail-popup-header" 
+              style={{ backgroundColor: kioskAlert.type === 'success' ? '#009CDA' : '#FF4B4B', padding: '25px' }}
+            >
+              <h2 className="fail-popup-title" style={{ color: 'white', margin: 0, fontSize: '3rem', fontWeight: '900' }}>
+                {kioskAlert.type === 'success' ? '인증 완료' : '확인 필요'}
+              </h2>
+            </div>
+
+            {/* 본문 내용 */}
+            <div className="fail-popup-body" style={{ padding: '40px 30px' }}>
+              <p className="fail-popup-message" style={{ fontSize: '2.6rem', marginBottom: kioskAlert.type === 'error' ? '40px' : '0', lineHeight: '1.5', textAlign: 'center', color: '#333', fontWeight: '800' }}>
+                {kioskAlert.message.split('\n').map((line, index) => (
+                  <React.Fragment key={index}>
+                    {line}
+                    <br />
+                  </React.Fragment>
+                ))}
+              </p>
+              
+              {/* 확인 버튼 (에러가 났을 때만 보여줌) */}
+              {kioskAlert.type === 'error' && (
+                <div className="fail-popup-actions" style={{ display: 'flex', justifyContent: 'center' }}>
+                  <button 
+                    className="account-btn account-btn-confirm" 
+                    onClick={kioskAlert.onConfirm}
+                    style={{ backgroundColor: '#495057', flex: 'none', width: '200px', height: '80px' }}
+                  >
+                    확인
+                  </button>
+                </div>
+              )}
+            </div>
+
           </div>
         </div>
       )}

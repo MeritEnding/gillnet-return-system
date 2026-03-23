@@ -37,7 +37,7 @@ const LoadingOverlay = ({ text }) => {
 
 const SafetyWarningIcon = () => (
   <svg width="120" height="120" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" stroke="#DC3545" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" stroke="#DC3545" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 
@@ -196,7 +196,7 @@ const DepositScreen = () => {
       window.speechSynthesis.speak(utterance);
     }
   };
- 
+
   // 1. [추가] 컴포넌트 내부(또는 바깥)에 포맷 변환 함수 추가
   const formatPhone = (phone) => {
     if (!phone) return "010-0000-0000"; // 데이터가 없을 때 백엔드 에러 방지용
@@ -250,6 +250,7 @@ const DepositScreen = () => {
     const existingGears = scannedGears.filter(g => g.gvbk_type.includes('기존'));
 
     let remgMngNo = '';
+    let finalRemgMngNo = '';
     let romgMngNo = '';
     const successfulReturns = [];
     let calcDeposit = 0;
@@ -273,6 +274,7 @@ const DepositScreen = () => {
         }
 
         remgMngNo = startRes.data?.data?.gvbk_mng_no;
+        finalRemgMngNo = remgMngNo; // 기본값 세팅
 
         if (remgMngNo) {
           for (const gear of depositGears) {
@@ -285,6 +287,10 @@ const DepositScreen = () => {
               const realAmount = Number(retRes.data.data?.gvbk_amt) || 0;
               successfulReturns.push({ code: gear.bacod_nm, type: '보증금어구', reward: realAmount, point: 0 });
               calcDeposit += realAmount;
+
+              if (retRes.data?.data?.gvbk_mng_no) {
+                finalRemgMngNo = retRes.data.data.gvbk_mng_no;
+              }
             } else {
               throw new Error(`[등록 거부] ${retRes.data?.message}`);
             }
@@ -334,6 +340,7 @@ const DepositScreen = () => {
       setTotalDeposit(calcDeposit);
       setTotalPoint(calcPoint);
       setViewState('CONFIRMING');
+      setReturnMngNos({ remg: finalRemgMngNo, romg: romgMngNo });
 
     } catch (err) {
       console.error("API 처리 에러 상세:", err);
@@ -358,7 +365,7 @@ const DepositScreen = () => {
       setIsDoorClosed(true);
       showMessage("투입구가 닫혔습니다. 확인 완료를 눌러주세요.");
     } catch (e) {
-      setIsDoorClosed(true); 
+      setIsDoorClosed(true);
       showMessage("테스트: 투입구 닫힘 처리 완료", true);
     } finally {
       setIsLoading(false);
@@ -369,27 +376,60 @@ const DepositScreen = () => {
 
   const handleFinalConfirm = async () => {
     setIsLoading(true);
-    setLoadingText("사진 데이터를 서버로 전송 중입니다...");
+    setLoadingText("데이터를 서버로 전송 중입니다...");
 
     try {
       if (capturedImages.length > 0) {
+        // ==========================================
+        // 1. 보증금 어구 (REMG) 처리
+        // ==========================================
         if (returnMngNos.remg) {
-          const formRemg = new FormData();
-          formRemg.append('gvbk_mng_no', returnMngNos.remg);
-          capturedImages.forEach(file => formRemg.append('files', file));
-          await axios.post(`${PROXY_API_URL}/deposit/image/remg`, formRemg, { headers: { 'Content-Type': 'multipart/form-data' } });
-          await axios.post(`${PROXY_API_URL}/deposit/return/remg/sms`, { gvbk_mng_no: returnMngNos.remg });
+          console.log("🚨 [문자 전송 전 확인] 날아가는 ID:", returnMngNos.remg);
+
+          // [사진 전송 블록] - 실패해도 아래로 넘어감
+          try {
+            const formRemg = new FormData();
+            formRemg.append('gvbk_mng_no', returnMngNos.remg);
+            capturedImages.forEach(file => formRemg.append('files', file));
+            await axios.post(`${PROXY_API_URL}/deposit/image/remg.json`, formRemg, { headers: { 'Content-Type': 'multipart/form-data' } });
+          } catch (imgError) {
+            console.warn("⚠️ 보증금어구 사진 전송 실패 (무시하고 문자 전송 진행):", imgError.message);
+          }
+
+          // [문자 전송 블록] - 사진이 실패해도 무조건 실행됨!
+          try {
+            await axios.post(`${PROXY_API_URL}/deposit/return/remg/sms.json`, { gvbk_mng_no: returnMngNos.remg });
+            console.log("✅ 보증금어구 문자 발송 성공!");
+          } catch (smsError) {
+            console.error("❌ 보증금어구 문자 발송 실패:", smsError.response?.data || smsError.message);
+          }
         }
+
+        // ==========================================
+        // 2. 기존 어구 (ROMG) 처리
+        // ==========================================
         if (returnMngNos.romg) {
-          const formRomg = new FormData();
-          formRomg.append('bfr_fsgr_gvbk_no', returnMngNos.romg);
-          capturedImages.forEach(file => formRomg.append('files', file));
-          await axios.post(`${PROXY_API_URL}/deposit/image/romg`, formRomg, { headers: { 'Content-Type': 'multipart/form-data' } });
-          await axios.post(`${PROXY_API_URL}/deposit/return/romg/sms`, { bfr_fsgr_gvbk_no: returnMngNos.romg });
+          // [사진 전송 블록]
+          try {
+            const formRomg = new FormData();
+            formRomg.append('bfr_fsgr_gvbk_no', returnMngNos.romg);
+            capturedImages.forEach(file => formRomg.append('files', file));
+            await axios.post(`${PROXY_API_URL}/deposit/image/romg.json`, formRomg, { headers: { 'Content-Type': 'multipart/form-data' } });
+          } catch (imgError) {
+            console.warn("⚠️ 기존어구 사진 전송 실패 (무시하고 문자 전송 진행):", imgError.message);
+          }
+
+          // [문자 전송 블록]
+          try {
+            await axios.post(`${PROXY_API_URL}/deposit/return/romg/sms.json`, { bfr_fsgr_gvbk_no: returnMngNos.romg });
+            console.log("✅ 기존어구 문자 발송 성공!");
+          } catch (smsError) {
+            console.error("❌ 기존어구 문자 발송 실패:", smsError.response?.data || smsError.message);
+          }
         }
       }
     } catch (error) {
-      console.error("사진/문자 전송 오류(무시하고 진행):", error);
+      console.error("전체 처리 중 알 수 없는 에러:", error);
     } finally {
       setIsLoading(false);
       navigate('/completion', {
@@ -545,7 +585,7 @@ const DepositScreen = () => {
             <SafetyWarningIcon />
             <h1 className="safety-warning-title">위험! 투입구 작동 중</h1>
             <p className="safety-warning-text">
-              안전을 위해 한 걸음<br/>
+              안전을 위해 한 걸음<br />
               뒤로 <strong>물러서 주세요!</strong>
             </p>
           </div>
