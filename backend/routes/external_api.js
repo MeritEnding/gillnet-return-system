@@ -5,7 +5,8 @@ const router = express.Router();
 const axios = require('axios');
 
 // 외부 API의 기본 URL
-const EXTERNAL_API_URL = 'http://221.143.131:8080/api/v1';
+// const EXTERNAL_API_URL = 'http://221.143.131:8080/api/v1';
+const EXTERNAL_API_URL = 'https://fdp.or.kr/api/v1';
 
 /**
  * 1. 서버 시스템 상태
@@ -70,22 +71,24 @@ router.post('/deposit/return.json', async (req, res) => {
     }
 });
 
-// external_api.js에 문자 발송 함수 추가
 router.post('/send-sms', async (req, res) => {
     const { return_no, isDeposit } = req.body;
-    // 보증금어구인지 기존어구인지에 따라 엔드포인트 분기
     const endpoint = isDeposit ? '/deposit/return/remg/sms.json' : '/deposit/return/romg/sms.json';
+    const payload = isDeposit ? { gvbk_mng_no: return_no } : { bfr_fsgr_gvbk_no: return_no };
+    
+    // ★★★ 이 부분을 꼭 확인해보세요! ★★★
+    console.log("👉 [문자 발송 요청 API 주소]:", `${EXTERNAL_API_URL}${endpoint}`);
+    console.log("👉 [문자 발송 요청 데이터]:", payload); 
     
     try {
-        const payload = isDeposit ? { gvbk_mng_no: return_no } : { bfr_fsgr_gvbk_no: return_no };
         const response = await axios.post(`${EXTERNAL_API_URL}${endpoint}`, payload);
         res.status(200).json(response.data);
     } catch (error) {
-        console.error('SMS 발송 실패:', error.message);
-        res.status(500).json({ message: 'SMS failed' });
+        // 에러 상세 내용 파악하기
+        console.error('❌ SMS 발송 실패 에러 응답:', error.response?.data);
+        res.status(500).json({ message: 'SMS failed', error: error.response?.data });
     }
 });
-
 
 
 module.exports = router;

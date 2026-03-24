@@ -119,8 +119,6 @@ router.post('/scan', verifySessionToken, async (req, res) => {
     const isDepositGear = item.reward > 0; // 보증금어구 여부 (DB 구조에 맞게 수정 필요, 예: item.type === '보증금어구')
 
     // 비회원이거나, 내 어구가 아닌 경우의 처리
-    // [POST] /scan 라우터 내부의 3번 로직(소유권 확인)을 다음과 같이 수정하세요.
-    // 비회원이거나, 내 어구가 아닌 경우의 처리
     if (item.current_fisherman_id !== fishermanId) {
       if (!isDepositGear) {
         // 기존 어구는 반드시 본인(회원)만 반납 가능
@@ -135,7 +133,6 @@ router.post('/scan', verifySessionToken, async (req, res) => {
         console.log(`-> 타인/비회원 보증금 어구 스캔 허용 (Gear: ${item.code})`);
       }
     }
-
     // 4. 중복 스캔 확인 (수정 없음)
     const sqlCheckDuplicate = "SELECT * FROM scanned_items WHERE return_session_id = ? AND gear_item_code = ?";
     const duplicate = await new Promise((resolve, reject) => {

@@ -10,7 +10,9 @@ const jwt = require('jsonwebtoken');
 const router = express.Router();
 const upload = multer({ dest: 'uploads/' });
 // 개발 URL [cite: 13]
-const EXTERNAL_API_URL = 'http://221.143.43.131:8080/api/v1'; 
+//const EXTERNAL_API_URL = 'http://221.143.43.131:8080/api/v1'; 
+
+const EXTERNAL_API_URL = 'https://fdp.or.kr/api/v1';
 const JWT_SECRET = process.env.JWT_SECRET || 'secret_key';
 
 // --- 공통 에러 핸들러 ---
