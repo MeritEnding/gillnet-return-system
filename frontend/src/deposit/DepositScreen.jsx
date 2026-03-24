@@ -447,6 +447,15 @@ const DepositScreen = () => {
           }
         }
       }
+
+      // 사진 전송 완료 후 기기 내부 클리닝 시퀀스 작동
+      if (!isTestMode) {
+        setLoadingText("기기 내부를 정리하고 있습니다...");
+        await axios.post(`${LOCAL_API_URL}/api/deposit/action/cleaning`);
+        
+        await new Promise(res => setTimeout(res, 2500));
+      }
+
     } catch (error) {
       console.error("전체 처리 중 알 수 없는 에러:", error);
     } finally {
