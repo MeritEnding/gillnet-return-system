@@ -2,10 +2,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useTranslation } from 'react-i18next'; // ★ 다국어 훅 추가
 import './LoginModal.css';
 import AccountInputModal from './AccountInputModal';
 
 const LoginModal = ({ onClose }) => {
+  const { t } = useTranslation(); // ★ 번역 함수 선언
   const navigate = useNavigate();
   const [userId, setUserId] = useState('');
   const [password, setPassword] = useState('');
@@ -16,10 +18,11 @@ const LoginModal = ({ onClose }) => {
   const [isShift, setIsShift] = useState(false);
   const [showAccountModal, setShowAccountModal] = useState(false);
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+
   const handleLoginSubmit = async (e) => {
     if (e) e.preventDefault();
     if (!userId || !password) {
-      alert("아이디와 비밀번호를 모두 입력해주세요.");
+      alert(t('login_alert_empty') || "아이디와 비밀번호를 모두 입력해주세요.");
       return;
     }
     setIsLoading(true);
@@ -30,7 +33,7 @@ const LoginModal = ({ onClose }) => {
 
       if (response.data.status === "200" || response.data.message.includes("성공")) {
         const userData = response.data.data;
-        // 기본 정보 저장 [cite: 55, 61, 65]
+        // 기본 정보 저장
         localStorage.setItem('mbr_no', userData.mbr_no);
         localStorage.setItem('fisherman_id', userData.user_fshnd_no);
         localStorage.setItem('fisherman_name', userData.mbr_nm);
@@ -39,7 +42,7 @@ const LoginModal = ({ onClose }) => {
         // ★ 계좌 정보가 있다면 하나도 빠짐없이 저장합니다 
         if (userData.actno) {
           localStorage.setItem('bank_cd', userData.bank_cd || '');
-          localStorage.setItem('bank_nm', userData.bank_nm || ''); // 은행 이름도 저장
+          localStorage.setItem('bank_nm', userData.bank_nm || '');
           localStorage.setItem('actno', userData.actno);
           localStorage.setItem('acct_nm', userData.dpstr_nm || userData.mbr_nm || '');
         }
@@ -51,10 +54,10 @@ const LoginModal = ({ onClose }) => {
           setShowAccountModal(true);
         }, 2000);
       } else {
-        alert("아이디 또는 비밀번호가 일치하지 않습니다.");
+        alert(t('login_alert_fail') || "아이디 또는 비밀번호가 일치하지 않습니다.");
       }
     } catch (error) {
-      alert("로그인 처리 중 오류가 발생했습니다.");
+      alert(t('login_alert_error') || "로그인 처리 중 오류가 발생했습니다.");
     } finally {
       setIsLoading(false);
     }
@@ -88,7 +91,6 @@ const LoginModal = ({ onClose }) => {
       ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
       ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'],
       ['SHIFT', 'z', 'x', 'c', 'v', 'b', 'n', 'm', 'DEL'],
-      // ★ 언더바(_) 기호 추가
       ['!', '@', '#', '_', '.', '/', '&', '*', 'SPACE', 'CLEAR']
     ];
 
@@ -115,10 +117,10 @@ const LoginModal = ({ onClose }) => {
                 displayKey = 'Shift';
               } else if (key === 'DEL') {
                 keyClass += ' special wide';
-                displayKey = '삭제';
+                displayKey = t('login_keyboard_delete') || '삭제';
               } else if (key === 'CLEAR') {
                 keyClass += ' special wide';
-                displayKey = '전체삭제';
+                displayKey = t('login_keyboard_clear') || '전체삭제';
               } else if (key === 'SPACE') {
                 keyClass += ' space';
                 displayKey = 'SPACE';
@@ -137,7 +139,9 @@ const LoginModal = ({ onClose }) => {
             })}
           </div>
         ))}
-        <button type="button" className="vkb-close-btn" onClick={() => setActiveField(null)}>자판 닫기</button>
+        <button type="button" className="vkb-close-btn" onClick={() => setActiveField(null)}>
+          {t('login_keyboard_close') || '자판 닫기'}
+        </button>
       </div>
     );
   };
@@ -147,25 +151,27 @@ const LoginModal = ({ onClose }) => {
   return (
     <div className="login-modal-backdrop" onClick={onClose}>
       <div className="login-modal-content" onClick={(e) => e.stopPropagation()}>
-        <h2 className="login-modal-title">어업인 로그인</h2>
+        <h2 className="login-modal-title">{t('login_title') || '어업인 로그인'}</h2>
 
         <form onSubmit={handleLoginSubmit}>
           <div className="login-input-row">
             <div className={`login-input-group ${activeField === 'userId' ? 'focused' : ''}`}>
-              <label>아이디</label>
+              <label>{t('login_id_label') || '아이디'}</label>
               <input
                 type="text" readOnly value={userId}
                 onClick={() => setActiveField('userId')}
-                className="login-input" placeholder="아이디를 입력하세요"
+                className="login-input" 
+                placeholder={t('login_id_placeholder') || '아이디를 입력하세요'}
               />
             </div>
 
             <div className={`login-input-group ${activeField === 'password' ? 'focused' : ''}`}>
-              <label>비밀번호</label>
+              <label>{t('login_pw_label') || '비밀번호'}</label>
               <input
                 type="password" readOnly value={password}
                 onClick={() => setActiveField('password')}
-                className="login-input" placeholder="비밀번호를 입력하세요"
+                className="login-input" 
+                placeholder={t('login_pw_placeholder') || '비밀번호를 입력하세요'}
               />
             </div>
           </div>
@@ -174,22 +180,21 @@ const LoginModal = ({ onClose }) => {
 
           <div className="login-actions">
             <button type="submit" disabled={isLoading} className="login-btn-submit">
-              로그인
+              {t('login_btn_submit') || '로그인'}
             </button>
             <button type="button" onClick={onClose} className="login-btn-cancel">
-              취소
+              {t('login_btn_cancel') || '취소'}
             </button>
           </div>
         </form>
       </div>
 
-      {/* ★ 로그인 성공 커스텀 알림창 (로그인창과 레이아웃 통일) ★ */}
+      {/* ★ 로그인 성공 커스텀 알림창 ★ */}
       {showSuccessAlert && (
         <div className="alert-overlay">
-          {/* 로그인창과 비슷한 크기(max-width)를 가지도록 설정 */}
           <div className="alert-content success-box-v2">
             <div className="alert-header-success-v2">
-              로그인 성공
+              {t('login_success_title') || '로그인 성공'}
             </div>
             <div className="alert-body-v2">
               <div className="success-icon-circle">
@@ -198,13 +203,15 @@ const LoginModal = ({ onClose }) => {
                 </svg>
               </div>
               <p className="alert-msg-v2">
-                <strong>{localStorage.getItem('fisherman_name')}</strong>님<br />
-                반갑습니다!
+                {/* 언어별 어순 처리를 위해 인사말을 두 파트로 나누었습니다 */}
+                <span className="greeting-text-top">{t('login_success_greeting_1')}</span>
+                <br />
+                <strong>{localStorage.getItem('fisherman_name')}</strong>{t('login_success_greeting_2')}
               </p>
               <div className="loading-bar-container">
                 <div className="loading-bar-fill"></div>
               </div>
-              <p className="auto-move-text">잠시 후 계좌 확인 화면으로 이동합니다...</p>
+              <p className="auto-move-text">{t('login_success_auto_move') || '잠시 후 계좌 확인 화면으로 이동합니다...'}</p>
             </div>
           </div>
         </div>

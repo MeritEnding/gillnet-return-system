@@ -1,8 +1,6 @@
+/* src/certificationPage/GearTypeSelectScreen.css */
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
 
-/* ========================================= */
-/* 화면 짤림 완벽 해결! (위로 땡기고 가로로 넓힌 버전) */
-/* ========================================= */
 .gear-wrapper {
   font-family: 'Pretendard', sans-serif;
   min-height: 100vh;
@@ -15,31 +13,7 @@
   overflow-y: auto;
 }
 
-/* --- 상단 뒤로가기 버튼 --- */
-.gear-back-btn {
-  position: absolute;
-  top: 25px; /* 조금 더 위로 바짝 붙임 */
-  left: 30px;
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  background-color: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(5px);
-  border: 4px solid rgba(255, 255, 255, 0.5);
-  border-radius: 50px;
-  padding: 15px 35px; /* 버튼 살짝 다이어트 */
-  color: white;
-  font-size: 2.2rem;
-  font-weight: 800;
-  cursor: pointer;
-  box-shadow: 0 6px 10px rgba(0,0,0,0.2);
-  transition: all 0.2s ease;
-  z-index: 10;
-}
-.gear-back-btn:active {
-  background-color: rgba(0, 0, 0, 0.8);
-  transform: scale(0.96);
-}
+/* ★ 상단 뒤로가기 버튼(`.gear-back-btn`) 관련 스타일은 제거합니다. */
 
 /* --- 메인 콘텐츠 영역 --- */
 .gear-content-area {
@@ -48,7 +22,6 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  /* ★ 상단 여백 100px -> 60px 로 대폭 줄여서 전체를 위로 땡겨 올림! */
   padding: 60px 20px 30px 20px; 
 }
 
@@ -58,7 +31,7 @@
   font-weight: 900;
   color: white;
   text-shadow: 2px 2px 15px rgba(0,0,0,0.7);
-  margin: 0 0 10px 0; /* 하단 여백 축소 */
+  margin: 0 0 10px 0;
   letter-spacing: -2px;
   text-align: center;
 }
@@ -67,7 +40,7 @@
   font-weight: 700;
   color: #EAF8FF;
   text-shadow: 1px 1px 8px rgba(0,0,0,0.7);
-  margin: 0 0 25px 0; /* ★ 45px -> 25px로 줄여서 카드 박스를 위로 더 당김 */
+  margin: 0 0 25px 0;
   text-align: center;
 }
 
@@ -77,19 +50,19 @@
   border: 10px solid #00A0E9;
   border-radius: 45px;
   width: 96%;
-  max-width: 1150px; /* ★ 가로 폭 1050px -> 1150px 로 더 넓고 시원하게! */
-  padding: 40px 50px; /* ★ 내부 상하 여백 60px -> 40px 로 줄여서 공간 절약 */
+  max-width: 1150px;
+  padding: 40px 50px;
   box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
 }
 
 /* --- 섹션별 타이틀 --- */
-.gear-section { margin-bottom: 35px; } /* ★ 구역 사이 여백 50px -> 35px로 축소 */
+.gear-section { margin-bottom: 25px; } /* ★ 구역 사이 여백 축소 */
 .gear-section:last-child { margin-bottom: 0; }
 
 .gear-section-title {
   font-size: 3rem;
   font-weight: 900;
-  margin: 0 0 15px 0; /* ★ 여백 축소 */
+  margin: 0 0 10px 0; /* ★ 여백 축소 */
   padding-bottom: 10px;
   border-bottom: 5px solid #eee;
 }
@@ -106,12 +79,14 @@
   grid-template-columns: 1fr;
 }
 
-/* ★ 버튼 사이즈 살짝 최적화 (짜리몽땅하지 않게 비율 조절) */
+/* ★ 버튼 사이즈 최적화 및 유연한 레이아웃 적용 (다국어 줄바꿈 대응) */
 .gear-btn {
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 300px; /* ★ 330px -> 300px로 줄여서 하단 잘림 완벽 방지 */
+  /* ★ 고정 높이 제거, 최소 높이 설정, 자동 높이 변경으로 줄바꿈 허용 */
+  min-height: 280px; 
+  height: auto;
   background-color: white;
   border-radius: 25px;
   cursor: pointer;
@@ -123,7 +98,7 @@
 /* 사진 영역 */
 .gear-btn-img {
   width: 100%;
-  height: 200px; /* 비율에 맞게 조정 */
+  height: 180px; /* ★ 높이 최적화 */
   padding: 10px;
   object-fit: contain;
   background-color: #fff;
@@ -136,10 +111,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2.6rem;
+  /* ★ 폰트 크기 축소 (2.6rem -> 2.2rem) 및 단어 단위 줄바꿈 해제 */
+  font-size: 2.2rem; 
   font-weight: 900;
   text-align: center;
   line-height: 1.2;
+  word-break: normal; /* ★ 영어 단어 줄바꿈을 위해 'keep-all'을 해제 */
+  padding: 5px; /* ★ 내부 여백 추가 */
 }
 
 /* --- 테마 색상 --- */

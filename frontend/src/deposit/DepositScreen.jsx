@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next'; // ★ 다국어 훅 적용
 import axios from 'axios';
 
 import './DepositScreen.css';
@@ -29,7 +29,7 @@ const LoadingOverlay = ({ text }) => {
     <div className="deposit-overlay">
       <div className="loading-column">
         <img src={LoadingSpinner} alt="loading" className="deposit-spinner large" />
-        <p className="loading-text">{text || t('deposit_loading_default')}</p>
+        <p className="loading-text">{text || t('deposit_loading_default') || "처리 중입니다..."}</p>
       </div>
     </div>
   );
@@ -44,7 +44,7 @@ const SafetyWarningIcon = () => (
 const DepositScreen = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { t } = useTranslation();
+  const { t } = useTranslation(); // ★ 번역 함수 선언
 
   const [isLoading, setIsLoading] = useState(false);
   const [loadingText, setLoadingText] = useState('');
@@ -113,9 +113,9 @@ const DepositScreen = () => {
     setStatusMessage('');
 
     try {
-      setLoadingText("카메라 촬영 중입니다...");
+      setLoadingText(t('deposit_msg_capture_loading') || "카메라 촬영 중입니다...");
       const captureRes = await axios.post(`${LOCAL_API_URL}/api/camera/devices/0/capture`);
-      if (!captureRes.data.success) throw new Error("로컬 카메라 촬영에 실패했습니다.");
+      if (!captureRes.data.success) throw new Error(t('deposit_msg_capture_fail') || "로컬 카메라 촬영에 실패했습니다.");
 
       const localImageUrl = `${LOCAL_API_URL}${captureRes.data.imageUrl}`;
       const imageBlob = await urlToBlob(localImageUrl);
@@ -123,10 +123,10 @@ const DepositScreen = () => {
 
       setCapturedImages(prev => [...prev, imageFile]);
       setDepositSubState('WAITING_CLOSE');
-      showMessage("어구가 확인되었습니다. [투입구 닫기] 버튼을 눌러주세요.");
+      showMessage(t('deposit_msg_capture_success') || "어구가 확인되었습니다. [투입구 닫기] 버튼을 눌러주세요.");
 
     } catch (error) {
-      showMessage(`카메라 연결 오류. [건너뛰기] 버튼을 사용해주세요.`, true);
+      showMessage(t('deposit_msg_cam_error') || `카메라 연결 오류. [건너뛰기] 버튼을 사용해주세요.`, true);
     } finally {
       setIsLoading(false);
     }
@@ -142,7 +142,7 @@ const DepositScreen = () => {
 
     setCapturedImages(prev => [...prev, dummyFile]);
     setDepositSubState('WAITING_CLOSE');
-    showMessage("[테스트 모드] 촬영을 건너뛰었습니다. [투입구 닫힘]을 눌러주세요.");
+    showMessage(t('deposit_msg_skip_test') || "[테스트 모드] 촬영을 건너뛰었습니다. [투입구 닫힘]을 눌러주세요.");
   };
 
   const handleCloseAndRunConveyor = async () => {
@@ -154,10 +154,10 @@ const DepositScreen = () => {
     speakSafetyWarning();
 
     if (isTestMode) {
-      setLoadingText("테스트 모드: 하드웨어 제어 건너뛰는 중...");
+      setLoadingText(t('deposit_msg_conveyor_test') || "테스트 모드: 하드웨어 제어 건너뛰는 중...");
       await new Promise(res => setTimeout(res, 2000)); // 경고를 볼 수 있도록 대기 시간 늘림
     } else {
-      setLoadingText("어구를 처리하고 컨베이어를 작동합니다... (8초)");
+      setLoadingText(t('deposit_msg_conveyor_run') || "어구를 처리하고 컨베이어를 작동합니다... (8초)");
       try {
         await axios.post(`${LOCAL_API_URL}/api/deposit/action/close-doors`, { isLast: false });
         await axios.post(`${LOCAL_API_URL}/api/deposit/action/conveyor`);
@@ -177,21 +177,22 @@ const DepositScreen = () => {
         if (!isTestMode) try { await axios.post(`${LOCAL_API_URL}/api/deposit/init`); } catch (e) { }
         setCurrentItemIndex(nextIndex);
         setDepositSubState('READY_CAPTURE');
-        showMessage(`다음 ${nextIndex + 1}번째 어구를 위해 촬영 버튼을 눌러주세요.`);
+        showMessage(t('deposit_msg_next_capture', { next: nextIndex + 1 }) || `다음 ${nextIndex + 1}번째 어구를 위해 촬영 버튼을 눌러주세요.`);
         setIsLoading(false);
       } else {
         await handleProcessScans();
       }
     } catch (error) {
-      showMessage("처리 중 오류가 발생했습니다. 다시 시도해주세요.", true);
+      showMessage(t('deposit_msg_process_err') || "처리 중 오류가 발생했습니다. 다시 시도해주세요.", true);
       setIsLoading(false);
     }
   };
+  
   const speakSafetyWarning = () => {
     if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel(); // 기존 음성 취소
-      const utterance = new SpeechSynthesisUtterance("위험하오니 한 걸음 뒤로 물러서 주세요. 투입구가 닫힙니다.");
-      utterance.lang = 'ko-KR';
+      const utterance = new SpeechSynthesisUtterance(t('deposit_msg_safety_voice') || "위험하오니 한 걸음 뒤로 물러서 주세요. 투입구가 닫힙니다.");
+      utterance.lang = 'ko-KR'; // 로직 유지를 위해 한국어 코드는 유지합니다 (단, 번역된 텍스트가 전달됨)
       utterance.rate = 1.0; // 말하기 속도
       window.speechSynthesis.speak(utterance);
     }
@@ -217,7 +218,7 @@ const DepositScreen = () => {
 
   const handleProcessScans = async () => {
     setIsLoading(true);
-    setLoadingText("반환 정보를 서버에 등록하는 중입니다...");
+    setLoadingText(t('deposit_msg_server_upload') || "반환 정보를 서버에 등록하는 중입니다...");
     const mbrNo = localStorage.getItem('mbr_no') || '';
     const isMember = localStorage.getItem('is_member') === 'true';
     const fishermanId = localStorage.getItem('fisherman_id');
@@ -272,7 +273,7 @@ const DepositScreen = () => {
         const startRes = await axios.post(`${PROXY_API_URL}/deposit/return/remg/start`, remgPayload);
 
         if (startRes.data?.status === "400" || startRes.data?.status === "500" || startRes.data?.status === 400) {
-          throw new Error(`[보증금어구 시작 거부] ${startRes.data?.message}`);
+          throw new Error(`${t('deposit_err_start_remg') || '[보증금어구 시작 거부]'} ${startRes.data?.message}`);
         }
 
         remgMngNo = startRes.data?.data?.gvbk_mng_no;
@@ -288,7 +289,7 @@ const DepositScreen = () => {
               if (retRes.data?.status === "200" || retRes.data?.status === 200 || retRes.data?.message === "OK") {
                 return { success: true, gear, mngNo: retRes.data.data?.gvbk_mng_no };
               } else {
-                throw new Error(`[등록 거부] ${retRes.data?.message}`);
+                throw new Error(`${t('deposit_err_register') || '[등록 거부]'} ${retRes.data?.message}`);
               }
             })
           );
@@ -314,7 +315,7 @@ const DepositScreen = () => {
         const startRes = await axios.post(`${PROXY_API_URL}/deposit/return/romg/start`, romgPayload);
 
         if (startRes.data?.status === "400" || startRes.data?.status === "500") {
-          throw new Error(`[기존어구 시작 거부] ${startRes.data?.message}`);
+          throw new Error(`${t('deposit_err_start_romg') || '[기존어구 시작 거부]'} ${startRes.data?.message}`);
         }
 
         romgMngNo = startRes.data?.data?.bfr_fsgr_gvbk_no;
@@ -329,7 +330,7 @@ const DepositScreen = () => {
               if (retRes.data?.status === "200" || retRes.data?.status === 200 || retRes.data?.message === "OK") {
                 return { success: true, gear };
               } else {
-                throw new Error(`[등록 거부] ${retRes.data?.message}`);
+                throw new Error(`${t('deposit_err_register') || '[등록 거부]'} ${retRes.data?.message}`);
               }
             })
           );
@@ -346,7 +347,7 @@ const DepositScreen = () => {
       setReturnMngNos({ remg: finalRemgMngNo, romg: romgMngNo });
 
       if (successfulReturns.length === 0) {
-        throw new Error("정상적으로 등록된 어구가 없습니다.");
+        throw new Error(t('deposit_err_no_normal') || "정상적으로 등록된 어구가 없습니다.");
       }
 
       setScannedList(successfulReturns);
@@ -359,7 +360,7 @@ const DepositScreen = () => {
       const backendErrorMsg = err.response?.data?.message || err.message;
       
       // ★ 멈춤의 주범이었던 alert()를 삭제하고 내부 알림 함수로 변경했습니다!
-      showMessage(`서버 통신 오류: ${backendErrorMsg}`, true);
+      showMessage(`${t('deposit_err_server_comm') || '서버 통신 오류:'} ${backendErrorMsg}`, true);
       
       // 에러 났을 때 화면이 멈추지 않고 다시 버튼을 누를 수 있게 상태 복구
       setViewState('DEPOSITING');
@@ -372,7 +373,7 @@ const DepositScreen = () => {
 
   const handleCloseDoors = async () => {
     setIsLoading(true);
-    setLoadingText("투입구를 닫고 있습니다...");
+    setLoadingText(t('deposit_msg_closing_door') || "투입구를 닫고 있습니다...");
 
     setShowSafetyWarning(true);
     speakSafetyWarning();
@@ -381,10 +382,10 @@ const DepositScreen = () => {
       if (!isTestMode) await axios.post(`${LOCAL_API_URL}/api/deposit/action/close-doors`, { isLast: true });
       await new Promise(res => setTimeout(res, 2500)); // 문 닫히는 동안 경고 유지
       setIsDoorClosed(true);
-      showMessage("투입구가 닫혔습니다. 확인 완료를 눌러주세요.");
+      showMessage(t('deposit_msg_door_closed') || "투입구가 닫혔습니다. 확인 완료를 눌러주세요.");
     } catch (e) {
       setIsDoorClosed(true);
-      showMessage("테스트: 투입구 닫힘 처리 완료", true);
+      showMessage(t('deposit_msg_door_closed_test') || "테스트: 투입구 닫힘 처리 완료", true);
     } finally {
       setIsLoading(false);
       // ★ 동작이 끝나면 안전 경고 끄기
@@ -394,7 +395,7 @@ const DepositScreen = () => {
 
   const handleFinalConfirm = async () => {
     setIsLoading(true);
-    setLoadingText("데이터를 서버로 전송 중입니다...");
+    setLoadingText(t('deposit_msg_final_upload') || "데이터를 서버로 전송 중입니다...");
 
     try {
       if (capturedImages.length > 0) {
@@ -458,8 +459,9 @@ const DepositScreen = () => {
 
   const translateGearType = (type) => {
     const typeStr = String(type);
-    if (typeStr.includes('보증금')) return "보증금어구";
-    if (typeStr.includes('기존')) return "기존어구";
+    // 이전 화면의 뱃지 키를 활용
+    if (typeStr.includes('보증금')) return t('gear_badge_deposit') || "보증금어구";
+    if (typeStr.includes('기존')) return t('gear_badge_existing') || "기존어구";
     return typeStr;
   };
 
@@ -471,7 +473,7 @@ const DepositScreen = () => {
           <button className="deposit-back-btn" onClick={handleBack} disabled={isLoading}>
             <BackIcon />
             <span className="deposit-back-text">
-              {viewState === 'CONFIRMING' ? '이전 단계' : '이전으로'}
+              {viewState === 'CONFIRMING' ? (t('deposit_btn_prev_step') || '이전 단계') : (t('deposit_btn_prev') || '이전으로')}
             </span>
           </button>
 
@@ -487,18 +489,18 @@ const DepositScreen = () => {
         <div className="deposit-card-container" style={{ backgroundImage: `url(${BgImage})` }}>
           <div className="deposit-info-card">
             <div className="step-tabs">
-              <div className="step-tab inactive"><div className="step-num-circle">1</div><span className="step-label">사용자 인증</span></div>
-              <div className="step-tab inactive"><div className="step-num-circle">2</div><span className="step-label">어구보증금표식 인증</span></div>
-              <div className="step-tab active"><div className="step-num-circle">3</div><span className="step-label">투입</span></div>
+              <div className="step-tab inactive"><div className="step-num-circle">1</div><span className="step-label">{t('auth_step_1') || '사용자 인증'}</span></div>
+              <div className="step-tab inactive"><div className="step-num-circle">2</div><span className="step-label">{t('auth_step_2') || '어구보증금표식 인증'}</span></div>
+              <div className="step-tab active"><div className="step-num-circle">3</div><span className="step-label">{t('auth_step_3') || '투입'}</span></div>
             </div>
 
-            <h2 className="step-main-title">{viewState === 'CONFIRMING' ? '투입 내역 확인' : '3단계: 투입'}</h2>
+            <h2 className="step-main-title">{viewState === 'CONFIRMING' ? (t('deposit_step_confirm') || '투입 내역 확인') : (t('deposit_step_3_title') || '3단계: 투입')}</h2>
 
             {viewState === 'DEPOSITING' && (
               <div className="deposit-content-box">
                 <div className="instruction-box">
                   <div style={{ textAlign: 'center', marginBottom: '15px', fontWeight: 'bold', fontSize: '1.2rem', color: '#333' }}>
-                    진행 상황: {currentItemIndex + 1} / {scannedGears.length}
+                    {t('deposit_progress') || '진행 상황'}: {currentItemIndex + 1} / {scannedGears.length}
                   </div>
 
                   {statusMessage ? (
@@ -507,10 +509,9 @@ const DepositScreen = () => {
                     </div>
                   ) : (
                     <p className="instruction-text">
-                      {/* 변경 후 ('촬영' -> '투입 확인') */}
                       {depositSubState === 'READY_CAPTURE' ?
-                        "폐어구를 투입구에 넣고 [투입 확인] 버튼을 눌러주세요." :
-                        "어구 확인이 완료되었습니다. [투입구 닫기] 버튼을 눌러주세요."
+                        (t('deposit_inst_ready') || "폐어구를 투입구에 넣고 [투입 확인] 버튼을 눌러주세요.") :
+                        (t('deposit_inst_done') || "어구 확인이 완료되었습니다. [투입구 닫기] 버튼을 눌러주세요.")
                       }
                     </p>
                   )}
@@ -519,7 +520,7 @@ const DepositScreen = () => {
                     {depositSubState === 'READY_CAPTURE' ? (
                       <div style={{ display: 'flex', gap: '15px', width: '100%', maxWidth: '400px' }}>
                         <button className="deposit-action-btn primary" onClick={handleCapture} disabled={isLoading} style={{ flex: 1, backgroundColor: '#007BFF' }}>
-                          투입 확인
+                          {t('deposit_btn_check') || '투입 확인'}
                         </button>
                         <button
                           className="deposit-action-btn"
@@ -527,12 +528,12 @@ const DepositScreen = () => {
                           disabled={isLoading}
                           style={{ flex: 1, backgroundColor: '#6c757d', color: '#fff', border: 'none', borderRadius: '8px', fontSize: '1.3rem', fontWeight: 'bold', cursor: 'pointer' }}
                         >
-                          건너뛰기(테스트)
+                          {t('deposit_btn_skip') || '건너뛰기(테스트)'}
                         </button>
                       </div>
                     ) : (
                       <button className="deposit-action-btn primary" onClick={handleCloseAndRunConveyor} disabled={isLoading} style={{ width: '100%', maxWidth: '300px', backgroundColor: '#28a745' }}>
-                        투입구 닫힘
+                        {t('deposit_btn_door_closed') || '투입구 닫힘'}
                       </button>
                     )}
                   </div>
@@ -545,23 +546,26 @@ const DepositScreen = () => {
                 <div className="deposit-table-scroll-wrapper">
                   <table className="deposit-table">
                     <thead>
-                      <tr><th>코드</th><th>유형</th><th>금액/포인트</th></tr>
+                      <tr>
+                        <th>{t('deposit_tbl_code') || '코드'}</th>
+                        <th>{t('deposit_tbl_type') || '유형'}</th>
+                        <th>{t('deposit_tbl_amt') || '금액/포인트'}</th>
+                      </tr>
                     </thead>
                     <tbody>
                       {scannedList.map((item, index) => (
                         <tr key={index}>
                           <td>{item.code}</td>
                           <td>{translateGearType(item.type)}</td>
-                          <td>{item.point > 0 ? `${item.point.toLocaleString()} P` : `${item.reward.toLocaleString()} 원`}</td>
+                          <td>{item.point > 0 ? `${item.point.toLocaleString()} P` : `${item.reward.toLocaleString()} ${t('currency_unit') || '원'}`}</td>
                         </tr>
                       ))}
                     </tbody>
                     <tfoot>
                       <tr>
-                        <td colSpan="2">총계</td>
+                        <td colSpan="2">{t('deposit_tbl_total') || '총계'}</td>
                         <td>
-                          {totalDeposit > 0 && <span>{totalDeposit.toLocaleString()} 원</span>}
-                          {/* 보증금과 포인트가 둘 다 있을 때만 콤마(,)나 슬래시(/)로 구분해줍니다 */}
+                          {totalDeposit > 0 && <span>{totalDeposit.toLocaleString()} {t('currency_unit') || '원'}</span>}
                           {totalDeposit > 0 && totalPoint > 0 && <span style={{ margin: '0 5px' }}>/</span>}
                           {totalPoint > 0 && <span>{totalPoint.toLocaleString()} P</span>}
                         </td>
@@ -572,7 +576,7 @@ const DepositScreen = () => {
 
                 {!isDoorClosed && (
                   <p style={{ textAlign: 'center', color: '#d9534f', fontWeight: 'bold', fontSize: '1.1rem', margin: '15px 0 5px 0' }}>
-                    ※ 바코드 스캐너를 잘 정리해주시고 투입구를 닫아주세요.
+                    {t('deposit_notice_scanner') || '※ 바코드 스캐너를 잘 정리해주시고 투입구를 닫아주세요.'}
                   </p>
                 )}
 
@@ -582,14 +586,14 @@ const DepositScreen = () => {
                     style={{ backgroundColor: isDoorClosed ? '#6c757d' : '#ffc107', color: isDoorClosed ? '#fff' : '#000', flex: 1 }}
                     onClick={handleCloseDoors} disabled={isLoading}
                   >
-                    {isDoorClosed ? "투입구 닫힘" : "투입구 닫기"}
+                    {isDoorClosed ? (t('deposit_btn_door_closed') || "투입구 닫힘") : (t('deposit_btn_close_door') || "투입구 닫기")}
                   </button>
                   <button
                     className="deposit-confirm-btn"
                     style={{ backgroundColor: isDoorClosed ? '#28a745' : '#ccc', cursor: isDoorClosed ? 'pointer' : 'not-allowed', flex: 1 }}
                     onClick={handleFinalConfirm} disabled={isLoading || !isDoorClosed}
                   >
-                    확인 완료
+                    {t('deposit_btn_final_confirm') || '확인 완료'}
                   </button>
                 </div>
               </div>
@@ -603,10 +607,10 @@ const DepositScreen = () => {
         <div className="safety-warning-overlay">
           <div className="safety-warning-box">
             <SafetyWarningIcon />
-            <h1 className="safety-warning-title">위험! 투입구 작동 중</h1>
+            <h1 className="safety-warning-title">{t('deposit_warn_title') || '위험! 투입구 작동 중'}</h1>
             <p className="safety-warning-text">
-              안전을 위해 한 걸음<br />
-              뒤로 <strong>물러서 주세요!</strong>
+              {t('deposit_warn_desc_1') || '안전을 위해 한 걸음'}<br />
+              {t('deposit_warn_desc_2') || '뒤로 '}<strong>{t('deposit_warn_desc_3') || '물러서 주세요!'}</strong>
             </p>
           </div>
         </div>

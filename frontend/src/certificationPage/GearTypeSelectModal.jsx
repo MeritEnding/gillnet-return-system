@@ -1,130 +1,115 @@
-// src/mainPage/modals/GearTypeSelectModal.jsx
-import React, { useState } from 'react';
+// src/certificationPage/GearTypeSelectScreen.jsx
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import './GearTypeSelectModal.css';
+import { useTranslation } from 'react-i18next'; // ★ 다국어 훅 추가
+import Header from '../mainPage/Header';
+import BgImage from '../assets/bg_all.png';
+import './GearTypeSelectScreen.css';
 
-const API_BASE_URL = 'http://localhost:8080/api/v1/proxy';
+// ★ 실제 어구 이미지 import
+import ImgHourglass from '../assets/스프링이 설치된 장구형의 통발.png';
+import ImgCylinder from '../assets/장어 통발.png';
+import ImgGillNet from '../assets/자망어구.png';
+import ImgConeSemi from '../assets/원뿔대형(반구형)의 통발.png';
+import ImgConeCrab from '../assets/기존 어구.png';
 
-const GearTypeSelectModal = ({ onClose }) => {
+const GearTypeSelectScreen = () => {
+  const { t } = useTranslation(); // ★ 번역 함수 선언
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false); // 로딩 상태 추가
+  const [isMember, setIsMember] = useState(false);
 
-  // 어구 선택 시 처리 함수 (API 호출 후 이동)
-  const handleSelect = async (gvbkType, clsfCd, clsfNm) => {
-    if (isLoading) return; // 중복 클릭 방지
-    setIsLoading(true);
-
-    try {
-      // 1. 서버에 보낼 페이로드 구성
-      const payload = {
-        user_fshnd_no: localStorage.getItem('fisherman_id') || '',
-        fsgr_clsf_cd: clsfCd,
-        korn_flnm: localStorage.getItem('fisherman_name') || '비회원',
-        brdt: localStorage.getItem('birthdate') || '1990-01-01',
-        mbl_telno: localStorage.getItem('fisherman_phone') || '',
-        bank_cd: localStorage.getItem('bank_cd') || '',
-        actno: localStorage.getItem('actno') || '',
-        acct_nm: localStorage.getItem('acct_nm') || '',
-        kiosk_no: 'KIOSK_01'
-      };
-
-      // 2. 어구 타입에 따른 API 주소 선택
-      const url = gvbkType === '1' 
-        ? `${API_BASE_URL}/deposit/return/remg/start` 
-        : `${API_BASE_URL}/deposit/return/romg/start`;
-
-      console.log("🚀 [반환 시작 요청]:", url, payload);
-      const res = await axios.post(url, payload);
-      console.log("✅ [반환 시작 응답]:", res.data);
-
-      // 3. 서버 응답 성공 시
-      if (res.data && (res.data.status == 200 || res.data.message?.includes('시작') || res.data.message?.includes('성공'))) {
-        
-        // 보증금어구는 gvbk_mng_no, 기존어구는 bfr_fsgr_gvbk_no 로 넘어옴 [cite: 243, 463]
-        const mngNo = gvbkType === '1' 
-          ? res.data.data?.gvbk_mng_no 
-          : res.data.data?.bfr_fsgr_gvbk_no;
-
-        if (!mngNo) throw new Error("서버 응답에 반환 관리번호가 없습니다.");
-
-        // ★ 성공 시 발급받은 '세션 관리번호'와 '어구 정보'를 로컬 스토리지에 저장
-        localStorage.setItem('session_mng_no', mngNo); 
-        localStorage.setItem('selected_gvbk_type', gvbkType); 
-        localStorage.setItem('selected_fsgr_clsf_cd', clsfCd); 
-        localStorage.setItem('selected_fsgr_clsf_nm', clsfNm); 
-
-        // 4. 스캔 화면으로 이동
-        if(onClose) onClose();
-        navigate('/certificationPage/scan');
-
-      } else {
-        throw new Error(res.data.message || "세션 발급 실패");
-      }
-    } catch (err) {
-      console.error("❌ [반환 시작 에러]:", err);
-      const serverErrorMsg = err.response?.data?.message || err.message;
-      alert(`반납 세션을 시작할 수 없습니다.\n사유: ${serverErrorMsg}`);
-    } finally {
-      setIsLoading(false);
+  useEffect(() => {
+    const mbrNo = localStorage.getItem('mbr_no');
+    if (mbrNo && mbrNo !== 'undefined' && mbrNo !== 'null' && mbrNo.trim() !== '') {
+      setIsMember(true);
+    } else {
+      setIsMember(false);
     }
+  }, []);
+
+  const handleGoBack = () => {
+    navigate(-1);
+  };
+
+  const handleSelect = (gvbkType, clsfCd, clsfNm) => {
+    // ★ 서버 코드와 명칭 매칭 저장 (백엔드 오류 방지를 위해 clsfNm은 한국어 원본 값 유지)
+    localStorage.setItem('selected_gvbk_type', gvbkType); 
+    localStorage.setItem('selected_fsgr_clsf_cd', clsfCd); 
+    localStorage.setItem('selected_fsgr_clsf_nm', clsfNm); 
+
+    navigate('/certificationPage/scan');
   };
 
   return (
-    <div className="modal-backdrop gear-modal-backdrop" onClick={onClose}>
-      <div className="modal-content gear-select-modal" onClick={(e) => e.stopPropagation()}>
+    <div className="gear-wrapper" style={{ backgroundImage: `url(${BgImage})` }}>
+      <Header />
+      
+      <button className="gear-back-btn" onClick={handleGoBack}>
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M15 19L8 12L15 5" stroke="white" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+        {t('gear_btn_home') || '처음으로'}
+      </button>
+
+      <div className="gear-content-area">
         
-        <button className="gear-close-btn" onClick={onClose}>✖</button>
-
-        <h2 className="gear-modal-title">반환하실 어구를 선택해주세요</h2>
-        <p className="gear-modal-subtitle">정확한 어구 종류를 선택해야 올바른 보증금이 환급됩니다.</p>
+        <h2 className="gear-page-title">{t('gear_page_title') || '반환하실 어구를 터치해주세요'}</h2>
+        <p className="gear-page-subtitle">{t('gear_page_subtitle') || '동일한 어구를 선택하고 반납을 해야 보증금이 환급됩니다.'}</p>
         
-        {/* 로딩 중일 때 화면을 살짝 덮어줌 */}
-        {isLoading && (
-          <div style={{position:'absolute', top:0, left:0, width:'100%', height:'100%', backgroundColor:'rgba(255,255,255,0.7)', zIndex:10, display:'flex', justifyContent:'center', alignItems:'center', fontSize:'2rem', fontWeight:'bold', color:'#00A0E9'}}>
-            서버와 연결 중입니다...
-          </div>
-        )}
+        <div className="gear-card">
+          
+          {/* 1. 보증금어구 섹션 */}
+          <div className="gear-section">
+            <h3 className="gear-section-title deposit">
+             {t('gear_section_deposit') || '보증금어구 반환 (현금 환급)'}
+            </h3>
+            
+            <div className="gear-grid">
+              {/* API 1: FISGE (장구형의통발) */}
+              <button className="gear-btn deposit" onClick={() => handleSelect('1', 'FISGE', '장구형의통발')}>
+                <img src={ImgHourglass} alt="장구형의 통발" className="gear-btn-img" />
+                <div className="gear-btn-text">{t('gear_type_hourglass') || '장구형의 통발'}</div>
+              </button>
 
-        <div className="gear-section">
-          <h3 className="gear-section-title">
-            <span className="icon-coin">💰</span> 보증금어구 반환 (현금 환급)
-          </h3>
-          <div className="gear-grid">
-            <button className="gear-card-btn deposit-btn" onClick={() => handleSelect('1', 'FISGE', '통발어구')}>
-              <div className="gear-icon">🦀</div>
-              <span className="gear-name">장구형의 통발 어구</span>
-            </button>
-            <button className="gear-card-btn deposit-btn" onClick={() => handleSelect('1', 'EELTP', '장어통발어구')}>
-              <div className="gear-icon">🐍</div>
-              <span className="gear-name">장어통발 어구</span>
-            </button>
-            <button className="gear-card-btn deposit-btn" onClick={() => handleSelect('1', 'GILNT', '자망어구')}>
-              <div className="gear-icon">🕸️</div>
-              <span className="gear-name">자망 어구</span>
-            </button>
-            <button className="gear-card-btn deposit-btn" onClick={() => handleSelect('1', 'ABUOY', '부표통발어구')}>
-              <div className="gear-icon">🎈</div>
-              <span className="gear-name">부표통발 어구</span>
-            </button>
+              {/* API 2: EELTP (장어통발) */}
+              <button className="gear-btn deposit" onClick={() => handleSelect('1', 'EELTP', '장어통발')}>
+                <img src={ImgCylinder} alt="장어통발" className="gear-btn-img" />
+                <div className="gear-btn-text">{t('gear_type_eel') || '장어통발'}</div>
+              </button>
+
+              {/* API 3: GILNT (자망) */}
+              <button className="gear-btn deposit" onClick={() => handleSelect('1', 'GILNT', '자망(그물)')}>
+                <img src={ImgGillNet} alt="자망 (그물)" className="gear-btn-img" />
+                <div className="gear-btn-text">{t('gear_type_gill_net') || '자망 (그물)'}</div>
+              </button>
+
+              {/* API 4: FISGE (원뿔대형 통발) */}
+              <button className="gear-btn deposit" onClick={() => handleSelect('1', 'FISGE', '원뿔대형(반구형)의 통발')}>
+                <img src={ImgConeSemi} alt="원뿔대형 통발" className="gear-btn-img" />
+                <div className="gear-btn-text">{t('gear_type_cone') || '원뿔대형 통발'}</div>
+              </button>
+            </div>
           </div>
+
+          {/* 2. 기존어구 섹션 */}
+          {isMember && (
+            <div className="gear-section">
+              <h3 className="gear-section-title existing">
+                {t('gear_section_existing') || '기존어구 반환 (포인트 적립)'}
+              </h3>
+              <div className="gear-grid single">
+                <button className="gear-btn existing" onClick={() => handleSelect('2', 'FISGE', '기존통발어구(바코드)')}>
+                  <img src={ImgConeCrab} alt="기존 통발 어구" className="gear-btn-img" />
+                  <div className="gear-btn-text">{t('gear_type_existing_trap') || '기존 통발 어구 (포인트)'}</div>
+                </button>
+              </div>
+            </div>
+          )}
+
         </div>
-
-        <div className="gear-section" style={{ marginTop: '40px' }}>
-          <h3 className="gear-section-title">
-            <span className="icon-gift">🎁</span> 기존어구 반환 (포인트 적립 - 회원 전용)
-          </h3>
-          <div className="gear-grid" style={{ gridTemplateColumns: '1fr' }}>
-            <button className="gear-card-btn existing-btn" onClick={() => handleSelect('2', 'FISGE', '통발어구(기존)')}>
-              <div className="gear-icon">📦</div>
-              <span className="gear-name">기존 통발 어구</span>
-            </button>
-          </div>
-        </div>
-
       </div>
     </div>
   );
 };
 
-export default GearTypeSelectModal;
+export default GearTypeSelectScreen;

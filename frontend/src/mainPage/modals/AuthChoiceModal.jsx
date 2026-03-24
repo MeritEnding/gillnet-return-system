@@ -1,6 +1,6 @@
 // src/mainPage/modals/AuthChoiceModal.jsx
 import React from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next'; // ★ Trans 컴포넌트 추가
 import PassLogo from '../../assets/PassLogo.png';
 
 const AuthChoiceModal = ({ onClose, onQr, onPass, onLogin }) => {
@@ -9,11 +9,13 @@ const AuthChoiceModal = ({ onClose, onQr, onPass, onLogin }) => {
   return (
     <div className="modal-backdrop" onClick={onClose}>
       <div className="modal-content auth-choice-modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '1100px' }}>
-        <h2 className="modal-title">{t('auth_choice_title') || '사용자 인증 방법 선택'}</h2>
+        <h2 className="modal-title">{t('auth_choice_title')}</h2>
         
-        {/* ★ 비회원 안내 문구 추가 ★ */}
+        {/* ★ 비회원 안내 문구 다국어 처리 (Trans 컴포넌트 사용) ★ */}
         <p className="auth-nonmember-guide">
-          비회원님은 오른쪽의 <strong>'PASS 인증'</strong>으로 진행해 주세요.
+          <Trans i18nKey="auth_nonmember_guide">
+            비회원님은 오른쪽의 <strong>'PASS 인증'</strong>으로 진행해 주세요.
+          </Trans>
         </p>
         
         <div className="modal-buttons-row">
@@ -35,8 +37,8 @@ const AuthChoiceModal = ({ onClose, onQr, onPass, onLogin }) => {
               </svg>
             </div>
             <div className="btn-text-area-large">
-              <span className="auth-main-text">{t('auth_qr_btn_main') || '회원인증'}</span>
-              <span className="auth-sub-text">{t('auth_qr_btn_sub') || '(QR 코드)'}</span>
+              <span className="auth-main-text">{t('auth_qr_btn_main')}</span>
+              <span className="auth-sub-text">{t('auth_qr_btn_sub')}</span>
             </div>
           </button>
 
@@ -49,8 +51,9 @@ const AuthChoiceModal = ({ onClose, onQr, onPass, onLogin }) => {
               </svg>
             </div>
             <div className="btn-text-area-large">
-              <span className="auth-main-text">아이디 로그인</span>
-              <span className="auth-sub-text">비밀번호로 인증합니다</span>
+              {/* ★ 아이디 로그인 부분 다국어 처리 ★ */}
+              <span className="auth-main-text">{t('auth_login_btn_main')}</span>
+              <span className="auth-sub-text">{t('auth_login_btn_sub')}</span>
             </div>
           </button>
 
@@ -60,14 +63,14 @@ const AuthChoiceModal = ({ onClose, onQr, onPass, onLogin }) => {
               <img src={PassLogo} alt="PASS" className="pass-logo-img-large" draggable={false} />
             </div>
             <div className="btn-text-area-large">
-              <span className="auth-main-text">{t('auth_pass_btn_main') || 'PASS 인증'}</span>
-              <span className="auth-sub-text">{t('auth_pass_btn_sub') || '(휴대폰 본인인증)'}</span>
+              <span className="auth-main-text">{t('auth_pass_btn_main')}</span>
+              <span className="auth-sub-text">{t('auth_pass_btn_sub')}</span>
             </div>
           </button>
 
         </div>
 
-        <p className="auth-guide-text">{t('auth_register_guide') || '회원 등록은 전용 앱이나 웹을 통해 가능합니다.'}</p>
+        <p className="auth-guide-text">{t('auth_register_guide')}</p>
       </div>
     </div>
   );

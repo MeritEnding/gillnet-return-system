@@ -1,7 +1,7 @@
 // src/certificationPage/GearScanScreen.jsx
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next'; // ★ 다국어 훅 적용
 import axios from 'axios';
 
 import './GearScanScreen.css';
@@ -76,77 +76,9 @@ const GearScanScreen = () => {
     if (window.speechSynthesis.onvoiceschanged !== undefined) window.speechSynthesis.onvoiceschanged = loadVoices;
   }, []);
 
-  // ★ 1. 선택한 어구 종류의 바코드 목록만 "미리" 싹 가져와서 저장해둠 (반납 처리 아님!)
-  // useEffect(() => {
-  //   const fetchUserGears = async () => {
-  //     const mbrNo = localStorage.getItem('mbr_no');
-  //     const isMember = localStorage.getItem('is_member') === 'true' || (mbrNo && mbrNo.trim() !== '');
-  //     if (!isMember || !mbrNo) {
-  //       setIsDataLoaded(true);
-  //       return;
-  //     }
-
-  //     setIsLoading(true);
-  //     setLoadingText("어구 데이터를 동기화 중입니다...");
-
-  //     try {
-  //       let allGroups = [];
-  //       // ★ 속도 최적화: 사용자가 선택한 모드(보증금/기존)의 목록 하나만 가져옵니다!
-  //       if (gearType === '1') {
-  //         const res = await axios.get(`${API_BASE_URL}/user/${mbrNo}/rentals/remg`);
-  //         allGroups = res.data?.data?.list || [];
-  //       } else {
-  //         const res = await axios.get(`${API_BASE_URL}/user/${mbrNo}/rentals/romg`);
-  //         allGroups = res.data?.data?.list || [];
-  //       }
-
-  //       const detailPromises = allGroups.map(group => {
-  //         const id = group.spmt_mng_no || group.fsgr_reg_mng_no;
-  //         const endpoint = group.spmt_mng_no
-  //           ? `${API_BASE_URL}/rentals/${id}/remg`
-  //           : `${API_BASE_URL}/rentals/${id}/romg`;
-
-  //         return axios.get(endpoint).then(res => ({
-  //           groupInfo: group,
-  //           barcodes: res.data?.data?.barcodes || []
-  //         })).catch(err => ({ groupInfo: group, barcodes: [] }));
-  //       });
-
-  //       const detailsResults = await Promise.all(detailPromises);
-  //       const barcodeDB = [];
-
-  //       detailsResults.forEach(result => {
-  //         result.barcodes.forEach(b => {
-  //           // ★ 0원 오류 완벽 해결: 서버가 내려주는 정확한 키값(grnte_amt, rmbr_pnt) 사용
-  //           barcodeDB.push({
-  //             bacod_nm: b.bacod_nm,
-  //             fsgr_nm: b.fsgr_nm || result.groupInfo.fsgr_nm,
-  //             gvbk_type: gearType === '1' ? '보증금어구' : '기존어구',
-  //             gvbk_amt: Number(b.grnte_amt) || 0, // 보증금 금액
-  //             gvbk_pnt: Number(b.rmbr_pnt) || 0,  // 기존어구 포인트
-  //             fullData: b
-  //           });
-  //         });
-  //       });
-
-  //       setUserTotalBarcodeDB(barcodeDB);
-  //       setIsDataLoaded(true);
-
-  //     } catch (err) {
-  //       console.error("데이터 동기화 실패:", err);
-  //       setErrorMessage("대여 목록을 불러오지 못했습니다.");
-  //     } finally {
-  //       setIsLoading(false);
-  //       setLoadingText("");
-  //     }
-  //   };
-
-  //   fetchUserGears();
-  // }, [gearType]);
   useEffect(() => {
     setIsDataLoaded(true); // 로딩 즉시 완료 처리
   }, [gearType]);
-
 
   // 스피치 안내
   useEffect(() => {
@@ -181,7 +113,6 @@ const GearScanScreen = () => {
     return () => clearTimeout(inputTimer);
   }, [barcodeInput]);
 
-  // ★ 2. 바코드 스캔 핸들러 (비회원/테스트 시 금액 정확하게 계산)
   // ★ 2. 바코드 스캔 핸들러 (서버 대기 없이 즉각 처리)
   const handleBarcodeScan = useCallback((scannedData) => {
     const cleanBarcode = scannedData.trim();
@@ -194,8 +125,6 @@ const GearScanScreen = () => {
       return;
     }
 
-    // 💡 프론트엔드에서 무거운 검증 없이 바로 스캔 목록에 추가! 
-    // (진짜 검증은 3단계 투입 시 서버가 안전하게 처리합니다)
     const selectedTypeNm = localStorage.getItem('selected_fsgr_clsf_nm') || '장구형의통발';
     const selectedCd = localStorage.getItem('selected_fsgr_clsf_cd') || 'FISGE';
 
@@ -223,12 +152,10 @@ const GearScanScreen = () => {
     setBarcodeScanInput('');
   }, [scannedGears, isDataLoaded, gearType]);
 
-  
   const totalAmount = scannedGears.reduce((sum, gear) => sum + gear.gvbk_amt, 0);
   const totalPoints = scannedGears.reduce((sum, gear) => sum + gear.gvbk_pnt, 0);
 
   const handleProceed = () => {
-    // 이제 진짜 반납(서버 통신)은 3단계 (DepositScreen)로 넘겨서 거기서 진행합니다!
     navigate('/deposit', { state: { scannedGears: scannedGears } });
   };
 
@@ -248,13 +175,14 @@ const GearScanScreen = () => {
         <div className="gear-card-container" style={{ backgroundImage: `url(${BgImage})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat' }}>
           <div className="gear-info-card">
 
+            {/* ★ 상단 단계 표시 바 다국어 적용 */}
             <div className="step-tabs">
-              <div className="step-tab inactive"><div className="step-num-circle">1</div><span className="step-label">사용자 인증</span></div>
-              <div className="step-tab active"><div className="step-num-circle">2</div><span className="step-label">어구보증금표식 인증</span></div>
-              <div className="step-tab inactive"><div className="step-num-circle">3</div><span className="step-label">투입</span></div>
+              <div className="step-tab inactive"><div className="step-num-circle">1</div><span className="step-label">{t('auth_step_1') || '사용자 인증'}</span></div>
+              <div className="step-tab active"><div className="step-num-circle">2</div><span className="step-label">{t('auth_step_2') || '어구보증금표식 인증'}</span></div>
+              <div className="step-tab inactive"><div className="step-num-circle">3</div><span className="step-label">{t('auth_step_3') || '투입'}</span></div>
             </div>
 
-            <h2 className="step-main-title">2단계: 어구보증금표식 바코드 스캔</h2>
+            <h2 className="step-main-title">{t('scan_page_title') || '2단계: 어구보증금표식 바코드 스캔'}</h2>
 
             <div className="gear-content-box">
               <div className="main-display-area">
@@ -266,6 +194,7 @@ const GearScanScreen = () => {
                       <div className="anim-target-large"><GearTagIcon /><div className="anim-laser-line-large"></div></div>
                     </div>
                     <p className="empty-scan-text">
+                      {/* ★ 안내 메시지 (줄바꿈 대응) */}
                       {(t('scan_instruction_msg') || '어구보증금표식 바코드를\n인식 시켜주세요.').split('\n').map((line, i) => (
                         <React.Fragment key={i}>{line}<br /></React.Fragment>
                       ))}
@@ -274,13 +203,15 @@ const GearScanScreen = () => {
                 ) : (
                   <div className="scanned-list-wrapper">
                     <div className="list-title-row">
-                      <h3>스캔된 바코드 ({scannedGears.length})</h3>
+                      {/* ★ 스캔된 바코드 갯수 */}
+                      <h3>{t('scan_list_title') || '스캔된 바코드'} ({scannedGears.length})</h3>
                     </div>
 
+                    {/* ★ 테이블 헤더 */}
                     <div className="list-header-row">
-                      <span className="header-col code">어구 코드</span>
-                      <span className="header-col info">어구 종류</span>
-                      <span className="header-col amt">보증금/포인트</span>
+                      <span className="header-col code">{t('scan_table_code') || '어구 코드'}</span>
+                      <span className="header-col info">{t('scan_table_type') || '어구 종류'}</span>
+                      <span className="header-col amt">{t('scan_table_amt') || '보증금/포인트'}</span>
                     </div>
 
                     <ul className="scanned-detail-list" ref={listRef}>
@@ -289,8 +220,12 @@ const GearScanScreen = () => {
                           <div className="item-col code">{gear.bacod_nm}</div>
                           <div className="item-col info">
                             <div className="gear-name-wrapper">
-                              <span className={`gear-type-badge ${gear.gvbk_type === '기존어구' ? 'gray' : ''}`}>{gear.gvbk_type}</span>
-                              <span className="gear-real-name">{gear.fsgr_nm}</span>
+                              {/* ★ 뱃지 다국어 처리 (gvbk_type 값에 따라 번역 키 매핑) */}
+                              <span className={`gear-type-badge ${gear.gvbk_type === '기존어구' ? 'gray' : ''}`}>
+                                {gear.gvbk_type === '기존어구' ? t('gear_badge_existing') : t('gear_badge_deposit')}
+                              </span>
+                              {/* 어구 종류명은 앞서 선택한 화면(GearTypeSelectScreen)의 로컬스토리지 값 (UI 노출용) */}
+                              <span className="gear-real-name">{t(gear.fsgr_nm) || gear.fsgr_nm}</span>
                             </div>
                           </div>
                           <div className="item-col amt">
@@ -305,7 +240,8 @@ const GearScanScreen = () => {
 
                     <div className="scan-summary-box">
                       <div className="summary-item">
-                        <span className="label">{gearType === '1' ? '총 환급 예정 금액' : '총 적립 예정 포인트'}</span>
+                        {/* ★ 총 예정 금액 텍스트 */}
+                        <span className="label">{gearType === '1' ? t('scan_total_deposit') : t('scan_total_points')}</span>
                         <span className="value">
                           {gearType === '1'
                             ? <>{totalAmount.toLocaleString()}{t('currency_unit') || '원'}</>
@@ -317,7 +253,7 @@ const GearScanScreen = () => {
                   </div>
                 )}
 
-                {isDuplicate && <p className="duplicate-warning">{t('duplicate_barcode_warning')}</p>}
+                {isDuplicate && <p className="duplicate-warning">{t('duplicate_barcode_warning') || '이미 스캔된 바코드입니다.'}</p>}
                 {errorMessage && <p className="duplicate-warning" style={{ color: '#d9534f' }}>{errorMessage}</p>}
               </div>
 
@@ -326,7 +262,7 @@ const GearScanScreen = () => {
                 onClick={handleProceed}
                 disabled={scannedGears.length === 0}
               >
-                다음 (스캔 완료)
+                {t('scan_btn_next') || '다음 (스캔 완료)'}
               </button>
             </div>
           </div>

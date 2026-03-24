@@ -7,17 +7,15 @@ import './LoginModal.css'; // 기존 로그인 성공 스타일 재사용
 import AccountInputModal from './AccountInputModal';
 
 const PassModal = ({ onClose, onNonMember }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(); // ★ 번역 함수 선언
   const navigate = useNavigate();
   const isRunRef = useRef(false);
   const popupRef = useRef(null);
 
   const [alertInfo, setAlertInfo] = useState({ show: false, message: '' });
   
-  // ★ 1. 인증 진행 중(로딩) 상태 추가
   const [isProcessing, setIsProcessing] = useState(false);
 
-  // 성공 알림창 상태
   const [successInfo, setSuccessInfo] = useState({ 
     show: false, 
     name: '', 
@@ -48,7 +46,7 @@ const PassModal = ({ onClose, onNonMember }) => {
   };
 
   const processNonMember = (fallbackUser) => {
-    const userName = fallbackUser?.name || '고객';
+    const userName = fallbackUser?.name || t('pass_default_guest_name') || '고객';
     if (fallbackUser) {
       localStorage.setItem('fisherman_name', userName);
       localStorage.setItem('fisherman_phone', fallbackUser.phone || '');
@@ -69,7 +67,6 @@ const PassModal = ({ onClose, onNonMember }) => {
   };
 
   const handlePassVerification = async (diValue, fallbackUser) => {
-    // ★ 2. PASS 인증이 끝나고 서버와 통신을 시작할 때 로딩 UI 띄우기
     setIsProcessing(true);
 
     try {
@@ -77,7 +74,6 @@ const PassModal = ({ onClose, onNonMember }) => {
         di: diValue
       });
 
-      // 통신 완료 후 로딩 UI 닫기
       setIsProcessing(false);
 
       if (response.data.status == 200 && response.data.data && response.data.data.mbr_no) {
@@ -104,12 +100,12 @@ const PassModal = ({ onClose, onNonMember }) => {
         processNonMember(fallbackUser);
       }
     } catch (error) {
-      setIsProcessing(false); // 에러 발생 시에도 로딩 UI 닫기
+      setIsProcessing(false);
 
       if (error.response && error.response.status === 404) {
         processNonMember(fallbackUser);
       } else {
-        showAlert("회원 확인 중 오류가 발생했습니다.");
+        showAlert(t('pass_alert_verify_error') || "회원 확인 중 오류가 발생했습니다.");
       }
     }
   };
@@ -122,7 +118,7 @@ const PassModal = ({ onClose, onNonMember }) => {
       if (type === 'PASS_AUTH_SUCCESS') {
         handlePassVerification(payload.di, payload.user);
       } else if (type === 'FAIL' || type === 'SYSTEM_ERROR') {
-        showAlert(payload.message || t('pass_alert_auth_fail'));
+        showAlert(payload.message || t('pass_alert_auth_fail') || "인증에 실패했습니다.");
       }
     };
 
@@ -160,10 +156,10 @@ const PassModal = ({ onClose, onNonMember }) => {
         form.appendChild(inputM); form.appendChild(inputEnc);
         document.body.appendChild(form); form.submit(); document.body.removeChild(form);
       } else {
-        showAlert(t('pass_alert_request_fail'));
+        showAlert(t('pass_alert_request_fail') || "인증 요청을 생성할 수 없습니다.");
       }
     } catch (error) {
-      showAlert(t('pass_alert_server_error'));
+      showAlert(t('pass_alert_server_error') || "서버 통신 중 오류가 발생했습니다.");
     }
   };
 
@@ -195,28 +191,28 @@ const PassModal = ({ onClose, onNonMember }) => {
               <div className="alert-overlay">
                 <div className="alert-content success-box-v2">
                   <div className="alert-header-success-v2" style={{ backgroundColor: '#6c757d' }}>
-                    인증 진행 중
+                    {t('pass_loading_title') || '인증 진행 중'}
                   </div>
                   <div className="alert-body-v2">
                     <div className="success-icon-circle" style={{ backgroundColor: 'transparent' }}>
                       <div className="loading-spinner" style={{ width: '80px', height: '80px', borderTopColor: '#6c757d' }}></div>
                     </div>
                     <p className="alert-msg-v2">
-                      시스템에서 사용자 정보를<br/>
-                      안전하게 확인하고 있습니다...
+                      {t('pass_loading_desc_1') || '시스템에서 사용자 정보를'}<br/>
+                      {t('pass_loading_desc_2') || '안전하게 확인하고 있습니다...'}
                     </p>
-                    <p className="auto-move-text">잠시만 기다려주세요.</p>
+                    <p className="auto-move-text">{t('pass_loading_wait') || '잠시만 기다려주세요.'}</p>
                   </div>
                 </div>
               </div>
             )}
 
-            {/* ★ 4. PASS 인증 성공 알림창 ("환영합니다!" 문구 적용) */}
+            {/* ★ 4. PASS 인증 성공 알림창 */}
             {successInfo.show && (
               <div className="alert-overlay">
                 <div className="alert-content success-box-v2">
                   <div className="alert-header-success-v2" style={{ backgroundColor: successInfo.isMember ? '#00A0E9' : '#28a745' }}>
-                    {successInfo.isMember ? '회원 인증 성공' : '비회원 인증 성공'}
+                    {successInfo.isMember ? (t('pass_success_member') || '회원 인증 성공') : (t('pass_success_non_member') || '비회원 인증 성공')}
                   </div>
                   <div className="alert-body-v2">
                     <div className="success-icon-circle">
@@ -225,13 +221,15 @@ const PassModal = ({ onClose, onNonMember }) => {
                       </svg>
                     </div>
                     <p className="alert-msg-v2">
-                      <strong>{successInfo.name}</strong>님<br/>
-                      환영합니다!
+                      {/* 언어별 어순 처리 */}
+                      <span className="greeting-text-top">{t('login_success_greeting_1')}</span>
+                      <br />
+                      <strong>{successInfo.name}</strong>{t('login_success_greeting_2')}
                     </p>
                     <div className="loading-bar-container">
                       <div className="loading-bar-fill" style={{ backgroundColor: successInfo.isMember ? '#00A0E9' : '#28a745' }}></div>
                     </div>
-                    <p className="auto-move-text">잠시 후 계좌 확인으로 이동합니다...</p>
+                    <p className="auto-move-text">{t('login_success_auto_move') || '잠시 후 계좌 확인 화면으로 이동합니다...'}</p>
                   </div>
                 </div>
               </div>
@@ -243,7 +241,7 @@ const PassModal = ({ onClose, onNonMember }) => {
                   <div className="custom-alert-message">
                     {alertInfo.message.split('\n').map((line, idx) => (<React.Fragment key={idx}>{line}<br /></React.Fragment>))}
                   </div>
-                  <button className="custom-alert-btn" onClick={handleCloseAlert}>확인</button>
+                  <button className="custom-alert-btn" onClick={handleCloseAlert}>{t('account_alert_btn_confirm') || '확인'}</button>
                 </div>
               </div>
             )}
@@ -251,7 +249,6 @@ const PassModal = ({ onClose, onNonMember }) => {
         </div>
       )}
 
-      {/* 인증 성공 시 나타나는 계좌 모달 */}
       {showAccountModal && (
         <AccountInputModal onClose={onClose} />
       )}
