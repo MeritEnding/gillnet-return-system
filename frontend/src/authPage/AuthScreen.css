@@ -1,0 +1,894 @@
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+:root {
+  --tab-active-bg: #009CDA;
+  --tab-inactive-bg: #7CC557;
+  --card-border-blue: #006090;
+  --inst-bg: #EAF8FF;
+  --text-dark: #333;
+}
+
+/* ========================================= */
+/* 1. 기본 레이아웃 (공통 & 가로 모드) */
+/* ========================================= */
+
+.auth-wrapper {
+  display: flex; 
+  flex-direction: column;
+  width: 100%; 
+  height: 100vh;
+  background-color: #f0f4f8;
+  font-family: 'Pretendard', sans-serif;
+  overflow: hidden;
+  position: relative;
+  max-width: 600px; /* 기본 모바일 비율 유지 */
+  margin: 0 auto; 
+  box-shadow: 0 0 50px rgba(0,0,0,0.1);
+}
+
+.auth-body {
+  flex: 1; 
+  display: flex; 
+  flex-direction: column;
+  overflow: hidden; 
+  position: relative;
+  width: 100%;
+}
+
+/* 상단 카메라 영역 */
+.camera-box {
+  flex: 1.2; 
+  background-color: #000; 
+  display: flex; 
+  justify-content: center; 
+  align-items: center;
+  overflow: hidden; 
+  position: relative; /* 버튼 배치의 기준점 */
+}
+
+.auth-video {
+  width: 100%; 
+  height: 100%; 
+  object-fit: fill; 
+}
+
+/* ========================================= */
+/* ★ 버튼 스타일 (뒤로가기 & 반납종료) */
+/* ========================================= */
+
+/* 1. 공통 디자인 (반투명 블랙, 둥근 모서리) */
+.auth-back-btn, .auth-exit-btn {
+  position: absolute;
+  z-index: 100;
+  
+  display: flex; 
+  align-items: center; 
+  gap: 10px;
+  
+  background-color: rgba(0, 0, 0, 0.5); /* 반투명 검정 배경 */
+  backdrop-filter: blur(4px); /* 블러 효과 */
+  border: 2px solid rgba(255, 255, 255, 0.4); /* 반투명 흰색 테두리 */
+  border-radius: 30px; 
+  padding: 12px 25px; /* 터치하기 좋은 크기 */
+  
+  cursor: pointer; 
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+/* 2. 위치 지정 */
+
+/* 뒤로가기: 왼쪽 상단 */
+.auth-back-btn {
+  top: 25px; 
+  left: 25px; 
+}
+
+/* ★ [수정] 반납종료: 오른쪽 하단 */
+.auth-exit-btn {
+  bottom: 25px; /* 아래쪽 배치 */
+  right: 25px;  /* 오른쪽 배치 */
+}
+
+/* 3. 눌렸을 때 효과 (공통) */
+.auth-back-btn:active, .auth-exit-btn:active { 
+  background-color: rgba(0, 0, 0, 0.7); 
+  transform: scale(0.96); 
+}
+
+/* 4. 텍스트 스타일 (공통) */
+.auth-back-text, .auth-exit-text { 
+  color: white; 
+  font-size: 1.4rem; 
+  font-weight: 700; 
+  padding-bottom: 2px; 
+  letter-spacing: -0.5px;
+}
+
+/* 5. 아이콘 크기 (공통) */
+.auth-back-btn svg, .auth-exit-btn svg {
+  width: 26px;
+  height: 26px;
+}
+
+
+/* ========================================= */
+/* 하단 카드 영역 */
+/* ========================================= */
+
+.auth-card-container {
+  flex: 1; 
+  position: relative;
+  background-color: #29C2F5; 
+  display: flex; 
+  justify-content: center; 
+  align-items: center;    
+  padding: 10px; 
+}
+
+/* 흰색 정보 카드 */
+.auth-info-card {
+  background-color: rgba(255, 255, 255, 0.98); 
+  width: 95%; 
+  height: 96%; 
+  border-radius: 25px;
+  border: 5px solid var(--card-border-blue);
+  padding: 20px;
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  justify-content: space-between; 
+  box-shadow: 0 10px 30px rgba(0, 70, 120, 0.3); 
+}
+
+/* 단계 탭 */
+.step-tabs {
+  display: flex; width: 100%; gap: 10px; flex-shrink: 0; 
+  height: 60px; margin-bottom: 10px;
+}
+
+.step-tab {
+  flex: 1; height: 100%; border-radius: 12px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  color: white; font-weight: 800; 
+  background: linear-gradient(180deg, #8EDA6D 0%, #6CC24A 100%);
+  border: 2px solid #fff; opacity: 0.9;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.step-tab.active {
+  background: linear-gradient(180deg, #29C2F5 0%, #0085CA 100%);
+  opacity: 1; transform: scale(1.02); z-index: 2; border-color: white;
+}
+
+.step-num-circle {
+  width: 24px; height: 24px; background-color: white; border-radius: 50%;
+  color: #555; font-size: 1rem; font-weight: 900; 
+  display: flex; justify-content: center; align-items: center; margin-bottom: 2px;
+}
+.step-tab.active .step-num-circle { color: var(--card-border-blue); } 
+.step-label { font-size: 0.9rem; letter-spacing: -0.5px; }
+
+/* 메인 타이틀 */
+.step-main-title {
+  color: var(--card-border-blue);
+  font-size: 1.8rem; font-weight: 800; 
+  text-align: center; margin: 5px 0 15px 0; flex-shrink: 0;
+}
+
+/* 내용 영역 */
+.idle-content {
+  width: 100%; height: 100%; flex: 1;
+  display: flex; flex-direction: column; justify-content: flex-start; gap: 10px;
+}
+
+/* 안내 박스 */
+.instruction-box {
+  background-color: var(--inst-bg);
+  width: 100%; border-radius: 15px; padding: 20px;
+  text-align: center; flex: 1; 
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+}
+.instruction-box p {
+  font-size: 1.5rem; font-weight: 700; color: #333; 
+  line-height: 1.4; margin: 0; word-break: keep-all; 
+}
+
+/* ========================================= */
+/* 성공 화면 (21인치 모니터 - 초대형 텍스트) */
+/* ========================================= */
+
+/* ========================================= */
+/* 성공 화면 (21인치 최적화 - 밸런스 수정) */
+/* ========================================= */
+
+.success-content { 
+  width: 100%; 
+  height: 100%; 
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  justify-content: center; 
+}
+
+/* 1. 타이틀: 적당히 큰 사이즈 (약 50px) */
+.success-title { 
+  color: var(--card-border-blue); 
+  font-size: 3.2rem;  /* 4.5rem -> 3.2rem 로 축소 */
+  font-weight: 900; 
+  margin-bottom: 25px; 
+  letter-spacing: -1.5px; 
+  text-align: center;
+}
+
+/* 2. 메시지 박스 */
+.success-msg-box { 
+  width: 95%; /* 가로 폭을 살짝 줄여서 여백 확보 */
+  background-color: white; 
+  border: 4px solid #eee; 
+  border-radius: 20px; 
+  padding: 30px; 
+  margin-bottom: 25px; 
+  text-align: center; 
+  box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+  
+  flex: 1; 
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ★ 안내 멘트: 부담스럽지 않게 잘 보이는 크기 (약 45px) */
+.success-msg-box p { 
+  font-size: 2.8rem; /* 4.2rem -> 2.8rem 로 축소 */
+  font-weight: 800; 
+  color: #333; 
+  line-height: 1.4; 
+  margin: 0; 
+  word-break: keep-all; 
+}
+
+/* 이름 강조 부분 */
+.success-msg-box p strong {
+  color: #009CDA; 
+  font-size: 3.0rem; /* 이름만 살짝 더 크게 */
+  font-weight: 900;
+}
+
+/* 3. 하단 (반납 준비 중) */
+.success-footer { 
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
+  gap: 15px; 
+  width: 100%;
+  padding-bottom: 10px;
+}
+
+.spin-icon { 
+  width: 60px; /* 90px -> 60px 로 축소 */
+  height: 60px; 
+  animation: spin 1s linear infinite; 
+}
+
+.success-footer-text { 
+  font-size: 2.0rem; /* 2.8rem -> 2.0rem 로 축소 */
+  font-weight: 700; 
+  color: var(--card-border-blue); 
+  text-align: left; 
+}
+
+/* (선택) 세로 모드일 때는 조금만 더 키워줌 */
+@media (orientation: portrait) {
+  .success-title { font-size: 3.8rem; }
+  .success-msg-box p { font-size: 3.2rem; }
+  .success-footer-text { font-size: 2.4rem; }
+  .spin-icon { width: 75px; height: 75px; }
+}
+.spin-icon { 
+  width: 90px; /* 로딩 아이콘도 대형화 */
+  height: 90px; 
+  animation: spin 1s linear infinite; 
+}
+
+.success-footer-text { 
+  font-size: 2.8rem; /* 약 45px */
+  font-weight: 800; 
+  color: var(--card-border-blue); 
+  text-align: left; 
+  line-height: 1.2;
+}
+
+@media (orientation: portrait) {
+  .spin-icon { width: 90px; height: 90px; }
+  .success-footer-text { font-size: 2.6rem !important; }
+}
+
+/* ========================================= */
+/* 2. 세로 모드 (키오스크 전용) 오버라이드 */
+/* ========================================= */
+@media (orientation: portrait) {
+
+  /* 1. 전체 래퍼 꽉 채우기 */
+  .auth-wrapper {
+    max-width: 100%;
+    width: 100vw;
+    height: 100vh;
+    box-shadow: none;
+  }
+
+  /* 2. 카메라 영역 비율 50%로 확대 */
+  .camera-box {
+    flex: 1; 
+    border-bottom: 4px solid #fff;
+    background-color: #000;
+  }
+
+  .auth-video { object-fit: cover; }
+
+  /* ★ 버튼 크기 및 위치 조정 (세로 모드) ★ */
+  .auth-back-btn, .auth-exit-btn {
+    padding: 15px 30px; /* 터치 영역 확대 */
+    border-radius: 40px; 
+    border-width: 3px;
+  }
+  
+  /* 뒤로가기: 좌측 상단 */
+  .auth-back-btn { 
+    top: 30px; 
+    left: 30px; 
+  }
+  
+  /* 반납종료: 우측 하단 */
+  .auth-exit-btn { 
+    bottom: 30px; 
+    right: 30px;
+  }
+
+  .auth-back-text, .auth-exit-text { font-size: 1.6rem; }
+  .auth-back-btn svg, .auth-exit-btn svg { width: 32px; height: 32px; }
+
+  /* 3. 하단 카드 컨테이너 비율 50% */
+  .auth-card-container {
+    flex: 1; 
+    padding: 30px; 
+    background: linear-gradient(180deg, #29C2F5 0%, #0093D7 100%);
+  }
+
+  /* 4. 정보 카드 */
+  .auth-info-card {
+    border-width: 8px; 
+    padding: 40px; 
+    gap: 30px;
+    justify-content: space-between;
+  }
+
+  /* 폰트 크기 강제 확대 (!important) */
+  .step-tabs { height: 110px; gap: 15px; margin-bottom: 25px; }
+  .step-tab { border-width: 4px; border-radius: 20px; }
+  
+  .step-num-circle { width: 40px; height: 40px; font-size: 1.8rem !important; }
+  .step-label { font-size: 1.6rem !important; font-weight: 800; }
+  .step-main-title { font-size: 3.5rem !important; margin: 20px 0 30px 0; letter-spacing: -2px; }
+  
+  .instruction-box { padding: 40px; }
+  .instruction-box p { font-size: 3.2rem !important; font-weight: 900; line-height: 1.4; }
+  
+  .success-title { font-size: 3rem !important; margin-top: 20px; }
+  .success-msg-box { padding: 50px; border-width: 6px; flex: 1; display: flex; align-items: center; justify-content: center; }
+  .success-msg-box p { font-size: 2.6rem !important; }
+  .spin-icon { width: 80px; height: 80px; }
+  .success-footer-text { font-size: 2rem !important; }
+}
+
+
+/* ========================================= */
+/* 3. 팝업 & 로딩 (공통) */
+/* ========================================= */
+.auth-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background-color: rgba(0,0,0,0.6); z-index: 2000;
+  display: flex; justify-content: center; align-items: center;
+}
+.loading-spinner {
+  width: 70px; height: 70px;
+  border: 8px solid #f3f3f3; border-top: 8px solid var(--tab-active-bg);
+  border-radius: 50%; animation: spin 1s linear infinite;
+}
+
+.fail-popup-content {
+  background-color: white; border: 4px solid #00A0E9; border-radius: 20px;
+  width: 90%; max-width: 450px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+@media (orientation: portrait) {
+  .fail-popup-content { max-width: 650px; border-width: 6px; border-radius: 30px; }
+}
+
+.fail-popup-header { background-color: #00A0E9; padding: 20px; text-align: center; }
+.fail-popup-title { color: white; margin: 0; font-size: 1.8rem; font-weight: 900; }
+@media (orientation: portrait) { .fail-popup-title { font-size: 2.4rem; padding: 15px 0; } }
+
+.fail-popup-body { padding: 40px 25px; display: flex; flex-direction: column; align-items: center; }
+.fail-popup-message { font-size: 1.6rem; font-weight: 800; text-align: center; margin-bottom: 30px; line-height: 1.4; color: #333; }
+@media (orientation: portrait) { .fail-popup-message { font-size: 2rem; margin-bottom: 50px; } }
+
+.fail-popup-actions { display: flex; gap: 15px; width: 100%; }
+.fail-popup-btn { flex: 1; height: 60px; font-size: 1.4rem; font-weight: 900; color: white; border: none; border-radius: 10px; cursor: pointer; }
+@media (orientation: portrait) { .fail-popup-btn { height: 100px; font-size: 2rem; border-radius: 15px; } }
+
+.fail-popup-btn.retry { background-color: var(--tab-active-bg); }
+.fail-popup-btn.cancel { background-color: var(--tab-inactive-bg); }
+
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+.css-scan-animation {
+  width: 100%;
+  height: 200px; /* 애니메이션 영역 높이 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+/* 핸드폰 모양 */
+/* ========================================= */
+/* ★ 스캔 애니메이션 (손 + 스캐너 + 핸드폰) CSS */
+/* ========================================= */
+
+/* 1. 애니메이션 전체 컨테이너 */
+.css-scan-animation {
+  width: 100%;
+  height: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px; /* 스캐너와 핸드폰 사이 간격 */
+  margin-bottom: 20px;
+}
+
+/* ------------------------------------------------ */
+/* 왼쪽: 스캐너 (손 포함) */
+/* ------------------------------------------------ */
+.scanner-part {
+  position: relative;
+  width: 100px; 
+  height: 100px;
+  display: flex; 
+  justify-content: center; 
+  align-items: center;
+  z-index: 10;
+  
+  /* 손이 까딱까딱 움직이는 애니메이션 */
+  animation: handMove 2s infinite ease-in-out;
+}
+
+/* 스캐너 움직임 키프레임 */
+@keyframes handMove {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  50% { transform: translate(5px, -5px) rotate(-5deg); } /* 살짝 들었다 놓기 */
+}
+
+/* 스캐너에서 나가는 붉은 빔 (삼각형 모양) */
+.scanner-beam {
+  position: absolute;
+  top: 35px;    /* 스캐너 헤드 높이에 맞춤 */
+  left: 95px;   /* 스캐너 앞쪽에서 시작 */
+  
+  width: 0; 
+  height: 0;
+  border-top: 20px solid transparent;
+  border-bottom: 20px solid transparent;
+  border-left: 80px solid rgba(255, 0, 0, 0.2); /* 붉은색 반투명 빔 */
+  
+  /* 빔이 깜빡이는 애니메이션 */
+  animation: beamFlash 0.5s infinite alternate;
+  pointer-events: none; /* 클릭 방해 안 함 */
+}
+
+@keyframes beamFlash {
+  0% { opacity: 0.3; transform: scaleX(0.9); }
+  100% { opacity: 0.7; transform: scaleX(1.1); }
+}
+
+/* ------------------------------------------------ */
+/* 오른쪽: 핸드폰 (CSS로 그림) */
+/* ------------------------------------------------ */
+.scan-phone {
+  width: 100px; 
+  height: 160px;
+  border: 6px solid #333; /* 폰 테두리 */
+  border-radius: 16px;
+  background-color: white;
+  position: relative;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  
+  display: flex; 
+  justify-content: center; 
+  align-items: center;
+  
+  transform: rotate(5deg); /* 폰을 살짝 기울임 */
+}
+
+/* 폰 상단 스피커 (디테일) */
+.scan-phone::before {
+  content: '';
+  position: absolute;
+  top: 10px;
+  width: 30px; 
+  height: 4px;
+  background-color: #eee;
+  border-radius: 2px;
+}
+
+/* 폰 화면 내부 (QR 코드 들어갈 자리) */
+.scan-screen {
+  width: 80%; 
+  height: 70%;
+  position: relative;
+  display: flex; 
+  justify-content: center; 
+  align-items: center;
+  overflow: hidden; /* 레이저가 화면 밖으로 나가지 않게 */
+}
+
+/* 폰 화면 위를 훑는 레이저 선 */
+.scan-laser {
+  position: absolute;
+  width: 120%; 
+  height: 2px;
+  background-color: red;
+  box-shadow: 0 0 6px red; /* 붉은 빛 번짐 효과 */
+  left: -10%; 
+  top: 10%;
+  
+  /* 위아래로 스캔하는 애니메이션 */
+  animation: laserScan 1.5s infinite linear;
+}
+
+@keyframes laserScan {
+  0% { top: 10%; opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { top: 90%; opacity: 0; }
+}
+
+
+/* ========================================= */
+/* 세로 모드 (키오스크 Portrait) 대응 */
+/* ========================================= */
+@media (orientation: portrait) {
+  
+  /* 전체 애니메이션 영역 확대 */
+  .css-scan-animation {
+    height: 300px; /* 높이 확보 */
+    gap: 40px;     /* 간격 넓힘 */
+  }
+
+  /* 스캐너 아이콘(SVG wrapper) 확대 */
+  .scanner-part {
+    width: 150px; 
+    height: 150px;
+  }
+  
+  /* 스캐너 SVG 자체 크기 확대 (부모 크기에 맞춤) */
+  .scanner-part svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* 빔 위치 및 크기 조정 */
+  .scanner-beam {
+    top: 55px;      /* 위치 조정 */
+    left: 140px;    /* 위치 조정 */
+    border-top-width: 30px;
+    border-bottom-width: 30px;
+    border-left-width: 120px; /* 빔 길이 늘림 */
+  }
+
+  /* 핸드폰 크기 확대 */
+  .scan-phone {
+    width: 140px; 
+    height: 240px;
+    border-width: 8px;
+    border-radius: 20px;
+  }
+}
+
+/* 핸드폰 상단 스피커 구멍 */
+.scan-phone::before {
+  content: '';
+  position: absolute;
+  top: 15px;
+  width: 40px;
+  height: 4px;
+  background-color: #eee;
+  border-radius: 2px;
+}
+
+/* 내부 화면 영역 */
+.scan-screen {
+  width: 80%;
+  height: 70%;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 빨간색 스캔 레이저 */
+.scan-laser {
+  position: absolute;
+  width: 120%;
+  height: 2px;
+  background-color: red;
+  box-shadow: 0 0 4px red;
+  left: -10%;
+  top: 0;
+  animation: scanMove 2s infinite ease-in-out;
+  opacity: 0.8;
+}
+
+/* 레이저 움직임 정의 */
+@keyframes scanMove {
+  0% { top: 10%; opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { top: 90%; opacity: 0; }
+}
+
+/* 안내 박스 스타일 수정 */
+.instruction-box {
+  background-color: var(--inst-bg);
+  width: 100%; 
+  border-radius: 20px; 
+  padding: 30px;
+  display: flex; 
+  flex-direction: column; 
+  align-items: center;
+  flex: 1; 
+  gap: 10px;
+  border: 2px solid #Cce4ff;
+}
+
+.instruction-text {
+  font-size: 1.8rem; 
+  font-weight: 900; 
+  color: #222; 
+  line-height: 1.4; 
+  margin: 0; 
+  word-break: keep-all; 
+  text-align: center;
+}
+
+/* 세로 모드 대응 */
+@media (orientation: portrait) {
+  .css-scan-animation { height: 250px; }
+  .scan-phone { width: 150px; height: 250px; border-width: 8px; }
+  .instruction-text { font-size: 3rem !important; }
+}
+/* ========================================= */
+/* 3. 팝업 & 로딩 (21인치 모니터 최적화) */
+/* ========================================= */
+
+.auth-overlay {
+  position: fixed; 
+  top: 0; 
+  left: 0; 
+  width: 100%; 
+  height: 100%;
+  background-color: rgba(0,0,0,0.7); /* 배경을 좀 더 어둡게 해서 팝업 집중도 향상 */
+  z-index: 2000;
+  display: flex; 
+  justify-content: center; 
+  align-items: center;
+  backdrop-filter: blur(5px); /* 배경 블러 처리 추가 */
+}
+
+.loading-spinner {
+  width: 100px; /* 로딩 스피너도 더 크게 */
+  height: 100px;
+  border: 10px solid #f3f3f3; 
+  border-top: 10px solid var(--tab-active-bg);
+  border-radius: 50%; 
+  animation: spin 1s linear infinite;
+}
+
+/* ★ [핵심] 실패 팝업창 컨테이너 확대 */
+.fail-popup-content {
+  background-color: white; 
+  border: 6px solid #00A0E9; /* 테두리 두께 강화 */
+  border-radius: 30px;
+  
+  width: 90%; 
+  max-width: 800px; /* 기존 450px -> 800px로 대폭 확대 (21인치 대응) */
+  
+  overflow: hidden; 
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5); /* 그림자 더 진하게 */
+  animation: popIn 0.3s ease-out; /* 팝업 등장 애니메이션 효과 */
+}
+
+/* 세로 모드(키오스크)일 경우 더 꽉 차게 */
+@media (orientation: portrait) {
+  .fail-popup-content { 
+    max-width: 90%; 
+    border-width: 8px; 
+    border-radius: 40px; 
+  }
+}
+
+/* 팝업 헤더 */
+.fail-popup-header { 
+  background-color: #00A0E9; 
+  padding: 30px 20px; /* 패딩 확대 */
+  text-align: center; 
+}
+
+/* ★ 제목 폰트 확대 */
+.fail-popup-title { 
+  color: white; 
+  margin: 0; 
+  font-size: 3rem; /* 기존 1.8rem -> 3rem (약 48px) */
+  font-weight: 900; 
+  letter-spacing: -1px;
+}
+
+@media (orientation: portrait) { 
+  .fail-popup-title { 
+    font-size: 3.5rem; 
+    padding: 10px 0; 
+  } 
+}
+
+/* 팝업 본문 */
+.fail-popup-body { 
+  padding: 60px 40px; /* 내부 여백 시원하게 */
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+}
+
+/* ★ 메시지 폰트 확대 */
+.fail-popup-message { 
+  font-size: 2.4rem; /* 기존 1.6rem -> 2.4rem (약 38px) */
+  font-weight: 800; 
+  text-align: center; 
+  margin-bottom: 60px; /* 버튼과의 간격 벌림 */
+  line-height: 1.5; 
+  color: #222; 
+  word-break: keep-all; /* 단어 단위 줄바꿈 */
+}
+
+@media (orientation: portrait) { 
+  .fail-popup-message { 
+    font-size: 2.8rem; 
+    margin-bottom: 80px; 
+  } 
+}
+
+/* 버튼 영역 */
+.fail-popup-actions { 
+  display: flex; 
+  gap: 20px; /* 버튼 사이 간격 */
+  width: 100%; 
+}
+
+/* ★ 버튼 크기 확대 */
+.fail-popup-btn { 
+  flex: 1; 
+  height: 100px; /* 버튼 높이: 60px -> 100px */
+  font-size: 2.2rem; /* 버튼 글자: 1.4rem -> 2.2rem */
+  font-weight: 900; 
+  color: white; 
+  border: none; 
+  border-radius: 20px; /* 둥글기 조정 */
+  cursor: pointer; 
+  transition: transform 0.1s;
+}
+
+.fail-popup-btn:active {
+  transform: scale(0.98); /* 클릭 시 눌리는 효과 */
+}
+
+@media (orientation: portrait) { 
+  .fail-popup-btn { 
+    height: 120px; /* 세로 모드에선 더 크게 */
+    font-size: 2.5rem; 
+    border-radius: 25px; 
+  } 
+}
+
+.fail-popup-btn.retry { background-color: var(--tab-active-bg); box-shadow: 0 5px 0 #007bb5; }
+.fail-popup-btn.cancel { background-color: #888; box-shadow: 0 5px 0 #666; }
+
+@keyframes spin { 
+  0% { transform: rotate(0deg); } 
+  100% { transform: rotate(360deg); } 
+}
+
+/* 팝업 등장 애니메이션 */
+@keyframes popIn {
+  0% { transform: scale(0.8); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+/* ========================================= */
+/* 최적화된 키오스크 계좌 입력 모달 (가로 폭 확장 & 글자 깨짐 방지) */
+/* ========================================= */
+.account-modal-content {
+  background-color: white;
+  border: 8px solid #00A0E9;
+  border-radius: 35px; 
+  width: 95%;
+  max-width: 850px; /* ★ 700px -> 850px로 가로 폭을 시원하게 확장했습니다! */
+  padding: 40px; 
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+  animation: popIn 0.3s ease-out;
+  display: flex;
+  flex-direction: column;
+}
+
+.account-header { text-align: center; margin-bottom: 25px; }
+.account-title { color: #006090; font-size: 2.8rem; font-weight: 900; margin: 0 0 10px 0; letter-spacing: -1.5px; }
+.account-subtitle { color: #009CDA; font-size: 1.8rem; font-weight: 700; margin: 0; }
+
+.account-form-group { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+.account-label { font-size: 2.2rem; font-weight: 900; color: #333; text-align: left; margin-left: 10px; }
+
+/* 공통 인풋 스타일 */
+.account-input-box {
+  width: 100%; height: 75px; 
+  padding: 0 20px; font-size: 2.4rem; font-weight: 800; color: #222;
+  border: 4px solid #ccc; border-radius: 15px; background-color: #f8f9fa; 
+  cursor: pointer; display: flex; align-items: center; justify-content: center; 
+  transition: all 0.2s; box-sizing: border-box;
+}
+.account-input-box:active { transform: scale(0.98); border-color: #00A0E9; }
+.account-input-box.highlight { border: 4px solid #00A0E9; background-color: #EAF8FF; color: #006090; }
+
+/* --- 은행 선택 바둑판 (가로 폭에 맞춰 안정적으로 배치) --- */
+.bank-grid-container {
+  display: grid; grid-template-columns: repeat(4, 1fr); 
+  gap: 12px; /* ★ 버튼 사이 간격을 살짝 넓혔습니다 */
+  background: #f1f3f5; padding: 20px; border-radius: 20px; margin-top: 10px;
+}
+.bank-btn {
+  height: 70px; /* ★ 버튼 높이도 살짝 키웠습니다 */
+  font-size: 1.8rem; font-weight: 900; color: #333;
+  background: white; border: 3px solid #ddd; border-radius: 12px; cursor: pointer;
+  word-break: keep-all; /* ★ 핵심! 글자가 중간에 이상하게 깨지지 않도록 방지합니다 */
+  padding: 0 5px; /* 좌우 여백을 줄여서 글자가 들어갈 공간 확보 */
+}
+.bank-btn:active { background: #00A0E9; color: white; border-color: #00A0E9; transform: scale(0.95); }
+
+/* --- 공통 키패드 컨테이너 --- */
+.account-keypad-container { background: #f1f3f5; padding: 20px; border-radius: 20px; border: 4px solid #dee2e6; margin-bottom: 15px; }
+
+/* --- 숫자 키패드 --- */
+.account-keypad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.account-keypad-btn {
+  height: 75px; font-size: 3rem; font-weight: 900; color: #333; background-color: #fff;
+  border: 3px solid #ced4da; border-radius: 15px; box-shadow: 0 5px 0 #ced4da; cursor: pointer;
+}
+.account-keypad-btn:active { transform: translateY(5px); box-shadow: 0 0 0 #ced4da; }
+
+/* --- 한글 가상 키보드 그리드 --- */
+.hangul-keypad-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+.hangul-btn {
+  height: 65px; font-size: 2.2rem; font-weight: 900; color: #333; background-color: #fff;
+  border: 3px solid #ced4da; border-radius: 12px; box-shadow: 0 4px 0 #ced4da; cursor: pointer;
+}
+.hangul-btn:active { transform: translateY(4px); box-shadow: 0 0 0 #ced4da; }
+.hangul-action-btn { background-color: #e9ecef; font-size: 1.8rem; color: #555; }
+
+/* --- 키패드 닫기 버튼 --- */
+.account-keypad-close { 
+  width: 100%; height: 70px; margin-top: 15px; 
+  font-size: 2.2rem; font-weight: 900; background-color: #495057; 
+  color: white; border: none; border-radius: 15px; box-shadow: 0 5px 0 #343a40; cursor: pointer; transition: all 0.1s; 
+}
+.account-keypad-close:active { transform: translateY(5px); box-shadow: 0 0 0 #343a40; }
+
+/* --- 하단 액션 버튼 --- */
+.account-action-group { display: flex; gap: 15px; margin-top: 10px; }
+.account-btn { flex: 1; height: 90px; font-size: 2.6rem; font-weight: 900; color: white; border: none; border-radius: 20px; cursor: pointer; }
+.account-btn-confirm { flex: 2; background-color: #009CDA; box-shadow: 0 6px 0 #007bb5; }
+.account-btn-cancel { flex: 1; background-color: #888; box-shadow: 0 6px 0 #666; }
