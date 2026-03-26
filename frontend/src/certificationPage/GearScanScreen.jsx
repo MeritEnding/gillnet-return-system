@@ -52,6 +52,26 @@ const GearScanScreen = () => {
 
   const gearType = localStorage.getItem('selected_gvbk_type'); // 1: 보증금, 2: 기존
 
+  // =========================================================================
+  // ★ [신규 추가] 화면 진입 시 바코드 투입구가 열려있는지 확인(확보)하는 로직
+  // =========================================================================
+  useEffect(() => {
+    const ensureBarcodeDoorOpen = async () => {
+      try {
+        // 주의: 이전에 확인하신 정확한 API 경로를 넣어주세요. (예: /api/auth/hw/barcode-door)
+        await axios.post('http://localhost:8080/api/auth/hw/barcode-door', { 
+          open: true 
+        });
+        console.log('✅ 바코드 투입구 개방 상태 확보 완료');
+      } catch (error) {
+        console.error('❌ 바코드 투입구 개방 실패:', error);
+      }
+    };
+
+    ensureBarcodeDoorOpen();
+  }, []); // 빈 배열을 넣어 화면이 켜질 때 딱 1번만 실행되게 합니다.
+  // =========================================================================
+
   const handleGoBack = () => {
     window.speechSynthesis.cancel();
     navigate(-1);

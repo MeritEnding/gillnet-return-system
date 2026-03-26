@@ -109,7 +109,7 @@ const TagScanScreen = () => {
   /* --- 뒤로가기 핸들러 --- */
   const handleGoBack = () => {
     window.speechSynthesis.cancel();
-    navigate('/auth');
+    navigate('/select-gear');
   };
 
   /* --- TTS 로직 --- */

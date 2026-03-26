@@ -9,7 +9,6 @@ import FlagPH from '../assets/ph-flag.png';
 import FlagID from '../assets/id-flag.png';
 import FlagMM from '../assets/mm-flag.png';
 
-// ★ props로 onGuide를 받도록 추가합니다.
 const Footer = ({ onGuide }) => {
   const { i18n } = useTranslation();
 
@@ -24,33 +23,25 @@ const Footer = ({ onGuide }) => {
 
   return (
     <footer className="bottom-bar-footer">
-      {/* 윗줄: 안내 문구와 이용안내 버튼을 양쪽으로 배치 */}
-      <div className="bottom-bar-header">
-        <div className="bottom-bar-title">
-          <span className="title-icon">🌐</span> Select Language
-        </div>
-        
-        {/* ★ 이용 안내 버튼 추가 */}
-        <button className="footer-guide-btn" onClick={onGuide}>
-          <span className="guide-icon">❓</span> 이용 안내
-        </button>
-      </div>
+      <div className="bottom-bar-inner">
+      
 
-      {/* 아랫줄: 언어 버튼들 */}
-      <div className="bottom-bar-row">
-        {languages.map((lang) => {
-          const isActive = i18n.language.includes(lang.code);
-          return (
-            <button
-              key={lang.code}
-              onClick={() => i18n.changeLanguage(lang.code)}
-              className={`row-lang-btn ${isActive ? 'active' : ''}`}
-            >
-              <img src={lang.flag} alt={lang.code} className="row-lang-flag" />
-              <span className="row-lang-text">{lang.label}</span>
-            </button>
-          );
-        })}
+        {/* 아랫줄: 언어 버튼들 */}
+        <div className="bottom-bar-row">
+          {languages.map((lang) => {
+            const isActive = i18n.language.includes(lang.code);
+            return (
+              <button
+                key={lang.code}
+                onClick={() => i18n.changeLanguage(lang.code)}
+                className={`row-lang-btn ${isActive ? 'active' : ''}`}
+              >
+                <img src={lang.flag} alt={lang.code} className="row-lang-flag" />
+                <span className="row-lang-text">{lang.label}</span>
+              </button>
+            );
+          })}
+        </div>
       </div>
     </footer>
   );

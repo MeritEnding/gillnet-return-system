@@ -102,11 +102,19 @@ const AuthScreen = () => {
     setAcctNm(Hangul.assemble(newJamo));
   };
 
+  // ★ [핵심 수정] 화면에 들어오자마자 바코드 문 열기 + 은행 목록 불러오기
   useEffect(() => {
     localStorage.clear(); sessionStorage.clear();
+    
+    // 1. 은행 목록 로드
     axios.get('http://localhost:8080/api/v1/proxy/banks')
       .then(res => { if(res.data?.data?.banks) setBanks(res.data.data.banks); })
       .catch(err => console.error('은행 목록 로드 실패', err));
+
+    // 2. 바코드 투입구 열기 (첫 번째 코드에서 잘 작동했던 주소 적용)
+    axios.post('http://localhost:8080/api/auth/hw/barcode-door', { open: true })
+      .then(() => console.log('✅ 바코드 투입구 열기 성공'))
+      .catch(err => console.error('❌ 바코드 투입구 열기 실패', err));
   }, []);
 
   const handleGoBack = () => { window.speechSynthesis.cancel(); navigate('/'); };

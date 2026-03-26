@@ -1,6 +1,6 @@
 {
   "location_name": "부산광역시 기장군 월전리/ 무인 반납 1호기",
-  "header_lang_select": "Select Language",
+  "header_lang_select": "언어 선택",
   "main_info_1": "함께해요! 어구보증금제",
   "main_info_2": "24시간 폐어구 반납 가능!",
   "main_info_3": "담당자: 010-0000-0000",
@@ -24,7 +24,8 @@
   "btn_home": "처음으로",
   "btn_end":"처음으로",
   "confirm_go_home": "처음 화면으로 돌아가시겠습니까?\n진행 중인 내용은 저장되지 않습니다.",
-
+  
+  "gear_voice_guide": "반납하실 어구의 종류를 선택해주세요.",
   "method_modal_title": "반납 방법",
   "method_title_main": "폐어구 무인 반납은 4단계로 간단하게 진행됩니다.",
   "method_step1_title": "사용자 인증",
@@ -38,7 +39,7 @@
   "modal_confirm_btn": "확인했습니다",
   "faq_a2_sub":"표식을 깨끗하게 닦은 후 다시 시도해 주십시오.",
 
-  "go_home":"뒤로가기",
+  "go_home":"뒤로 가기",
 
   "policy_modal_title": "어구보증금제",
   "policy_title_1": "함께해요! 어구보증금제\"",
@@ -412,7 +413,7 @@
   "error_load_gear": "어구 정보를 불러오는데 실패했습니다.",
   "error_barcode_not_found": "대여 목록에 없는 바코드입니다.",
   "duplicate_barcode_warning": "이미 스캔된 바코드입니다.",
-  "go_home": "홈으로",
+  "go_home": "뒤로가기",
   "modal_home_title": "처음으로 이동",
   "modal_home_msg": "진행 중인 내용은 저장되지 않습니다.\n처음 화면으로 돌아가시겠습니까?",
   "btn_yes": "예",
@@ -535,8 +536,8 @@
   "deposit_msg_door_closed": "투입구가 닫혔습니다. 확인 완료를 눌러주세요.",
   "deposit_msg_door_closed_test": "테스트: 투입구 닫힘 처리 완료",
   "deposit_msg_final_upload": "데이터를 서버로 전송 중입니다...",
-  "deposit_btn_prev_step": "이전 단계",
-  "deposit_btn_prev": "이전으로",
+  "deposit_btn_prev_step": "뒤로 가기",
+  "deposit_btn_prev": "뒤로 가기",
   "deposit_step_confirm": "투입 내역 확인",
   "deposit_step_3_title": "3단계: 투입",
   "deposit_progress": "진행 상황",
@@ -544,8 +545,8 @@
   "deposit_inst_done": "어구 확인이 완료되었습니다. [투입구 닫기] 버튼을 눌러주세요.",
   "deposit_btn_check": "투입 확인",
   "deposit_btn_skip": "건너뛰기(테스트)",
-  "deposit_btn_door_closed": "투입구 닫힘",
-  "deposit_btn_close_door": "투입구 닫기",
+  "deposit_btn_door_closed": "투입구 닫기",
+  "deposit_btn_close_door": "바코드 투입구 닫기",
   "deposit_tbl_code": "코드",
   "deposit_tbl_type": "유형",
   "deposit_tbl_amt": "금액/포인트",

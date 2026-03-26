@@ -2,18 +2,17 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { useTranslation } from 'react-i18next'; // ★ 다국어 훅 추가
+import { useTranslation } from 'react-i18next';
 import './LoginModal.css';
 import AccountInputModal from './AccountInputModal';
 
 const LoginModal = ({ onClose }) => {
-  const { t } = useTranslation(); // ★ 번역 함수 선언
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [userId, setUserId] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  // 처음에는 자판을 숨깁니다.
   const [activeField, setActiveField] = useState(null);
   const [isShift, setIsShift] = useState(false);
   const [showAccountModal, setShowAccountModal] = useState(false);
@@ -33,13 +32,12 @@ const LoginModal = ({ onClose }) => {
 
       if (response.data.status === "200" || response.data.message.includes("성공")) {
         const userData = response.data.data;
-        // 기본 정보 저장
+        
         localStorage.setItem('mbr_no', userData.mbr_no);
         localStorage.setItem('fisherman_id', userData.user_fshnd_no);
         localStorage.setItem('fisherman_name', userData.mbr_nm);
         localStorage.setItem('is_member', 'true');
 
-        // ★ 계좌 정보가 있다면 하나도 빠짐없이 저장합니다 
         if (userData.actno) {
           localStorage.setItem('bank_cd', userData.bank_cd || '');
           localStorage.setItem('bank_nm', userData.bank_nm || '');
@@ -47,8 +45,9 @@ const LoginModal = ({ onClose }) => {
           localStorage.setItem('acct_nm', userData.dpstr_nm || userData.mbr_nm || '');
         }
 
+
+
         setShowSuccessAlert(true);
-        // ★ 2초 뒤에 계좌 모달로 자동 전환
         setTimeout(() => {
           setShowSuccessAlert(false);
           setShowAccountModal(true);
@@ -189,7 +188,6 @@ const LoginModal = ({ onClose }) => {
         </form>
       </div>
 
-      {/* ★ 로그인 성공 커스텀 알림창 ★ */}
       {showSuccessAlert && (
         <div className="alert-overlay">
           <div className="alert-content success-box-v2">
@@ -203,7 +201,6 @@ const LoginModal = ({ onClose }) => {
                 </svg>
               </div>
               <p className="alert-msg-v2">
-                {/* 언어별 어순 처리를 위해 인사말을 두 파트로 나누었습니다 */}
                 <span className="greeting-text-top">{t('login_success_greeting_1')}</span>
                 <br />
                 <strong>{localStorage.getItem('fisherman_name')}</strong>{t('login_success_greeting_2')}

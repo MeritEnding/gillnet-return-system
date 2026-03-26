@@ -7,7 +7,7 @@ import './LoginModal.css'; // 기존 로그인 성공 스타일 재사용
 import AccountInputModal from './AccountInputModal';
 
 const PassModal = ({ onClose, onNonMember }) => {
-  const { t } = useTranslation(); // ★ 번역 함수 선언
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const isRunRef = useRef(false);
   const popupRef = useRef(null);
@@ -36,9 +36,9 @@ const PassModal = ({ onClose, onNonMember }) => {
     }
   };
 
-  const showSuccessAndRedirect = (name, isMember, redirectFn) => {
+  const showSuccessAndRedirect = async (name, isMember, redirectFn) => {
     setSuccessInfo({ show: true, name, isMember });
-    
+
     setTimeout(() => {
       setSuccessInfo({ show: false, name: '', isMember: false });
       redirectFn();
@@ -186,7 +186,7 @@ const PassModal = ({ onClose, onNonMember }) => {
               <button className="privacy-action-btn-xl btn-cancel-green" onClick={onClose}>{t('btn_cancel') || '취소'}</button>
             </div>
 
-            {/* ★ 3. 인증 서버 확인 중(로딩) 알림창 */}
+            {/* 인증 서버 확인 중 알림창 */}
             {isProcessing && (
               <div className="alert-overlay">
                 <div className="alert-content success-box-v2">
@@ -207,7 +207,7 @@ const PassModal = ({ onClose, onNonMember }) => {
               </div>
             )}
 
-            {/* ★ 4. PASS 인증 성공 알림창 */}
+            {/* PASS 인증 성공 알림창 */}
             {successInfo.show && (
               <div className="alert-overlay">
                 <div className="alert-content success-box-v2">
@@ -221,7 +221,6 @@ const PassModal = ({ onClose, onNonMember }) => {
                       </svg>
                     </div>
                     <p className="alert-msg-v2">
-                      {/* 언어별 어순 처리 */}
                       <span className="greeting-text-top">{t('login_success_greeting_1')}</span>
                       <br />
                       <strong>{successInfo.name}</strong>{t('login_success_greeting_2')}

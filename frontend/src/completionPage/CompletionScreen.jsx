@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import axios from 'axios'; // ★ 추가
 import './CompletionScreen.css';
 
 import Header from '../mainPage/Header';
@@ -13,6 +14,7 @@ import IconScale from '../assets/image_3.png';
 import IconEarth from '../assets/image_4.png';
 import IconPoint from '../assets/image_5.png'; 
 import LoadingSpinner from '../assets/loading-spinner.png';
+
 
 /* --- 1. TTS 헬퍼 함수 --- */
 const getBestVoice = (langCode, voiceList) => {
@@ -118,12 +120,15 @@ const CompletionScreen = () => {
     navigate('/');
   };
 
+ // --- [수정] 추가 반납 (로그인 유지, 바코드 스캐너 투입구 열기 및 스캔 페이지로) ---
+  // --- [추가] 추가 반납 (로그인 유지 및 스캔 페이지로) ---
+  // --- [수정] 추가 반납 (로그인 유지, 바코드 스캐너 투입구 열기 및 스캔 페이지로) ---
   // --- [추가] 추가 반납 (로그인 유지 및 스캔 페이지로) ---
   const handleAddMore = () => {
     // 음성 안내 중단
     window.speechSynthesis.cancel();
     // 세션 정보 삭제하지 않고 스캔 페이지로 이동
-    navigate('/certificationPage/scan');
+    navigate('/select-gear');
   };
 
   if (isLoading) return <LoadingOverlay />;
@@ -143,6 +148,7 @@ const CompletionScreen = () => {
         </div>
       );
   }
+
 
   if (!receiptData) return null;
 

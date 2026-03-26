@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next'; // ★ 다국어 훅 적용
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 
 import './DepositScreen.css';
@@ -44,7 +44,7 @@ const SafetyWarningIcon = () => (
 const DepositScreen = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { t } = useTranslation(); // ★ 번역 함수 선언
+  const { t } = useTranslation();
 
   const [isLoading, setIsLoading] = useState(false);
   const [loadingText, setLoadingText] = useState('');
@@ -56,9 +56,6 @@ const DepositScreen = () => {
   const [statusMessage, setStatusMessage] = useState('');
   const [isError, setIsError] = useState(false);
   const [isDoorClosed, setIsDoorClosed] = useState(false);
-
-  // ★ 하드웨어 에러 방지용 테스트 모드 플래그
-  const [isTestMode, setIsTestMode] = useState(false);
 
   const [scannedGears, setScannedGears] = useState([]);
   const [scannedList, setScannedList] = useState([]);
@@ -79,7 +76,7 @@ const DepositScreen = () => {
   };
 
   useEffect(() => {
-    axios.post(`${LOCAL_API_URL}/api/deposit/init`).catch(() => console.log("하드웨어 초기화 건너뜀 (테스트 환경)"));
+    axios.post(`${LOCAL_API_URL}/api/deposit/init`).catch(() => console.log("하드웨어 초기화 건너뜀"));
   }, []);
 
   useEffect(() => {
@@ -100,9 +97,19 @@ const DepositScreen = () => {
       setDepositSubState('READY_CAPTURE');
       setCurrentItemIndex(0);
       setCapturedImages([]);
-      setIsTestMode(false);
     } else {
       navigate(-1);
+    }
+
+  };
+
+  // 1. 함수 추가 (handleBack 바로 아래에 작성)
+  const forceRunConveyor = async () => {
+    alert("컨베이어 강제 구동 신호를 보냅니다!");
+    try {
+      await axios.post(`${LOCAL_API_URL}/api/deposit/action/conveyor`);
+    } catch (e) {
+      alert("통신 실패: " + e.message);
     }
   };
 
@@ -126,47 +133,48 @@ const DepositScreen = () => {
       showMessage(t('deposit_msg_capture_success') || "어구가 확인되었습니다. [투입구 닫기] 버튼을 눌러주세요.");
 
     } catch (error) {
-      showMessage(t('deposit_msg_cam_error') || `카메라 연결 오류. [건너뛰기] 버튼을 사용해주세요.`, true);
+      showMessage(t('deposit_msg_cam_error') || `카메라 연결 오류가 발생했습니다.`, true);
     } finally {
       setIsLoading(false);
     }
   };
 
-  // ★ 테스트 모드 전용 건너뛰기
-  const handleSkipCapture = () => {
-    if (isLoading) return;
-    setIsTestMode(true); // 이후 하드웨어 통신 전면 차단
-
-    const dummyBlob = new Blob(["dummy image data"], { type: "image/jpeg" });
-    const dummyFile = new File([dummyBlob], `dummy_capture_${Date.now()}.jpg`, { type: "image/jpeg" });
-
-    setCapturedImages(prev => [...prev, dummyFile]);
-    setDepositSubState('WAITING_CLOSE');
-    showMessage(t('deposit_msg_skip_test') || "[테스트 모드] 촬영을 건너뛰었습니다. [투입구 닫힘]을 눌러주세요.");
-  };
-
   const handleCloseAndRunConveyor = async () => {
+
     if (isLoading) return;
+
     setIsLoading(true);
 
     // 안전 경고 켜고 음성 재생
     setShowSafetyWarning(true);
     speakSafetyWarning();
 
-    if (isTestMode) {
-      setLoadingText(t('deposit_msg_conveyor_test') || "테스트 모드: 하드웨어 제어 건너뛰는 중...");
-      await new Promise(res => setTimeout(res, 2000)); // 경고를 볼 수 있도록 대기 시간 늘림
-    } else {
-      setLoadingText(t('deposit_msg_conveyor_run') || "어구를 처리하고 컨베이어를 작동합니다... (8초)");
-      try {
-        await axios.post(`${LOCAL_API_URL}/api/deposit/action/close-doors`, { isLast: false });
-        await axios.post(`${LOCAL_API_URL}/api/deposit/action/conveyor`);
-        await new Promise(resolve => setTimeout(resolve, 8000));
-      } catch (hwError) {
-        console.log("하드웨어 통신 에러 무시");
-      }
+    setLoadingText(t('deposit_msg_conveyor_run') || "어구를 처리하고 컨베이어를 작동합니다... (8초)");
+
+    // ▼▼▼ 진짜 제대로 돌아가는 정공법 구현 (무시 없음, 순서 엄수) ▼▼▼
+    try {
+      // 1. 투입구 닫기 명령
+      await axios.post(`${LOCAL_API_URL}/api/deposit/action/close-doors`, { isLast: false });
+
+      // ★ [핵심] PLC 기기가 물리적으로 문을 닫고 다음 통신을 받을 준비를 할 수 있도록 1.5초의 여유를 줍니다.
+      await new Promise(resolve => setTimeout(resolve, 8000));
+
+      // 2. 컨베이어 가동 명령 (문이 닫힌 후 안전하게 전송)
+      await axios.post(`${LOCAL_API_URL}/api/deposit/action/conveyor`);
+
+      // 3. 컨베이어가 도는 시간 동안 화면 대기
+      await new Promise(resolve => setTimeout(resolve, 5000));
+
+    } catch (hwError) {
+      console.error("❌ 하드웨어 통신 에러 발생! 진행을 멈춥니다:", hwError);
+      showMessage("하드웨어 통신에 실패했습니다. 다음 단계로 넘어갈 수 없습니다.", true);
+      setIsLoading(false);
+      setShowSafetyWarning(false);
+      return; // ⛔ 에러 시 여기서 함수 즉시 종료! 무시하고 넘어가지 않음.
     }
-    // 동작이 끝나면 안전 경고 끄기
+    // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+
+    // 정상 작동 완료 시 안전 경고 끄기
     setShowSafetyWarning(false);
 
     try {
@@ -174,7 +182,7 @@ const DepositScreen = () => {
       const isLastItem = nextIndex >= scannedGears.length;
 
       if (!isLastItem) {
-        if (!isTestMode) try { await axios.post(`${LOCAL_API_URL}/api/deposit/init`); } catch (e) { }
+        try { await axios.post(`${LOCAL_API_URL}/api/deposit/init`); } catch (e) { }
         setCurrentItemIndex(nextIndex);
         setDepositSubState('READY_CAPTURE');
         showMessage(t('deposit_msg_next_capture', { next: nextIndex + 1 }) || `다음 ${nextIndex + 1}번째 어구를 위해 촬영 버튼을 눌러주세요.`);
@@ -186,29 +194,29 @@ const DepositScreen = () => {
       showMessage(t('deposit_msg_process_err') || "처리 중 오류가 발생했습니다. 다시 시도해주세요.", true);
       setIsLoading(false);
     }
+
   };
-  
+
   const speakSafetyWarning = () => {
     if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel(); // 기존 음성 취소
+      window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(t('deposit_msg_safety_voice') || "위험하오니 한 걸음 뒤로 물러서 주세요. 투입구가 닫힙니다.");
-      utterance.lang = 'ko-KR'; // 로직 유지를 위해 한국어 코드는 유지합니다 (단, 번역된 텍스트가 전달됨)
-      utterance.rate = 1.0; // 말하기 속도
+      utterance.lang = 'ko-KR';
+      utterance.rate = 1.0;
       window.speechSynthesis.speak(utterance);
     }
   };
 
-  // 1. [추가] 컴포넌트 내부(또는 바깥)에 포맷 변환 함수 추가
   const formatPhone = (phone) => {
-    if (!phone) return "010-0000-0000"; // 데이터가 없을 때 백엔드 에러 방지용
+    if (!phone) return "010-0000-0000";
     const cleaned = ('' + phone).replace(/\D/g, '');
     const match = cleaned.match(/^(\d{3})(\d{3,4})(\d{4})$/);
-    if (match) return `${match[1]}-${match[2]}-${match[3]}`; // 010-1234-5678 형식
+    if (match) return `${match[1]}-${match[2]}-${match[3]}`;
     return phone;
   };
 
   const formatBrdt = (brdt) => {
-    if (!brdt) return "1990-01-01"; // PASS에서 생년월일을 안 줬을 때 방어용
+    if (!brdt) return "1990-01-01";
     const cleaned = ('' + brdt).replace(/\D/g, '');
     if (cleaned.length === 8) {
       return `${cleaned.substring(0, 4)}-${cleaned.substring(4, 6)}-${cleaned.substring(6, 8)}`;
@@ -223,12 +231,11 @@ const DepositScreen = () => {
     const isMember = localStorage.getItem('is_member') === 'true';
     const fishermanId = localStorage.getItem('fisherman_id');
     const fishermanName = localStorage.getItem('fisherman_name') || '비회원';
-   
-    // 저장된 사용자/계좌 정보 가져오기 (null 에러 방지 처리)
+
     const rawPhone = localStorage.getItem('fisherman_phone') || localStorage.getItem('mbl_telno');
     const rawBrdt = localStorage.getItem('brdt') || localStorage.getItem('birthdate');
     const bankCd = localStorage.getItem('bank_cd') || '';
-    const actno = localStorage.getItem('actno') || ''; 
+    const actno = localStorage.getItem('actno') || '';
     const acctNm = localStorage.getItem('acct_nm') || fishermanName;
     const selectedClsfCd = localStorage.getItem('selected_fsgr_clsf_cd') || 'FISGE';
 
@@ -240,7 +247,7 @@ const DepositScreen = () => {
       telno: formatPhone(rawPhone),
       mbl_telno: formatPhone(rawPhone),
       bank_cd: bankCd,
-      actno: actno.replace(/-/g, ''), // null 방지 적용 완료
+      actno: actno.replace(/-/g, ''),
       acct_nm: acctNm,
       kiosk_no: "K001",
       mbr_no: mbrNo
@@ -261,7 +268,6 @@ const DepositScreen = () => {
     let calcPoint = 0;
 
     try {
-      // 2. 보증금 어구(REMG) 반환 시작 
       if (depositGears.length > 0) {
         const remgPayload = {
           ...commonPayload,
@@ -280,8 +286,7 @@ const DepositScreen = () => {
         finalRemgMngNo = remgMngNo;
 
         if (remgMngNo) {
-          // ★ for문 대신 Promise.all 사용: 모든 바코드를 한 번에 쏴서 처리 속도 10배 상승!
-          const remgPromises = depositGears.map(gear => 
+          const remgPromises = depositGears.map(gear =>
             axios.post(`${PROXY_API_URL}/deposit/return/remg`, {
               bacod_nm: gear.bacod_nm,
               gvbk_mng_no: remgMngNo
@@ -293,7 +298,7 @@ const DepositScreen = () => {
               }
             })
           );
-          
+
           const remgResults = await Promise.all(remgPromises);
           remgResults.forEach(res => {
             const realAmount = res.gear.gvbk_amt || 0;
@@ -304,7 +309,6 @@ const DepositScreen = () => {
         }
       }
 
-      // 3. 기존 어구(ROMG) 반환 시작 (회원 전용)
       if (existingGears.length > 0 && isMember) {
         const romgPayload = {
           ...commonPayload,
@@ -321,8 +325,7 @@ const DepositScreen = () => {
         romgMngNo = startRes.data?.data?.bfr_fsgr_gvbk_no;
 
         if (romgMngNo) {
-          // ★ 여기도 Promise.all 로 속도 대폭 개선
-          const romgPromises = existingGears.map(gear => 
+          const romgPromises = existingGears.map(gear =>
             axios.post(`${PROXY_API_URL}/deposit/return/romg`, {
               bacod_nm: gear.bacod_nm,
               bfr_fsgr_gvbk_no: romgMngNo
@@ -334,7 +337,7 @@ const DepositScreen = () => {
               }
             })
           );
-          
+
           const romgResults = await Promise.all(romgPromises);
           romgResults.forEach(res => {
             const realPoint = res.gear.gvbk_pnt || 0;
@@ -358,108 +361,104 @@ const DepositScreen = () => {
     } catch (err) {
       console.error("API 처리 에러 상세:", err);
       const backendErrorMsg = err.response?.data?.message || err.message;
-      
-      // ★ 멈춤의 주범이었던 alert()를 삭제하고 내부 알림 함수로 변경했습니다!
       showMessage(`${t('deposit_err_server_comm') || '서버 통신 오류:'} ${backendErrorMsg}`, true);
-      
-      // 에러 났을 때 화면이 멈추지 않고 다시 버튼을 누를 수 있게 상태 복구
+
       setViewState('DEPOSITING');
       setDepositSubState('READY_CAPTURE');
-      
+
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleCloseDoors = async () => {
+
     setIsLoading(true);
+
     setLoadingText(t('deposit_msg_closing_door') || "투입구를 닫고 있습니다...");
 
     setShowSafetyWarning(true);
+
     speakSafetyWarning();
 
     try {
-      if (!isTestMode) await axios.post(`${LOCAL_API_URL}/api/deposit/action/close-doors`, { isLast: true });
-      await new Promise(res => setTimeout(res, 2500)); // 문 닫히는 동안 경고 유지
+      await axios.post(`${LOCAL_API_URL}/api/deposit/action/close-doors`, { isLast: true });
+
+      await new Promise(res => setTimeout(res, 2500));
+
       setIsDoorClosed(true);
+
       showMessage(t('deposit_msg_door_closed') || "투입구가 닫혔습니다. 확인 완료를 눌러주세요.");
+
     } catch (e) {
-      setIsDoorClosed(true);
-      showMessage(t('deposit_msg_door_closed_test') || "테스트: 투입구 닫힘 처리 완료", true);
+      console.error("❌ 문 닫기 통신 에러! 진행을 멈춥니다.");
+      showMessage("투입구를 닫는 중 통신 오류가 발생했습니다. 다시 시도해주세요.", true);
     } finally {
       setIsLoading(false);
-      // ★ 동작이 끝나면 안전 경고 끄기
       setShowSafetyWarning(false);
+    }
+
+  };
+
+  // ✅ 새롭게 추가된 백그라운드 전송 함수
+  const uploadImagesAndSendSMSBackground = async () => {
+    if (capturedImages.length === 0) return;
+
+    if (returnMngNos.remg) {
+      try {
+        const formRemg = new FormData();
+        formRemg.append('gvbk_mng_no', returnMngNos.remg);
+        capturedImages.forEach(file => formRemg.append('files', file));
+        await axios.post(`${PROXY_API_URL}/deposit/image/remg.json`, formRemg, { headers: { 'Content-Type': 'multipart/form-data' } });
+      } catch (imgError) {
+        console.warn("⚠️ 보증금어구 사진 전송 실패 (무시하고 문자 전송 진행):", imgError.message);
+      }
+
+      try {
+        await axios.post(`${PROXY_API_URL}/deposit/return/remg/sms.json`, { gvbk_mng_no: returnMngNos.remg });
+        console.log("✅ 보증금어구 문자 발송 성공!");
+      } catch (smsError) {
+        console.error("❌ 보증금어구 문자 발송 실패:", smsError.response?.data || smsError.message);
+      }
+    }
+
+    if (returnMngNos.romg) {
+      try {
+        const formRomg = new FormData();
+        formRomg.append('bfr_fsgr_gvbk_no', returnMngNos.romg);
+        capturedImages.forEach(file => formRomg.append('files', file));
+        await axios.post(`${PROXY_API_URL}/deposit/image/romg.json`, formRomg, { headers: { 'Content-Type': 'multipart/form-data' } });
+      } catch (imgError) {
+        console.warn("⚠️ 기존어구 사진 전송 실패 (무시하고 문자 전송 진행):", imgError.message);
+      }
+
+      try {
+        await axios.post(`${PROXY_API_URL}/deposit/return/romg/sms.json`, { bfr_fsgr_gvbk_no: returnMngNos.romg });
+        console.log("✅ 기존어구 문자 발송 성공!");
+      } catch (smsError) {
+        console.error("❌ 기존어구 문자 발송 실패:", smsError.response?.data || smsError.message);
+      }
     }
   };
 
+  // ✅ 개선된 handleFinalConfirm 함수 (물리적 대기는 유지, 네트워크 전송은 await 제거)
   const handleFinalConfirm = async () => {
     setIsLoading(true);
-    setLoadingText(t('deposit_msg_final_upload') || "데이터를 서버로 전송 중입니다...");
+    setLoadingText("기기를 마무리하고 완료 화면으로 이동합니다...");
 
     try {
-      if (capturedImages.length > 0) {
-        // ==========================================
-        // 1. 보증금 어구 (REMG) 처리
-        // ==========================================
-        if (returnMngNos.remg) {
-          console.log("🚨 [문자 전송 전 확인] 날아가는 ID:", returnMngNos.remg);
+      // 1. 무거운 사진/문자 전송은 백그라운드(비동기)로 던져둡니다! (await를 쓰지 않아 사용자 UI를 멈추지 않음)
+      uploadImagesAndSendSMSBackground();
 
-          // [사진 전송 블록] - 실패해도 아래로 넘어감
-          try {
-            const formRemg = new FormData();
-            formRemg.append('gvbk_mng_no', returnMngNos.remg);
-            capturedImages.forEach(file => formRemg.append('files', file));
-            await axios.post(`${PROXY_API_URL}/deposit/image/remg.json`, formRemg, { headers: { 'Content-Type': 'multipart/form-data' } });
-          } catch (imgError) {
-            console.warn("⚠️ 보증금어구 사진 전송 실패 (무시하고 문자 전송 진행):", imgError.message);
-          }
-
-          // [문자 전송 블록] - 사진이 실패해도 무조건 실행됨!
-          try {
-            await axios.post(`${PROXY_API_URL}/deposit/return/remg/sms.json`, { gvbk_mng_no: returnMngNos.remg });
-            console.log("✅ 보증금어구 문자 발송 성공!");
-          } catch (smsError) {
-            console.error("❌ 보증금어구 문자 발송 실패:", smsError.response?.data || smsError.message);
-          }
-        }
-
-        // ==========================================
-        // 2. 기존 어구 (ROMG) 처리
-        // ==========================================
-        if (returnMngNos.romg) {
-          // [사진 전송 블록]
-          try {
-            const formRomg = new FormData();
-            formRomg.append('bfr_fsgr_gvbk_no', returnMngNos.romg);
-            capturedImages.forEach(file => formRomg.append('files', file));
-            await axios.post(`${PROXY_API_URL}/deposit/image/romg.json`, formRomg, { headers: { 'Content-Type': 'multipart/form-data' } });
-          } catch (imgError) {
-            console.warn("⚠️ 기존어구 사진 전송 실패 (무시하고 문자 전송 진행):", imgError.message);
-          }
-
-          // [문자 전송 블록]
-          try {
-            await axios.post(`${PROXY_API_URL}/deposit/return/romg/sms.json`, { bfr_fsgr_gvbk_no: returnMngNos.romg });
-            console.log("✅ 기존어구 문자 발송 성공!");
-          } catch (smsError) {
-            console.error("❌ 기존어구 문자 발송 실패:", smsError.response?.data || smsError.message);
-          }
-        }
-      }
-
-      // 사진 전송 완료 후 기기 내부 클리닝 시퀀스 작동
-      if (!isTestMode) {
-        setLoadingText("기기 내부를 정리하고 있습니다...");
-        await axios.post(`${LOCAL_API_URL}/api/deposit/action/cleaning`);
-        
-        await new Promise(res => setTimeout(res, 2500));
-      }
+      // 2. 기기 내부를 정리 (★ 물리적 시간 절대 건드리지 않음)
+      await axios.post(`${LOCAL_API_URL}/api/deposit/action/cleaning`);
+      await new Promise(res => setTimeout(res, 2500));
 
     } catch (error) {
-      console.error("전체 처리 중 알 수 없는 에러:", error);
+      console.error("기기 정리 중 에러:", error);
     } finally {
       setIsLoading(false);
+      // 백그라운드 업로드와 상관없이, 하드웨어 정리가 끝나면 바로 완료 화면으로 이동합니다!
       navigate('/completion', {
         state: { totalDeposit, totalPoint, totalCount: scannedList.length }
       });
@@ -468,7 +467,6 @@ const DepositScreen = () => {
 
   const translateGearType = (type) => {
     const typeStr = String(type);
-    // 이전 화면의 뱃지 키를 활용
     if (typeStr.includes('보증금')) return t('gear_badge_deposit') || "보증금어구";
     if (typeStr.includes('기존')) return t('gear_badge_existing') || "기존어구";
     return typeStr;
@@ -482,7 +480,7 @@ const DepositScreen = () => {
           <button className="deposit-back-btn" onClick={handleBack} disabled={isLoading}>
             <BackIcon />
             <span className="deposit-back-text">
-              {viewState === 'CONFIRMING' ? (t('deposit_btn_prev_step') || '이전 단계') : (t('deposit_btn_prev') || '이전으로')}
+              {viewState === 'CONFIRMING' ? (t('deposit_btn_prev_step') || '이전 단계') : (t('deposit_btn_prev') || '뒤로가기')}
             </span>
           </button>
 
@@ -527,17 +525,9 @@ const DepositScreen = () => {
 
                   <div className="deposit-action-buttons-row" style={{ display: 'flex', justifyContent: 'center', margin: '20px 0' }}>
                     {depositSubState === 'READY_CAPTURE' ? (
-                      <div style={{ display: 'flex', gap: '15px', width: '100%', maxWidth: '400px' }}>
-                        <button className="deposit-action-btn primary" onClick={handleCapture} disabled={isLoading} style={{ flex: 1, backgroundColor: '#007BFF' }}>
+                      <div style={{ display: 'flex', gap: '15px', width: '100%', maxWidth: '300px' }}>
+                        <button className="deposit-action-btn primary" onClick={handleCapture} disabled={isLoading} style={{ width: '100%', backgroundColor: '#007BFF' }}>
                           {t('deposit_btn_check') || '투입 확인'}
-                        </button>
-                        <button
-                          className="deposit-action-btn"
-                          onClick={handleSkipCapture}
-                          disabled={isLoading}
-                          style={{ flex: 1, backgroundColor: '#6c757d', color: '#fff', border: 'none', borderRadius: '8px', fontSize: '1.3rem', fontWeight: 'bold', cursor: 'pointer' }}
-                        >
-                          {t('deposit_btn_skip') || '건너뛰기(테스트)'}
                         </button>
                       </div>
                     ) : (
@@ -593,7 +583,7 @@ const DepositScreen = () => {
                   <button
                     className="deposit-confirm-btn"
                     style={{ backgroundColor: isDoorClosed ? '#6c757d' : '#ffc107', color: isDoorClosed ? '#fff' : '#000', flex: 1 }}
-                    onClick={handleCloseDoors} disabled={isLoading}
+                    onClick={handleCloseDoors} disabled={isLoading || isDoorClosed}
                   >
                     {isDoorClosed ? (t('deposit_btn_door_closed') || "투입구 닫힘") : (t('deposit_btn_close_door') || "투입구 닫기")}
                   </button>

@@ -372,3 +372,79 @@
 }
 
 /* ... (미디어 쿼리 등 나머지 유지) ... */
+/* ========================================= */
+/* 4. 바코드 검색창 스타일 */
+/* ========================================= */
+.rentals-search-box {
+  display: flex;
+  align-items: center;
+  background-color: #ffffff;
+  border: 3px solid #cbd5e1;
+  border-radius: 12px;
+  padding: 0 15px;
+  margin-bottom: 15px;
+  height: 60px;
+  flex-shrink: 0;
+  transition: all 0.2s ease-in-out;
+}
+
+.rentals-search-box:focus-within {
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 4px rgba(0, 96, 144, 0.1);
+}
+
+.rentals-search-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 1.3rem;
+  font-family: inherit;
+  font-weight: 600;
+  color: #333;
+  padding: 0 15px;
+  background: transparent;
+}
+
+.rentals-search-input::placeholder {
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.rentals-search-clear-btn {
+  background: #cbd5e1;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 세로 모드 키오스크 해상도 대응 */
+@media (orientation: portrait) {
+  .rentals-search-box {
+    height: 75px;
+    border-width: 4px;
+    border-radius: 16px;
+    padding: 0 20px;
+    margin-bottom: 20px;
+  }
+  .rentals-search-box svg {
+    width: 32px;
+    height: 32px;
+  }
+  .rentals-search-input {
+    font-size: 1.6rem;
+    padding: 0 20px;
+  }
+  .rentals-search-clear-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 1.3rem;
+  }
+}

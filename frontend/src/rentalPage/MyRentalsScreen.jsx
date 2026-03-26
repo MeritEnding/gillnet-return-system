@@ -17,6 +17,14 @@ const BackIcon = () => (
   </svg>
 );
 
+/* 검색 돋보기 아이콘 (SVG) */
+const SearchIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="11" cy="11" r="8"></circle>
+    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+  </svg>
+);
+
 /* 어구명 번역 매핑 테이블 */
 const GEAR_NAME_MAP = {
   "원뿔대형(대게류·붉은대게류)의 통발": "gear_conical_crab_trap",
@@ -26,7 +34,7 @@ const GEAR_NAME_MAP = {
 };
 
 // --- [GearCard: 개별 어구 카드] ---
-const GearCard = ({ gear, type, t, translateGearName }) => {
+const GearCard = ({ gear, type, t, translateGearName, searchQuery }) => {
   const [loading, setLoading] = useState(true); 
   const [error, setError] = useState(null);
   const [data, setData] = useState(null); 
@@ -55,8 +63,17 @@ const GearCard = ({ gear, type, t, translateGearName }) => {
     fetchDetails();
   }, [endpoint, t]);
 
-  const possibleList = data ? data.filter(item => item.return_status === '반환가능') : [];
-  const completedList = data ? data.filter(item => item.return_status !== '반환가능') : [];
+  // ★ [수정] 검색어(searchQuery)가 있으면 바코드 번호에 포함된 것만 필터링
+  const filteredData = data ? data.filter(item => item.bacod_nm.includes(searchQuery)) : [];
+
+  // ★ [추가] 검색어가 있는데 이 카드 안에 일치하는 바코드가 하나도 없으면 카드를 아예 숨김 처리
+  if (searchQuery && !loading && data && filteredData.length === 0) {
+    return null;
+  }
+
+  // 필터링된 데이터(filteredData)를 기준으로 탭 목록 생성
+  const possibleList = filteredData.filter(item => item.return_status === '반환가능');
+  const completedList = filteredData.filter(item => item.return_status !== '반환가능');
   const currentList = activeTab === 'possible' ? possibleList : completedList;
 
   const formatAmount = (item) => {
@@ -70,14 +87,16 @@ const GearCard = ({ gear, type, t, translateGearName }) => {
       <div className="rentals-gear-header">
         <div className="rentals-gear-info">
           <p className="gear-name">{translateGearName(gear.fsgr_nm)}</p>
-          <p className="gear-qty">{t('gear_quantity')}: <strong>{gear.quaty}</strong></p>
+          {/* 검색 중일 때는 검색된 개수를, 아닐 때는 전체 개수를 표시 */}
+          <p className="gear-qty">
+            {t('gear_quantity')}: <strong>{searchQuery ? filteredData.length : gear.quaty}</strong>
+          </p>
         </div>
       </div>
 
       <div className="rentals-card-content">
         <div className="rentals-divider"></div>
         
-        {/* ★ [수정] 인라인 로딩 멘트 추가 */}
         {loading && (
           <div className="rentals-inline-loading">
             <div className="rentals-spinner small"></div>
@@ -133,7 +152,9 @@ const GearCard = ({ gear, type, t, translateGearName }) => {
                 ))
               ) : (
                 <div className="rentals-empty-inline">
-                   {activeTab === 'possible' ? (t('msg_no_returnable') || "반환 가능한 어구가 없습니다.") : (t('msg_no_returned') || "반환 완료된 내역이 없습니다.")}
+                   {searchQuery 
+                     ? (t('msg_no_search_result') || "검색된 바코드가 없습니다.") 
+                     : (activeTab === 'possible' ? (t('msg_no_returnable') || "반환 가능한 어구가 없습니다.") : (t('msg_no_returned') || "반환 완료된 내역이 없습니다."))}
                 </div>
               )}
             </div>
@@ -152,6 +173,9 @@ const MyRentalsScreen = () => {
   const [fishermanId, setFishermanId] = useState(null);
   const [fishermanName, setFishermanName] = useState(null);
   const [activeTab, setActiveTab] = useState('deposit'); 
+
+  // ★ [추가] 검색어 상태 관리
+  const [searchQuery, setSearchQuery] = useState('');
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -215,6 +239,12 @@ const MyRentalsScreen = () => {
     navigate('/certificationPage/scan');
   };
 
+  // 탭 변경 시 검색어 초기화
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    setSearchQuery('');
+  };
+
   return (
     <div className="rentals-page-wrapper" style={{ backgroundImage: `url(${BgAll})` }}>
       
@@ -233,19 +263,35 @@ const MyRentalsScreen = () => {
         <div className="rentals-tab-group">
           <button 
             className={`rentals-tab-item ${activeTab === 'deposit' ? 'active' : ''}`}
-            onClick={() => setActiveTab('deposit')}
+            onClick={() => handleTabChange('deposit')}
           >
             {t('rentals_deposit_gear_tab')}
           </button>
           <button 
             className={`rentals-tab-item ${activeTab === 'existing' ? 'active' : ''}`}
-            onClick={() => setActiveTab('existing')}
+            onClick={() => handleTabChange('existing')}
           >
             {t('rentals_existing_gear_tab')}
           </button>
         </div>
 
-        {/* ★ [수정] 전체 로딩 멘트 추가 */}
+        {/* ★ [추가] 바코드 검색 입력창 */}
+        <div className="rentals-search-box">
+          <SearchIcon />
+          <input 
+            type="text" 
+            className="rentals-search-input"
+            placeholder={t('search_barcode_placeholder') || "바코드 번호 검색 (터치하여 입력)"}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          {searchQuery && (
+            <button className="rentals-search-clear-btn" onClick={() => setSearchQuery('')}>
+              ✕
+            </button>
+          )}
+        </div>
+
         {loading && (
           <div className="rentals-loading-overlay">
             <div className="rentals-loading-content">
@@ -271,6 +317,7 @@ const MyRentalsScreen = () => {
                       type="deposit" 
                       t={t}
                       translateGearName={translateGearName}
+                      searchQuery={searchQuery} /* ★ 검색어 전달 */
                     />
                   ))
                 ) : (
@@ -289,6 +336,7 @@ const MyRentalsScreen = () => {
                       type="existing" 
                       t={t}
                       translateGearName={translateGearName}
+                      searchQuery={searchQuery} /* ★ 검색어 전달 */
                     />
                   ))
                 ) : (
