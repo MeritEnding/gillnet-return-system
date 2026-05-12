@@ -6,7 +6,7 @@
   "main_info_3": "담당자: 010-0000-0000",
   "main_start_button": "폐어구\n반납 시작",
   "main_guide_button": "이용\n안내",
-  "guide_admin_button":"관리자",
+  "guide_admin_button": "관리자",
   "btn_back": "뒤로 가기",
   "guide_title": "이용 안내",
   "guide_method_button": "반납 방법",
@@ -22,9 +22,9 @@
   "gear_existing_square_trap": "기존사각통발(바코드)",
   "gear_existing_trap_generic": "기존통발어구(바코드)",
   "btn_home": "처음으로",
-  "btn_end":"처음으로",
+  "btn_end": "처음으로",
+  "AUTH_CHOICE_VOICE": "원하시는 사용자 인증 방법을 선택해 주세요. 비회원이신 경우 우측의 패스 인증을 선택해 주세요.",
   "confirm_go_home": "처음 화면으로 돌아가시겠습니까?\n진행 중인 내용은 저장되지 않습니다.",
-  
   "gear_voice_guide": "반납하실 어구의 종류를 선택해주세요.",
   "method_modal_title": "반납 방법",
   "method_title_main": "폐어구 무인 반납은 4단계로 간단하게 진행됩니다.",
@@ -37,10 +37,9 @@
   "method_step4_title": "반납 완료",
   "method_step4_desc": "투입이 완료되면, 모니터에서 총 반납 내역과 환급될 보증금을 확인합니다.",
   "modal_confirm_btn": "확인했습니다",
-  "faq_a2_sub":"표식을 깨끗하게 닦은 후 다시 시도해 주십시오.",
-
-  "go_home":"뒤로 가기",
-
+  "faq_a2_sub": "표식을 깨끗하게 닦은 후 다시 시도해 주십시오.",
+  "deposit_loading_title": "잠시만 기다려주세요",
+  "go_home": "뒤로 가기",
   "policy_modal_title": "어구보증금제",
   "policy_title_1": "함께해요! 어구보증금제\"",
   "policy_text1_strong": "어구보증금제",
@@ -48,19 +47,16 @@
   "policy_text2_strong": "언제든지, 24시간",
   "policy_text2": " 편리하게 폐어구를 반납할 수 있습니다.",
   "policy_text3": "폐어구의 올바른 수거를 통해 깨끗한 우리 바다를 만드는 데 동참해 주셔서 감사합니다.",
-
-   "faq_modal_title": "자주 묻는 질문 (FAQ)",
+  "faq_modal_title": "자주 묻는 질문 (FAQ)",
   "faq_q1": "사용자 인증(QR 스캔)이 자꾸 실패합니다.",
   "faq_a1": "핸드폰 화면의 QR 코드가 스캐너에 잘 맞도록 다시 한번 명확하게 스캔해 주십시오. 지속적으로 실패할 경우, '다시 시도' 버튼을 누르거나 '대체 인증' 방식을 이용해 주세요.",
   "faq_q2": "어구 표식(태그)이 인식되지 않습니다.",
   "faq_a2_strong": "어구보증금표식을 깨끗하게 닦은 후 다시 시도해 주십시오. 계속 실패할 경우, 담당자에게 문의가 필요합니다.",
   "faq_a2": "표식이 바닷물이나 이물질로 오염되었을 수 있습니다. ",
   "faq_q3": "기기에 문제가 생기거나 도움이 필요합니다.",
-  "faq_a3_strong": "담당자 연락처(010-0000-0000)",
+  "faq_a3_strong": "담당자 연락처(010-6667-1987)",
   "faq_a3": "키오스크 이용 중 문제가 발생하면, 화면에 항상 표시되어 있는 로 즉시 연락해 주시기 바랍니다.",
   "auth_register_guide": "회원 등록은 전용 앱이나 웹을 통해 가능합니다.",
-
-
   "auth_step_1": "1. 사용자 인증",
   "auth_step_2": "2. 어구보증금표식 인증",
   "auth_step_3": "3. 투입",
@@ -69,21 +65,18 @@
   "auth_instruction_strong": "어업인 QR 코드",
   "auth_instruction": "앱을 켜고 내 정보의 '어업인 QR코드'를 스캐너에 인식시켜주세요",
   "auth_test_success_button": "(테스트) 등록 QR 스캔",
-  "auth_test_fail_button": "(테스트) 미등록 QR 스캔", 
+  "auth_test_fail_button": "(테스트) 미등록 QR 스캔",
   "auth_contact_label": "담당자:",
-
   "auth_fail_popup_title": "⚠️ 사용자 인증 실패",
   "auth_fail_popup_message": "QR 코드 또는 바코드를\n다시 한번 명확하게 스캔해 주십시오.",
   "auth_fail_popup_retry_button": "다시 시도",
   "auth_fail_popup_alternate_button": "대체 인증",
-
- 
   "auth_success_popup_title": "사용자 인증 완료",
   "auth_success_popup_welcome_strong": "님 환영합니다.",
   "auth_success_popup_welcome": "어구를 반납을 준비합니다.",
   "auth_success_popup_loading_text": "폐어구 반납 준비 중..\n조금만 기다려주세요",
   "auth_loading_alt": "로딩 중",
-  "auth_mascot_alt": "마스코트", 
+  "auth_mascot_alt": "마스코트",
   "auth_qr_alt": "어업인 QR 코드",
   "auth_success_mascot_alt": "성공 마스코트",
   "deposit_amount": "보증금",
@@ -93,9 +86,8 @@
   "status_error": "처리 오류",
   "status_fail": "반납 실패",
   "msg_loading_rentals": "대여 목록을 불러오는 중입니다..\n잠시만 기다려주세요.",
-  "msg_loading_details":"잠시만 기다려주세요..",
+  "msg_loading_details": "잠시만 기다려주세요..",
   "completion_add_more": "추가 반납하기",
-  
   "alt_auth_title": "1단계: 대체 인증",
   "alt_auth_pin_instruction": "정보 입력 후, [인증하기] 버튼을 눌러주세요.",
   "alt_auth_label_name": "이름",
@@ -108,13 +100,11 @@
   "alt_auth_submit_button": "인증하기",
   "alt_auth_alert_all_fields": "모든 항목을 입력해주세요.",
   "alt_auth_alert_invalid_format": "입력 형식을 확인해주세요 (생년월일 8자리, 전화번호 10-11자리, PIN 4자리).",
-  
-  "alt_auth_fail_popup_title": "⚠️ 사용자 인증 실패", 
+  "alt_auth_fail_popup_title": "⚠️ 사용자 인증 실패",
   "alt_auth_fail_popup_message": "입력하신 정보를 찾을 수 없습니다.\n다시 확인해 주세요.",
-  "alt_auth_fail_popup_retry_button": "다시 시도", 
+  "alt_auth_fail_popup_retry_button": "다시 시도",
   "alt_auth_fail_popup_goback_button": "QR 스캔으로",
-  "auth_success_popup_welcome_suffix":" 환영합니다.",
-
+  "auth_success_popup_welcome_suffix": " 환영합니다.",
   "tagging_step_label": "2단계",
   "tagging_title": "2단계: 진위 확인",
   "tagging_instruction_top": "반납할 어구의 개수를 입력해주세요.",
@@ -127,8 +117,7 @@
   "tagging_alert_min_quantity": "1개 이상의 개수를 입력해주세요.",
   "tagging_alert_session_expired": "사용자 세션이 만료되었습니다. 1단계 인증 화면으로 돌아갑니다.",
   "tagging_alert_api_error_prefix": "오류: ",
-  "tagging_alert_network_error": "서버와 통신 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요."
-,
+  "tagging_alert_network_error": "서버와 통신 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
   "gearscan_fail_popup_title": "⚠️ 바코드 스캔 실패",
   "gearscan_fail_popup_message": "바코드를 인식할 수 없습니다.\n깨끗이 닦은 후 다시 시도하거나\n담당자에게 문의하십시오.",
   "gearscan_success_popup_title": "바코드 스캔 완료",
@@ -138,8 +127,7 @@
   "gearscan_img_alt_examples": "바코드 예시",
   "gearscan_instruction_single": "어구보증금표식 바코드를<br/><strong>인식 시켜주세요.</strong>",
   "gearscan_test_button_success": "(테스트) 유효 바코드",
-  "gearscan_test_button_fail_owner": "(테스트) 소유권 없음",  
-
+  "gearscan_test_button_fail_owner": "(테스트) 소유권 없음",
   "tagscan_fail_popup_title": "⚠️ 표식 진위 확인 불가",
   "tagscan_fail_popup_message": "어구보증금표식을 깨끗하게 닦은 후\n다시 시도하거나\n담당자에게 문의 해주십시오.",
   "tagscan_fail_popup_retry_button": "다시 시도",
@@ -154,8 +142,7 @@
   "tagscan_test_button_success": "표식 스캔 성공",
   "tagscan_test_button_fail": "표식 스캔 실패",
   "tagscan_img_alt_ref_tag": "표식 스캔 예시",
-  "tagscan_img_alt_ref_net": "그물 스캔 예시"
-,
+  "tagscan_img_alt_ref_net": "그물 스캔 예시",
   "gearscan_popup_title": "표식 확인 완료",
   "gearscan_popup_message": "현재 {{totalCount}}개의 어구가 등록되었습니다.<1/>추가로 반납할 어구가 있습니까?",
   "gearscan_popup_yes": "예",
@@ -173,12 +160,10 @@
   "gearscan_table_header_deposit": "보증금 반환",
   "gearscan_table_deposit_amount": "{{amount}}원",
   "gearscan_table_footer_total": "총 적립 보증금",
-  "gearscan_test_button_prefix": "스캔: "
- ,
+  "gearscan_test_button_prefix": "스캔: ",
   "scan_error_alert_prefix": "스캔 오류:",
   "session_expired_alert": "세션 정보가 만료되었습니다. 1단계 인증부터 다시 시작합니다.",
   "error_server_communication": "서버와 통신 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
-  
   "deposit_loading_default": "처리 중...",
   "deposit_loading_alt": "로딩 중",
   "deposit_webcam_error": "웹캠을 시작할 수 없습니다. 카메라 권한을 확인해주세요.",
@@ -194,7 +179,6 @@
   "deposit_title": "3단계: 투입",
   "deposit_live_label": "실시간 촬영 중입니다",
   "deposit_mascot_alt": "투입 마스코트",
-  
   "deposit_state_idle": "준비가 되면 '촬영' 버튼을 누르세요.",
   "deposit_state_detecting": "어구를 감지 중입니다...",
   "deposit_state_capturing": "감지 완료! 3초 후 촬영합니다.",
@@ -208,8 +192,6 @@
   "deposit_popup_yes": "예 (추가 투입)",
   "deposit_popup_no": "아니오 (반납 완료)",
   "deposit_alert_no_image": "캡처된 이미지가 없습니다. 최소 1개 이상의 어구를 투입해야 합니다.",
-  
- 
   "deposit_alert_no_items": "반납할 어구가 없습니다. 어구를 먼저 스캔해주세요.",
   "completion_loading_receipt": "반납 목록을 불러오는 중...",
   "deposit_confirm_title": "3단계: 반납 목록 확인",
@@ -229,10 +211,8 @@
   "deposit_state_loading_camera": "카메라를 준비 중입니다...",
   "deposit_button_loading_camera": "카메라 준비 중...",
   "deposit_instruction_strong": "<strong>폐어구를 투입구에 넣고</strong><1/>",
-  "deposit_state_ready":"촬영 버튼을 눌러주세요.",
-  "deposit_button_capture":"촬영",
-
-
+  "deposit_state_ready": "촬영 버튼을 눌러주세요.",
+  "deposit_button_capture": "촬영",
   "completion_loading_alt": "로딩 중",
   "completion_error_no_session": "반납 세션 정보를 찾을 수 없습니다. 1단계부터 다시 시도해주세요.",
   "completion_error_fetch_failed": "영수증 정보를 불러오는데 실패했습니다.",
@@ -248,14 +228,13 @@
   "completion_summary_deposit_label": "반환 예정 보증금",
   "completion_summary_deposit_value": "{{amount}}원",
   "completion_icon_alt_earth": "환경 기여",
-  "completion_summary_weight_label":"오늘 수거된 어구",
-  "completion_summary_co2_label_short":"CO2 감소",
+  "completion_summary_weight_label": "오늘 수거된 어구",
+  "completion_summary_co2_label_short": "CO2 감소",
   "completion_summary_co2_label": "환경 기여 CO2 {{co2}}kg 감소",
   "completion_icon_alt_scale": "저울",
   "completion_summary_weight_value": "{{weight}}Kg",
   "completion_icon_alt_collected": "수거량",
-  "completion_summary_collected_label": "오늘 수거된 어구"
-  ,
+  "completion_summary_collected_label": "오늘 수거된 어구",
   "auth_choice_title": "사용자 인증 방법 선택",
   "auth_qr_btn_main": "회원인증",
   "auth_qr_btn_sub": "(QR 코드)",
@@ -273,7 +252,6 @@
   "privacy_tp_item": "- 제공항목: 성명, 어업인 등록번호",
   "privacy_tp_purpose": "- 목적: 본인 확인 및 반납 이력 관리",
   "privacy_tp_ask": "동의 하시겠습니까 ?",
-  
   "privacy_modal_title": "개인정보 수집 및 이용 동의",
   "privacy_modal_desc": "원활한 폐어구 반납 및 보증금 환급 처리를\n위해 아래 약관에 동의해주세요.",
   "privacy_req_label": "[필수] 개인정보 수집 및 이용 동의",
@@ -281,15 +259,12 @@
   "privacy_opt_label": "[선택] 마케팅 정보 수신 동의 (선택사항)",
   "privacy_agree_check": "위 내용을 확인하였으며, 이에 동의합니다.",
   "privacy_view_full": "[전문보기]",
-  
   "btn_agree": "동의",
   "btn_cancel": "취소",
   "full_text_title": "약관 전문",
   "video_close_hint": "화면을 터치하면 닫힙니다",
   "alert_agree_required": "필수 항목에 동의해주셔야 합니다.",
-
   "agreement_text_required": "[개인정보 수집 및 이용 동의 전문]\n\n1. 수집하는 개인정보 항목\n(주)KETG는 원활한 폐어구 반납 및 보증금 환급 처리를 위해 아래와 같은 개인정보를 수집하고 있습니다.\n- 필수항목: 이름, 생년월일, 휴대전화번호, 계좌번호(은행명, 예금주 포함)\n- 자동수집항목: 서비스 이용기록, 접속 로그, 쿠키, 접속 IP 정보\n\n2. 개인정보의 수집 및 이용목적\n수집한 개인정보를 다음의 목적을 위해 활용합니다.\n- 본인확인: 어구 보증금 반납 대상자 식별 및 본인 여부 확인\n- 보증금 환급: 반납된 어구에 대한 보증금 지급 및 계좌 실명 확인\n- 민원처리: 이용자 문의사항 처리 및 결과 회신\n\n3. 개인정보의 보유 및 이용기간\n원칙적으로, 개인정보 수집 및 이용목적이 달성된 후에는 해당 정보를 지체 없이 파기합니다. 단, 관계법령의 규정에 의하여 보존할 필요가 있는 경우 아래와 같이 관계법령에서 정한 일정한 기간 동안 회원정보를 보관합니다.\n- 보존 항목: 이름, 생년월일, 휴대전화번호, 계좌번호, 반납 이력\n- 보존 근거: 수산자원관리법 및 보조금 관리에 관한 법률\n- 보존 기간: 환급 완료 후 3년",
-  
   "agreement_text_optional": "[마케팅 정보 수신 동의 전문]\n\n1. 마케팅 및 광고에의 활용\n- 신규 서비스(제품) 개발 및 맞춤 서비스 제공\n- 이벤트 및 광고성 정보 제공 및 참여기회 제공\n- 인구통계학적 특성에 따른 서비스 제공 및 광고 게재\n- 서비스의 유효성 확인, 접속빈도 파악 또는 회원의 서비스 이용에 대한 통계\n\n2. 수신 동의 거부 시 불이익\n귀하는 마케팅 정보 수신 동의를 거부할 수 있으며, 동의를 거부하더라도 기본 서비스 이용(폐어구 반납 및 환급)에는 제한이 없습니다. 다만, 이벤트 및 혜택 정보 안내를 받으실 수 없습니다.",
   "gear_type_trap": "통발",
   "gear_type_gillnet": "자망",
@@ -310,7 +285,6 @@
   "btn_close": "닫기",
   "error_gear_not_owner": "이 어구는 현재 회원님이 대여한 어구가 아닙니다.",
   "error_gear_unknown": "이미 스캔한 어구입니다.",
-
   "INIT_01": "안녕하세요. 폐어구 무인 반납 시스템입니다. 시작하려면 화면을 터치해 주세요.",
   "INIT_02": "폐어구를 반납하시려면, 화면의 '폐어구 반납 시작' 버튼을 눌러주세요.",
   "AUTH_01": "어업인 인증을 위해 해양수산부 앱을 실행한 뒤, 바코드를 스캐너에 인식시켜 주세요.",
@@ -325,11 +299,9 @@
   "AUTH_10": "이미 처리된 어구입니다. 다른 어구를 스캔해 주세요.",
   "AUTH_11": "유효하지 않은 바코드입니다. 다시 스캔해 주세요.",
   "AUTH_12": "스캔이 완료되었습니다. 잠시 후 투입구가 열리면 안내에 따라 어구를 넣어 주세요.",
-  
   "PROC_02": "폐어구를 촬영합니다. 투입구에 어구를 넣고 촬영 버튼을 눌러주세요.",
   "PROC_03": "촬영이 완료되었습니다.",
   "PROC_04": "추가로 반납할 폐어구가 있으신가요?",
-
   "COMP_01": "반납된 어구를 확인하신 후, '반납 완료' 버튼을 눌러 주세요.",
   "COMP_02": "이용해 주셔서 감사합니다. 깨끗한 바다를 만드는 데 함께해 주셔서 고맙습니다.",
   "DEPOSIT_H_01": "열려있는 시건장치에 통발 어구를 단단히 체결하고, 문을 닫아주십시오.",
@@ -339,6 +311,9 @@
   "STATUS_H_01": "어구를 보관함으로 안전하게 이송하고 있습니다.",
   "STATUS_G_01": "자망 포대를 압축 및 밴딩하고 있습니다. 이는 보관 효율을 높이기 위한 과정입니다.",
   "STATUS_02": "잠시만 기다려 주세요.",
+  "label_deposit_gear_short": "보증금 어구",
+  "label_existing_gear_short": "기존 어구",
+  "AUTH_CHOICE_VOICE": "원하시는 사용자 인증 방법을 선택해 주세요. 비회원이신 경우 우측의 패스 인증을 선택해 주세요.",
   "deposit_alert_no_items": "반납할 어구 정보가 없습니다.",
   "deposit_capture_success": "반납 사진 등록이 완료되었습니다.",
   "error_occurred": "오류가 발생했습니다.",
@@ -379,8 +354,8 @@
   "pass_alert_auth_fail": "인증 실패",
   "pass_alert_request_fail": "인증 데이터 요청 실패",
   "pass_alert_server_error": "서버 통신 오류",
-  "btn_cancel": "취소"
-  ,"auth_choice_title": "사용자 인증 방법 선택",
+  "btn_cancel": "취소",
+  "auth_choice_title": "사용자 인증 방법 선택",
   "auth_qr_btn_main": "회원인증",
   "auth_qr_btn_sub": "(QR 코드)",
   "auth_pass_btn_main": "PASS 인증",
@@ -426,9 +401,6 @@
   "contact_label_deposit": "보증금 문의",
   "contact_label_general": "일반 문의",
   "btn_close": "닫기",
-
-
-  
   "auth_choice_title": "사용자 인증 방법 선택",
   "auth_nonmember_guide": "비회원님은 오른쪽의 <1>'PASS 인증'</1>으로 진행해 주세요.",
   "auth_qr_btn_main": "회원인증",
@@ -438,7 +410,6 @@
   "auth_pass_btn_main": "PASS 인증",
   "auth_pass_btn_sub": "(휴대폰 본인인증)",
   "auth_register_guide": "회원 등록은 전용 앱이나 웹을 통해 가능합니다.",
-
   "login_alert_empty": "아이디와 비밀번호를 모두 입력해주세요.",
   "login_alert_fail": "아이디 또는 비밀번호가 일치하지 않습니다.",
   "login_alert_error": "로그인 처리 중 오류가 발생했습니다.",
@@ -456,8 +427,6 @@
   "login_success_greeting_1": "",
   "login_success_greeting_2": "님, 반갑습니다!",
   "login_success_auto_move": "잠시 후 계좌 확인 화면으로 이동합니다...",
-
-
   "account_title": "환급받을 계좌를 확인해 주세요",
   "account_subtitle": "(항목을 터치하여 수정할 수 있습니다)",
   "account_bank_label": "은행 (필수)",
@@ -481,14 +450,11 @@
   "account_alert_title_success": "인증 완료",
   "account_alert_title_error": "확인 필요",
   "account_alert_btn_confirm": "확인",
-
   "auth_btn_reset": "처음으로",
   "auth_step_1": "사용자 인증",
   "auth_step_2": "어구보증금표식 인증",
   "auth_step_3": "투입",
   "auth_success_redirect_msg": "계좌 정보 화면으로 이동합니다...",
-  
-
   "gear_btn_home": "처음으로",
   "gear_page_title": "반환하실 어구를 터치해주세요",
   "gear_page_subtitle": "동일한 어구를 선택하고 반납을 해야 보증금이 환급됩니다.",
@@ -499,7 +465,6 @@
   "gear_type_cone": "원뿔대형 통발",
   "gear_section_existing": "기존어구 반환 (포인트 적립)",
   "gear_type_existing_trap": "기존 통발 어구 (포인트)",
-
   "scan_page_title": "2단계: 어구보증금표식 바코드 스캔",
   "scan_instruction_msg": "어구보증금표식 바코드를\n인식 시켜주세요.",
   "scan_list_title": "스캔된 바코드",
@@ -513,20 +478,20 @@
   "scan_total_points": "총 적립 예정 포인트",
   "duplicate_barcode_warning": "이미 스캔된 바코드입니다.",
   "scan_btn_next": "다음 (스캔 완료)",
-
+  "deposit_msg_finishing": "거의 다 되었습니다! 잠시 후 완료 화면으로 이동합니다.",
   "deposit_loading_default": "처리 중입니다...",
   "deposit_alert_no_items": "스캔된 어구가 없습니다.",
-  "deposit_msg_capture_loading": "카메라 촬영 중입니다...",
+  "deposit_msg_capture_loading": "어구를 확인하는 중 입니다...",
   "deposit_msg_capture_fail": "로컬 카메라 촬영에 실패했습니다.",
-  "deposit_msg_capture_success": "어구가 확인되었습니다. [투입구 닫기] 버튼을 눌러주세요.",
+  "deposit_msg_capture_success": "어구가 확인되었습니다.\n [투입구 닫기] 버튼을 눌러주세요.",
   "deposit_msg_cam_error": "카메라 연결 오류. [건너뛰기] 버튼을 사용해주세요.",
   "deposit_msg_skip_test": "[테스트 모드] 촬영을 건너뛰었습니다. [투입구 닫힘]을 눌러주세요.",
   "deposit_msg_conveyor_test": "테스트 모드: 하드웨어 제어 건너뛰는 중...",
-  "deposit_msg_conveyor_run": "어구를 처리하고 컨베이어를 작동합니다... (8초)",
-  "deposit_msg_next_capture": "다음 {{next}}번째 어구를 위해 촬영 버튼을 눌러주세요.",
+  "deposit_msg_conveyor_run": "어구를 반납 처리 중입니다...",
+  "deposit_msg_next_capture": "다음 {{next}}번째 어구를 투입하고\n[투입 확인] 버튼을 눌러주세요.",
   "deposit_msg_process_err": "처리 중 오류가 발생했습니다. 다시 시도해주세요.",
   "deposit_msg_safety_voice": "위험하오니 한 걸음 뒤로 물러서 주세요. 투입구가 닫힙니다.",
-  "deposit_msg_server_upload": "반환 정보를 서버에 등록하는 중입니다...",
+  "deposit_msg_server_upload": "반납 내역을 안전하게 기록하고 있습니다...",
   "deposit_err_start_remg": "[보증금어구 시작 거부]",
   "deposit_err_register": "[등록 거부]",
   "deposit_err_start_romg": "[기존어구 시작 거부]",
@@ -541,8 +506,8 @@
   "deposit_step_confirm": "투입 내역 확인",
   "deposit_step_3_title": "3단계: 투입",
   "deposit_progress": "진행 상황",
-  "deposit_inst_ready": "폐어구를 투입구에 넣고 [투입 확인] 버튼을 눌러주세요.",
-  "deposit_inst_done": "어구 확인이 완료되었습니다. [투입구 닫기] 버튼을 눌러주세요.",
+  "deposit_inst_ready": "폐어구를 투입구에 넣고\n[투입 확인] 버튼을 눌러주세요.",
+  "deposit_inst_done": "어구 확인이 완료되었습니다.\n[투입구 닫기] 버튼을 눌러주세요.",
   "deposit_btn_check": "투입 확인",
   "deposit_btn_skip": "건너뛰기(테스트)",
   "deposit_btn_door_closed": "투입구 닫기",
@@ -557,7 +522,6 @@
   "deposit_warn_desc_1": "안전을 위해 한 걸음",
   "deposit_warn_desc_2": "뒤로 ",
   "deposit_warn_desc_3": "물러서 주세요!",
-
   "pass_default_guest_name": "고객",
   "pass_alert_verify_error": "회원 확인 중 오류가 발생했습니다.",
   "pass_alert_auth_fail": "인증에 실패했습니다.",
@@ -573,6 +537,65 @@
   "pass_loading_desc_2": "안전하게 확인하고 있습니다...",
   "pass_loading_wait": "잠시만 기다려주세요.",
   "pass_success_member": "회원 인증 성공",
-  "pass_success_non_member": "비회원 인증 성공"
-
+  "pass_success_non_member": "비회원 인증 성공",
+  "system_maintenance_title": "시스템 점검 중입니다",
+  "system_maintenance_wait": "⚠️ 원격 점검 및 조치 대기 중...",
+  "system_maintenance_admin_unlock": "[관리자 수동] 강제 화면 해제",
+  
+  "error_software_msg": "[소프트웨어 시스템 오류]\n서버 통신에 일시적인 장애가 발생했습니다.\n관리자에게 보고되었으며 신속히 점검하겠습니다.",
+  
+  "alarm_88_title": "🚨 만재(전체) 알람",
+  "alarm_88_detail": "적재함에 폐어구가 가득 차서 더 이상 투입할 수 없습니다.\n반드시 수거 작업 완료 후 리셋해야 합니다.",
+  
+  "alarm_83_title": "🚨 만재(후문쪽) 알람",
+  "alarm_83_detail": "기기 후방 적재함이 가득 찼습니다.\n신속한 수거가 필요합니다.",
+  
+  "alarm_85_title": "🚨 만재(가운데) 알람",
+  "alarm_85_detail": "기기 중앙 적재함이 가득 찼습니다.\n신속한 수거가 필요합니다.",
+  
+  "alarm_87_title": "🚨 만재(정문쪽) 알람",
+  "alarm_87_detail": "기기 전방 적재함이 가득 찼습니다.\n신속한 수거가 필요합니다.",
+  
+  "alarm_97_title": "🚪 후문 열림 알림",
+  "alarm_97_detail": "기기 후문이 열려 있어 시스템이 정지되었습니다.\n문을 닫고 잠금 상태를 확인해 주세요.",
+  
+  "alarm_99_title": "⚠️ 정문 열림 알림",
+  "alarm_99_detail": "기기 정문(투입구)이 비정상적으로 열려 있습니다.\n안전을 위해 작동이 중단되었습니다.",
+  
+  "alarm_104_title": "🛑 비상 신호 발생",
+  "alarm_104_detail": "비상 정지 버튼이 눌렸거나 시스템 긴급 상황입니다.\n기기 상태를 즉시 점검해 주세요.",
+  
+  "alarm_105_title": "🛑 모터 과부하 알림",
+  "alarm_105_detail": "기계 장치 모터에 과부하가 발생했습니다.\n모터 및 컨베이어 상태를 점검해 주세요.",
+  "deposit_voice_close_barcode_door": "투입 내역을 확인하신 후, 바코드 투입구를 닫아주세요.",
+  "deposit_voice_confirm_complete": "바코드 투입구가 닫혔습니다. 확인 완료 버튼을 눌러주세요.",
+  "auth_login_voice_guide": "아이디와 비밀번호를 입력하여 로그인해 주세요.",
+  "pass_auth_voice_guide": "본인 인증 팝업이 뜨면 휴대폰에서 인증을 진행해 주세요.",
+  "login_alert_fail": "아이디 또는\n비밀번호가 잘못 되었습니다.\n아이디와 비밀번호를 정확히 입력해 주세요.",
+  "login_alert_title_warning": "로그인 실패",
+  "login_alert_btn_confirm": "확인",
+  "footer_terms": "이용약관",
+  "footer_privacy": "개인정보처리방침",
+  "modal_terms_title": "서비스 이용약관",
+  "modal_privacy_title": "개인정보처리방침",
+  "btn_confirm": "확인",
+  "policy_terms_content": "<h3>어구보증금제도 무인 반납 시스템 이용약관</h3><p class='version'>시행일자: 2026년 4월 6일</p><h4>제 1 장 총 칙</h4><p class='article-title'>제 1 조 (목적)</p><p>본 약관은 KETG(이하 '회사')가 제공하는 폐어구 무인 반납 시스템(이하 '키오스크')의 이용조건, 권리, 의무를 규정함을 목적으로 합니다.</p><p class='article-title'>제 2 조 (용어의 정의)</p><p>1. <strong>보증금어구</strong>: 지정 계좌로 현금 환급되는 어구<br/>2. <strong>기존어구</strong>: 회사가 정한 정책에 따라 포인트로 지급되는 어구</p><h4>제 2 장 서비스 이용 및 의무</h4><p class='article-title'>제 3 조 (이용자의 의무)</p><p>1. 타인의 명의나 바코드를 도용하여 기존어구를 대리 반납하는 행위는 엄격히 금지됩니다.<br/>2. 기기를 훼손하거나 허위 계좌 입력 등 부정한 방법으로 보증금을 편취하려는 경우 법적 책임을 질 수 있습니다.</p><p class='article-title'>제 4 조 (환급 정책)</p><p>시스템상 바코드 정보와 실제 투입된 어구가 일치하지 않을 경우 환급이 거절되거나 사후 회수될 수 있습니다.</p><h4>제 3 장 기타</h4><p class='article-title'>제 5 조 (면책조항)</p><p>회사는 이용자의 계좌 오입력으로 인한 송금 오류나 천재지변, 통신 장애 등 불가항력적 사유로 인한 서비스 중단에 대해 책임을 지지 않습니다.</p>",
+  "policy_privacy_content": "<h3>개인정보처리방침</h3><p class='version'>시행일자: 2026년 4월 6일</p><h4>1. 개인정보의 처리 목적</h4><p>가. 본인 확인: 어구 반납 자격 확인 및 대리 반납 방지<br/>나. 환급 처리: 보증금 현금 입금 및 포인트 적립<br/>다. 부정 방지: 기기 오류 대응 및 부당 수령 적발</p><h4>2. 처리하는 개인정보 항목</h4><table class='policy-table'><tr><th>수집 목적</th><th>필수 수집 항목</th></tr><tr><td>본인 인증</td><td>성명, 어업인코드, 연계정보(CI/DI), 휴대전화번호, 생년월일</td></tr><tr><td>환급 처리</td><td>은행명, 예금주명, 계좌번호</td></tr><tr><td>부정 방지</td><td>투입 어구 및 이용자 영상(카메라 촬영)</td></tr></table><h4>3. 개인정보의 보유 및 이용 기간</h4><p>가. 대금 결제 및 환급 기록: 5년 (전자상거래법)<br/>나. 분쟁 처리 기록: 3년 (전자상거래법)<br/>다. 접속 및 기기 이용 기록: 3개월 (통신비밀보호법)</p><h4>4. 제3자 제공 및 위탁</h4><p>- 본인인증 처리: 코리아크레딧뷰로(KCB), NICE평가정보<br/>- 송금 처리: 금융결제원, 헥토파이낸셜<br/>- 알림 발송: (주)다우기술</p><h4>5. 정보주체의 권리</h4><p>이용자는 개인정보 조회, 수정, 동의 철회를 요청할 수 있으나, 필수 정보 삭제 시 환급 서비스 이용이 제한될 수 있습니다.</p><h4>6. 개인정보 보호책임자</h4><p>담당부서: KETG 무인반납 운영팀<br/>연락처: 010-6667-1987<br/>이메일: jiseob@ketg.co.kr</p>",
+  "scan_alert_title_warning": "안내",
+  "scan_err_not_gear": "어구 바코드가 아닙니다.\n정상적인 어구를 스캔해주세요.",
+  "duplicate_barcode_warning": "이미 스캔된 바코드입니다.",
+  "scan_err_not_found": "어구 정보를 찾을 수 없습니다.",
+  "scan_err_not_available": "반환 불가 어구입니다.",
+  "scan_err_not_deposit": "보증금어구가 아닙니다.\n이전 화면에서 기존어구를 선택해주세요.",
+  "scan_err_not_existing": "기존어구가 아닙니다.\n이전 화면에서 보증금어구를 선택해주세요.",
+  "scan_err_stolen": "타인 명의의 기존어구는\n반납할 수 없습니다.",
+  "auth_manual_placeholder": "인증 코드 터치하여 직접 입력",
+  "auth_manual_submit": "입력 확인",
+  "account_keypad_delete": "지우기",
+  "account_keypad_clear": "초기화",
+  "account_keypad_close": "키패드 닫기",
+  "1.장구형의 통발": "1. 장구형 통발",
+  "장구형의 통발": "장구형 통발",
+  "기존통발(흰색 바코드)": "기존통발 (흰색 바코드)",
+  "이미 반환 처리됨": "이미 반환 처리됨"
 }

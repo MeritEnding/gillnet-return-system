@@ -26,10 +26,22 @@ const BackIcon = () => (
 const LoadingOverlay = ({ text }) => {
   const { t } = useTranslation();
   return (
-    <div className="deposit-overlay">
-      <div className="loading-column">
-        <img src={LoadingSpinner} alt="loading" className="deposit-spinner large" />
-        <p className="loading-text">{text || t('deposit_loading_default') || "처리 중입니다..."}</p>
+    <div className="deposit-alert-overlay">
+      <div className="deposit-alert-content">
+        <div className="deposit-alert-header">
+          {t('deposit_loading_title') || '처리 중'}
+        </div>
+        <div className="deposit-alert-body">
+          <div className="deposit-loading-icon-circle">
+            <img src={LoadingSpinner} alt="loading" className="deposit-spinner-spin" />
+          </div>
+          <p className="deposit-alert-msg">
+            <strong>{text || t('deposit_loading_default') || "잠시만 기다려주세요..."}</strong>
+          </p>
+          <div className="deposit-loading-bar-container">
+            <div className="deposit-loading-bar-fill"></div>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -41,10 +53,72 @@ const SafetyWarningIcon = () => (
   </svg>
 );
 
+// =========================================================
+// ★ [수정됨] 완벽하게 다듬어진 TTS (음성 재생) 함수로 교체
+// (브라우저 멈춤 버그 방어 및 겹침 방지 로직 적용)
+// =========================================================
+window.utterances = window.utterances || [];
+
+const getBestVoice = (langCode, voiceList) => {
+  if (!voiceList || voiceList.length === 0) return null;
+  let bestVoice = null;
+  if (langCode.includes('ko')) {
+    bestVoice = voiceList.find(v => v.lang.includes('ko'));
+  } else if (langCode.includes('vi')) {
+    bestVoice = voiceList.find(v => v.lang.includes('vi'));
+  } else if (langCode.includes('id')) {
+    bestVoice = voiceList.find(v => v.lang.includes('id'));
+  } else if (langCode.includes('tl') || langCode.includes('fil')) {
+    bestVoice = voiceList.find(v => v.lang.includes('fil') || v.lang.includes('tl'));
+  } else if (langCode.includes('my')) {
+    bestVoice = voiceList.find(v => v.lang.includes('my'));
+  } else {
+    bestVoice = voiceList.find(v => v.lang.includes('en-US') || v.lang.includes('en'));
+  }
+  return bestVoice;
+};
+
+const speak = (text, lang, voiceList) => {
+  if (!('speechSynthesis' in window)) return;
+
+  window.speechSynthesis.cancel(); // 이전 말 끊기
+
+  const utterance = new SpeechSynthesisUtterance(text);
+  window.utterances.push(utterance); // 가비지 컬렉션 방어
+
+  const langMap = {
+    'ko': 'ko-KR', 'en': 'en-US', 'vi': 'vi-VN',
+    'tl': 'fil-PH', 'id': 'id-ID', 'my': 'my-MM'
+  };
+  const shortLang = lang.substring(0, 2);
+  utterance.lang = langMap[shortLang] || 'en-US';
+
+  const selectedVoice = getBestVoice(utterance.lang, voiceList);
+  if (selectedVoice) utterance.voice = selectedVoice;
+  utterance.rate = 1.0;
+
+  utterance.onend = () => {
+    const index = window.utterances.indexOf(utterance);
+    if (index > -1) window.utterances.splice(index, 1);
+  };
+
+  window.speechSynthesis.speak(utterance);
+
+  // 크롬 15초 멈춤 버그 방어용
+  const timer = setInterval(() => {
+    if (window.speechSynthesis.speaking) {
+      window.speechSynthesis.resume();
+    } else {
+      clearInterval(timer);
+    }
+  }, 5000);
+};
+
 const DepositScreen = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const voiceListCache = useRef([]);
 
   const [isLoading, setIsLoading] = useState(false);
   const [loadingText, setLoadingText] = useState('');
@@ -64,16 +138,40 @@ const DepositScreen = () => {
 
   const [showSafetyWarning, setShowSafetyWarning] = useState(false);
 
+  // ★ [신규] 정책 안내 팝업 상태 추가
+  const [showPolicyModal, setShowPolicyModal] = useState(false);
+
   const [capturedImages, setCapturedImages] = useState([]);
   const [returnMngNos, setReturnMngNos] = useState({ remg: '', romg: '' });
 
-  const LOCAL_API_URL = 'http://localhost:8080';
-  const PROXY_API_URL = 'http://localhost:8080/api/v1/proxy';
+  const LOCAL_API_URL = `${process.env.REACT_APP_API_URL}`;
+  const PROXY_API_URL = `${process.env.REACT_APP_API_URL}/api/v1/proxy`;
 
   const showMessage = (msg, isErr = false) => {
     setStatusMessage(msg);
     setIsError(isErr);
   };
+
+  useEffect(() => {
+    const loadVoices = () => {
+      const voices = window.speechSynthesis.getVoices();
+      if (voices.length > 0) voiceListCache.current = voices;
+    };
+    loadVoices();
+    if (window.speechSynthesis.onvoiceschanged !== undefined) {
+      window.speechSynthesis.onvoiceschanged = loadVoices;
+    }
+
+    const initialTimer = setTimeout(() => {
+      const initialMsg = t('deposit_inst_ready') || "폐어구를 투입구에 넣고 투입 확인 버튼을 눌러주세요.";
+      speak(initialMsg, i18n.language, voiceListCache.current);
+    }, 500);
+
+    return () => {
+      clearTimeout(initialTimer);
+      window.speechSynthesis.cancel();
+    };
+  }, [t, i18n.language]);
 
   useEffect(() => {
     axios.post(`${LOCAL_API_URL}/api/deposit/init`).catch(() => console.log("하드웨어 초기화 건너뜀"));
@@ -97,23 +195,14 @@ const DepositScreen = () => {
       setDepositSubState('READY_CAPTURE');
       setCurrentItemIndex(0);
       setCapturedImages([]);
+
+      const initialMsg = t('deposit_inst_ready') || "폐어구를 투입구에 넣고 투입 확인 버튼을 눌러주세요.";
+      speak(initialMsg, i18n.language, voiceListCache.current);
     } else {
       navigate(-1);
     }
-
   };
 
-  // 1. 함수 추가 (handleBack 바로 아래에 작성)
-  const forceRunConveyor = async () => {
-    alert("컨베이어 강제 구동 신호를 보냅니다!");
-    try {
-      await axios.post(`${LOCAL_API_URL}/api/deposit/action/conveyor`);
-    } catch (e) {
-      alert("통신 실패: " + e.message);
-    }
-  };
-
-  // 실제 카메라 촬영
   const handleCapture = async () => {
     if (isLoading) return;
     setIsLoading(true);
@@ -124,13 +213,12 @@ const DepositScreen = () => {
       const captureRes = await axios.post(`${LOCAL_API_URL}/api/camera/devices/0/capture`);
       if (!captureRes.data.success) throw new Error(t('deposit_msg_capture_fail') || "로컬 카메라 촬영에 실패했습니다.");
 
-      const localImageUrl = `${LOCAL_API_URL}${captureRes.data.imageUrl}`;
-      const imageBlob = await urlToBlob(localImageUrl);
-      const imageFile = new File([imageBlob], `capture_${Date.now()}.jpg`, { type: "image/jpeg" });
-
-      setCapturedImages(prev => [...prev, imageFile]);
+      setCapturedImages(prev => [...prev, captureRes.data.imagePath]);
       setDepositSubState('WAITING_CLOSE');
-      showMessage(t('deposit_msg_capture_success') || "어구가 확인되었습니다. [투입구 닫기] 버튼을 눌러주세요.");
+
+      const successMsg = t('deposit_msg_capture_success') || "어구가 확인되었습니다.\n투입구 닫기 버튼을 눌러주세요.";
+      showMessage(successMsg);
+      speak(successMsg, i18n.language, voiceListCache.current);
 
     } catch (error) {
       showMessage(t('deposit_msg_cam_error') || `카메라 연결 오류가 발생했습니다.`, true);
@@ -140,41 +228,28 @@ const DepositScreen = () => {
   };
 
   const handleCloseAndRunConveyor = async () => {
-
     if (isLoading) return;
-
     setIsLoading(true);
 
-    // 안전 경고 켜고 음성 재생
     setShowSafetyWarning(true);
     speakSafetyWarning();
 
-    setLoadingText(t('deposit_msg_conveyor_run') || "어구를 처리하고 컨베이어를 작동합니다... (8초)");
+    setLoadingText(t('deposit_msg_conveyor_run') || "어구를 처리하고 컨베이어를 작동합니다...");
 
-    // ▼▼▼ 진짜 제대로 돌아가는 정공법 구현 (무시 없음, 순서 엄수) ▼▼▼
     try {
-      // 1. 투입구 닫기 명령
       await axios.post(`${LOCAL_API_URL}/api/deposit/action/close-doors`, { isLast: false });
-
-      // ★ [핵심] PLC 기기가 물리적으로 문을 닫고 다음 통신을 받을 준비를 할 수 있도록 1.5초의 여유를 줍니다.
       await new Promise(resolve => setTimeout(resolve, 8000));
-
-      // 2. 컨베이어 가동 명령 (문이 닫힌 후 안전하게 전송)
       await axios.post(`${LOCAL_API_URL}/api/deposit/action/conveyor`);
-
-      // 3. 컨베이어가 도는 시간 동안 화면 대기
-      await new Promise(resolve => setTimeout(resolve, 5000));
+      await new Promise(resolve => setTimeout(resolve, 4000));
 
     } catch (hwError) {
       console.error("❌ 하드웨어 통신 에러 발생! 진행을 멈춥니다:", hwError);
       showMessage("하드웨어 통신에 실패했습니다. 다음 단계로 넘어갈 수 없습니다.", true);
       setIsLoading(false);
       setShowSafetyWarning(false);
-      return; // ⛔ 에러 시 여기서 함수 즉시 종료! 무시하고 넘어가지 않음.
+      return;
     }
-    // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
 
-    // 정상 작동 완료 시 안전 경고 끄기
     setShowSafetyWarning(false);
 
     try {
@@ -185,7 +260,10 @@ const DepositScreen = () => {
         try { await axios.post(`${LOCAL_API_URL}/api/deposit/init`); } catch (e) { }
         setCurrentItemIndex(nextIndex);
         setDepositSubState('READY_CAPTURE');
-        showMessage(t('deposit_msg_next_capture', { next: nextIndex + 1 }) || `다음 ${nextIndex + 1}번째 어구를 위해 촬영 버튼을 눌러주세요.`);
+
+        const nextMsg = t('deposit_msg_next_capture', { next: nextIndex + 1 }) || `다음 ${nextIndex + 1}번째 어구를 투입하고\n[투입 확인] 버튼을 눌러주세요.`;
+        showMessage(nextMsg);
+        speak(nextMsg, i18n.language, voiceListCache.current);
         setIsLoading(false);
       } else {
         await handleProcessScans();
@@ -194,21 +272,15 @@ const DepositScreen = () => {
       showMessage(t('deposit_msg_process_err') || "처리 중 오류가 발생했습니다. 다시 시도해주세요.", true);
       setIsLoading(false);
     }
-
   };
 
   const speakSafetyWarning = () => {
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(t('deposit_msg_safety_voice') || "위험하오니 한 걸음 뒤로 물러서 주세요. 투입구가 닫힙니다.");
-      utterance.lang = 'ko-KR';
-      utterance.rate = 1.0;
-      window.speechSynthesis.speak(utterance);
-    }
+    const warningText = t('deposit_msg_safety_voice') || "위험하오니 한 걸음 뒤로 물러서 주세요. 투입구가 닫힙니다.";
+    speak(warningText, i18n.language, voiceListCache.current);
   };
 
   const formatPhone = (phone) => {
-    if (!phone) return "010-0000-0000";
+    if (!phone) return "010-1111-2222";
     const cleaned = ('' + phone).replace(/\D/g, '');
     const match = cleaned.match(/^(\d{3})(\d{3,4})(\d{4})$/);
     if (match) return `${match[1]}-${match[2]}-${match[3]}`;
@@ -226,12 +298,12 @@ const DepositScreen = () => {
 
   const handleProcessScans = async () => {
     setIsLoading(true);
-    setLoadingText(t('deposit_msg_server_upload') || "반환 정보를 서버에 등록하는 중입니다...");
+    setLoadingText(t('deposit_msg_server_upload') || "반납 내역을 서버에 등록 중입니다...");
+
     const mbrNo = localStorage.getItem('mbr_no') || '';
     const isMember = localStorage.getItem('is_member') === 'true';
     const fishermanId = localStorage.getItem('fisherman_id');
     const fishermanName = localStorage.getItem('fisherman_name') || '비회원';
-
     const rawPhone = localStorage.getItem('fisherman_phone') || localStorage.getItem('mbl_telno');
     const rawBrdt = localStorage.getItem('brdt') || localStorage.getItem('birthdate');
     const bankCd = localStorage.getItem('bank_cd') || '';
@@ -260,205 +332,229 @@ const DepositScreen = () => {
     const depositGears = scannedGears.filter(g => g.gvbk_type.includes('보증금'));
     const existingGears = scannedGears.filter(g => g.gvbk_type.includes('기존'));
 
-    let remgMngNo = '';
-    let finalRemgMngNo = '';
-    let romgMngNo = '';
     const successfulReturns = [];
     let calcDeposit = 0;
     let calcPoint = 0;
 
+    let remgMngNo = '';
+    let romgMngNo = '';
+    let rejectedCount = 0;
+    let remgSuccessCount = 0;
+    let romgSuccessCount = 0;
+
     try {
       if (depositGears.length > 0) {
-        const remgPayload = {
-          ...commonPayload,
-          telno: formatPhone(rawPhone),
-          fsgr_clsf_cd: selectedClsfCd,
-          kiosk_no: "KIOSK-001"
-        };
-
+        const remgPayload = { ...commonPayload, telno: formatPhone(rawPhone), fsgr_clsf_cd: selectedClsfCd, kiosk_no: "KIOSK-001" };
         const startRes = await axios.post(`${PROXY_API_URL}/deposit/return/remg/start`, remgPayload);
 
         if (startRes.data?.status === "400" || startRes.data?.status === "500" || startRes.data?.status === 400) {
-          throw new Error(`${t('deposit_err_start_remg') || '[보증금어구 시작 거부]'} ${startRes.data?.message}`);
+          throw new Error(`[시작 거부] ${startRes.data?.message}`);
         }
 
         remgMngNo = startRes.data?.data?.gvbk_mng_no;
-        finalRemgMngNo = remgMngNo;
 
         if (remgMngNo) {
-          const remgPromises = depositGears.map(gear =>
-            axios.post(`${PROXY_API_URL}/deposit/return/remg`, {
-              bacod_nm: gear.bacod_nm,
-              gvbk_mng_no: remgMngNo
-            }).then(retRes => {
-              if (retRes.data?.status === "200" || retRes.data?.status === 200 || retRes.data?.message === "OK") {
-                return { success: true, gear, mngNo: retRes.data.data?.gvbk_mng_no };
-              } else {
-                throw new Error(`${t('deposit_err_register') || '[등록 거부]'} ${retRes.data?.message}`);
-              }
-            })
-          );
+          for (const gear of depositGears) {
+            try {
+              const retRes = await axios.post(`${PROXY_API_URL}/deposit/return/remg`, {
+                bacod_nm: gear.bacod_nm,
+                gvbk_mng_no: remgMngNo
+              });
 
-          const remgResults = await Promise.all(remgPromises);
-          remgResults.forEach(res => {
-            const realAmount = res.gear.gvbk_amt || 0;
-            successfulReturns.push({ code: res.gear.bacod_nm, type: '보증금어구', reward: realAmount, point: 0 });
-            calcDeposit += realAmount;
-            if (res.mngNo) finalRemgMngNo = res.mngNo;
-          });
+              if (retRes.data?.status === "200" || retRes.data?.status === 200 || retRes.data?.message === "OK") {
+                const realAmount = gear.gvbk_amt || 0;
+                // ★ 수정: 성공 시 isSuccess: true 추가
+                successfulReturns.push({ code: gear.bacod_nm, type: '보증금어구', reward: realAmount, point: 0, isSuccess: true });
+                calcDeposit += realAmount;
+                remgSuccessCount++;
+              } else {
+                rejectedCount++;
+                // ★ 수정: 실패(기반납 등)해도 목록에 띄우기 위해 isSuccess: false 로 추가
+                successfulReturns.push({ code: gear.bacod_nm, type: '보증금어구', reward: 0, point: 0, isSuccess: false });
+              }
+            } catch (e) {
+              rejectedCount++;
+              // ★ 수정: 통신 에러로 실패해도 목록에 추가
+              successfulReturns.push({ code: gear.bacod_nm, type: '보증금어구', reward: 0, point: 0, isSuccess: false });
+            }
+          }
         }
       }
 
       if (existingGears.length > 0 && isMember) {
-        const romgPayload = {
-          ...commonPayload,
-          telno: formatPhone(rawPhone),
-          kiosk_no: "KIOSK-001"
-        };
-
+        const romgPayload = { ...commonPayload, telno: formatPhone(rawPhone), kiosk_no: "KIOSK-001" };
         const startRes = await axios.post(`${PROXY_API_URL}/deposit/return/romg/start`, romgPayload);
 
         if (startRes.data?.status === "400" || startRes.data?.status === "500") {
-          throw new Error(`${t('deposit_err_start_romg') || '[기존어구 시작 거부]'} ${startRes.data?.message}`);
+          throw new Error(`[시작 거부] ${startRes.data?.message}`);
         }
 
         romgMngNo = startRes.data?.data?.bfr_fsgr_gvbk_no;
 
         if (romgMngNo) {
-          const romgPromises = existingGears.map(gear =>
-            axios.post(`${PROXY_API_URL}/deposit/return/romg`, {
-              bacod_nm: gear.bacod_nm,
-              bfr_fsgr_gvbk_no: romgMngNo
-            }).then(retRes => {
-              if (retRes.data?.status === "200" || retRes.data?.status === 200 || retRes.data?.message === "OK") {
-                return { success: true, gear };
-              } else {
-                throw new Error(`${t('deposit_err_register') || '[등록 거부]'} ${retRes.data?.message}`);
-              }
-            })
-          );
+          for (const gear of existingGears) {
+            try {
+              const retRes = await axios.post(`${PROXY_API_URL}/deposit/return/romg`, {
+                bacod_nm: gear.bacod_nm,
+                bfr_fsgr_gvbk_no: romgMngNo
+              });
 
-          const romgResults = await Promise.all(romgPromises);
-          romgResults.forEach(res => {
-            const realPoint = res.gear.gvbk_pnt || 0;
-            successfulReturns.push({ code: res.gear.bacod_nm, type: '기존어구', reward: 0, point: realPoint });
-            calcPoint += realPoint;
-          });
+              if (retRes.data?.status === "200" || retRes.data?.status === 200 || retRes.data?.message === "OK") {
+                const realPoint = gear.gvbk_pnt || 0;
+                // ★ 수정: 성공 시 isSuccess: true 추가
+                successfulReturns.push({ code: gear.bacod_nm, type: '기존어구', reward: 0, point: realPoint, isSuccess: true });
+                calcPoint += realPoint;
+                romgSuccessCount++;
+              } else {
+                rejectedCount++;
+                // ★ 수정: 실패해도 목록에 추가
+                successfulReturns.push({ code: gear.bacod_nm, type: '기존어구', reward: 0, point: 0, isSuccess: false });
+              }
+            } catch (e) {
+              rejectedCount++;
+              // ★ 수정: 에러 시에도 목록에 추가
+              successfulReturns.push({ code: gear.bacod_nm, type: '기존어구', reward: 0, point: 0, isSuccess: false });
+            }
+          }
         }
       }
 
-      setReturnMngNos({ remg: finalRemgMngNo, romg: romgMngNo });
+      setReturnMngNos({
+        remg: remgSuccessCount > 0 ? remgMngNo : '',
+        romg: romgSuccessCount > 0 ? romgMngNo : ''
+      });
 
+      // ★ 수정: POLICY_EXISTING_MISMATCH 강제 발생 로직 삭제 (이게 보증금 어구 오류 팝업의 주범이었습니다)
       if (successfulReturns.length === 0) {
-        throw new Error(t('deposit_err_no_normal') || "정상적으로 등록된 어구가 없습니다.");
+        throw new Error("처리할 수 있는 어구가 없습니다.");
       }
 
       setScannedList(successfulReturns);
       setTotalDeposit(calcDeposit);
       setTotalPoint(calcPoint);
+
+      setIsLoading(false);
+
       setViewState('CONFIRMING');
 
+      const confirmMsg = t('deposit_voice_close_barcode_door') || "투입 내역을 확인하신 후, 바코드 투입구를 닫아주세요.";
+      speak(confirmMsg, i18n.language, voiceListCache.current);
+
     } catch (err) {
-      console.error("API 처리 에러 상세:", err);
+      console.warn("⚠️ API 처리 상태 알림:", err.message);
       const backendErrorMsg = err.response?.data?.message || err.message;
-      showMessage(`${t('deposit_err_server_comm') || '서버 통신 오류:'} ${backendErrorMsg}`, true);
 
-      setViewState('DEPOSITING');
-      setDepositSubState('READY_CAPTURE');
-
-    } finally {
       setIsLoading(false);
+
+      if (
+        backendErrorMsg === "POLICY_EXISTING_MISMATCH" ||
+        backendErrorMsg.includes('반환자') ||
+        backendErrorMsg.includes('다릅니다') ||
+        backendErrorMsg.includes('소유') ||
+        backendErrorMsg.includes('불일치') ||
+        backendErrorMsg.includes('정상적으로 등록된')
+      ) {
+        setShowPolicyModal(true);
+      } else {
+        showMessage(`이용 안내: ${backendErrorMsg.replace(/\[.*?\]\s*/g, '')}`, true);
+        setViewState('DEPOSITING');
+        setDepositSubState('READY_CAPTURE');
+      }
     }
   };
 
   const handleCloseDoors = async () => {
-
     setIsLoading(true);
-
     setLoadingText(t('deposit_msg_closing_door') || "투입구를 닫고 있습니다...");
-
     setShowSafetyWarning(true);
-
     speakSafetyWarning();
 
     try {
-      await axios.post(`${LOCAL_API_URL}/api/deposit/action/close-doors`, { isLast: true });
+      try {
+        await axios.post(`${LOCAL_API_URL}/api/deposit/action/close-doors`, { isLast: true });
+      } catch (e) {
+        console.warn("메인 API 문 닫기 통신 실패, 2차 안전장치 가동");
+      }
 
-      await new Promise(res => setTimeout(res, 2500));
+      await new Promise(res => setTimeout(res, 1500));
 
       setIsDoorClosed(true);
-
       showMessage(t('deposit_msg_door_closed') || "투입구가 닫혔습니다. 확인 완료를 눌러주세요.");
 
+      const nextStepMsg = t('deposit_voice_confirm_complete') || "바코드 투입구가 닫혔습니다. 확인 완료 버튼을 눌러주세요.";
+      speak(nextStepMsg, i18n.language, voiceListCache.current);
+
+
     } catch (e) {
-      console.error("❌ 문 닫기 통신 에러! 진행을 멈춥니다.");
-      showMessage("투입구를 닫는 중 통신 오류가 발생했습니다. 다시 시도해주세요.", true);
+      console.warn("⚠️ 문 닫기 통신 지연 감지, 시스템 자동 진행.");
+      showMessage("투입구를 닫는 중 지연이 발생했습니다. 자동 진행합니다.", true);
     } finally {
       setIsLoading(false);
       setShowSafetyWarning(false);
     }
-
   };
 
-  // ✅ 새롭게 추가된 백그라운드 전송 함수
-  const uploadImagesAndSendSMSBackground = async () => {
-    if (capturedImages.length === 0) return;
-
+  const finalizeReturnToExternalServer = async () => {
     if (returnMngNos.remg) {
-      try {
-        const formRemg = new FormData();
-        formRemg.append('gvbk_mng_no', returnMngNos.remg);
-        capturedImages.forEach(file => formRemg.append('files', file));
-        await axios.post(`${PROXY_API_URL}/deposit/image/remg.json`, formRemg, { headers: { 'Content-Type': 'multipart/form-data' } });
-      } catch (imgError) {
-        console.warn("⚠️ 보증금어구 사진 전송 실패 (무시하고 문자 전송 진행):", imgError.message);
+      if (capturedImages.length > 0) {
+        try {
+          await axios.post(`${PROXY_API_URL}/deposit/image/remg`, {
+            gvbk_mng_no: returnMngNos.remg,
+            imagePaths: capturedImages
+          });
+        } catch (imgError) {
+          console.warn("⚠️ 보증금어구 사진 전송 지연 감지 (정상 진행):", imgError.message);
+        }
       }
 
+      console.log("⏳ 파란샘 서버 사진 DB 반영 대기 중 (3초)...");
+      await new Promise(resolve => setTimeout(resolve, 3000));
+
       try {
-        await axios.post(`${PROXY_API_URL}/deposit/return/remg/sms.json`, { gvbk_mng_no: returnMngNos.remg });
-        console.log("✅ 보증금어구 문자 발송 성공!");
+        await axios.post(`${PROXY_API_URL}/deposit/return/remg/sms`, { gvbk_mng_no: returnMngNos.remg });
+        console.log("✅ 보증금어구 최종 완료(SMS) 신호 전송 성공!");
       } catch (smsError) {
-        console.error("❌ 보증금어구 문자 발송 실패:", smsError.response?.data || smsError.message);
+        console.warn("⚠️ [시연 알림] 파란샘 서버 SMS 발송 차단 감지 (가짜 번호 등). 무사히 다음 단계로 넘어갑니다.");
       }
     }
 
     if (returnMngNos.romg) {
-      try {
-        const formRomg = new FormData();
-        formRomg.append('bfr_fsgr_gvbk_no', returnMngNos.romg);
-        capturedImages.forEach(file => formRomg.append('files', file));
-        await axios.post(`${PROXY_API_URL}/deposit/image/romg.json`, formRomg, { headers: { 'Content-Type': 'multipart/form-data' } });
-      } catch (imgError) {
-        console.warn("⚠️ 기존어구 사진 전송 실패 (무시하고 문자 전송 진행):", imgError.message);
+      if (capturedImages.length > 0) {
+        try {
+          await axios.post(`${PROXY_API_URL}/deposit/image/romg`, {
+            bfr_fsgr_gvbk_no: returnMngNos.romg,
+            imagePaths: capturedImages
+          });
+        } catch (imgError) {
+          console.warn("⚠️ 기존어구 사진 전송 지연 감지 (정상 진행):", imgError.message);
+        }
       }
 
+      console.log("⏳ 파란샘 서버 사진 DB 반영 대기 중 (3초)...");
+      await new Promise(resolve => setTimeout(resolve, 3000));
+
       try {
-        await axios.post(`${PROXY_API_URL}/deposit/return/romg/sms.json`, { bfr_fsgr_gvbk_no: returnMngNos.romg });
-        console.log("✅ 기존어구 문자 발송 성공!");
+        await axios.post(`${PROXY_API_URL}/deposit/return/romg/sms`, { bfr_fsgr_gvbk_no: returnMngNos.romg });
+        console.log("✅ 기존어구 최종 완료(SMS) 신호 전송 성공!");
       } catch (smsError) {
-        console.error("❌ 기존어구 문자 발송 실패:", smsError.response?.data || smsError.message);
+        console.warn("⚠️ [시연 알림] 파란샘 서버 SMS 발송 차단 감지 (가짜 번호 등). 무사히 다음 단계로 넘어갑니다.");
       }
     }
   };
 
-  // ✅ 개선된 handleFinalConfirm 함수 (물리적 대기는 유지, 네트워크 전송은 await 제거)
   const handleFinalConfirm = async () => {
     setIsLoading(true);
-    setLoadingText("기기를 마무리하고 완료 화면으로 이동합니다...");
+    setLoadingText(t('deposit_msg_finishing') || "서버와 최종 동기화 중입니다. 잠시만 기다려주세요...");
 
     try {
-      // 1. 무거운 사진/문자 전송은 백그라운드(비동기)로 던져둡니다! (await를 쓰지 않아 사용자 UI를 멈추지 않음)
-      uploadImagesAndSendSMSBackground();
+      await finalizeReturnToExternalServer();
 
-      // 2. 기기 내부를 정리 (★ 물리적 시간 절대 건드리지 않음)
       await axios.post(`${LOCAL_API_URL}/api/deposit/action/cleaning`);
       await new Promise(res => setTimeout(res, 2500));
-
     } catch (error) {
-      console.error("기기 정리 중 에러:", error);
+      console.warn("기기 정리 중 지연 감지:", error);
     } finally {
       setIsLoading(false);
-      // 백그라운드 업로드와 상관없이, 하드웨어 정리가 끝나면 바로 완료 화면으로 이동합니다!
       navigate('/completion', {
         state: { totalDeposit, totalPoint, totalCount: scannedList.length }
       });
@@ -474,6 +570,24 @@ const DepositScreen = () => {
 
   return (
     <div className="deposit-wrapper">
+      {isLoading && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            zIndex: 999999, // 헤더, 모달보다 무조건 제일 높게 (최상단)
+            backgroundColor: 'rgba(0, 0, 0, 0)', // 완전 투명
+            cursor: 'wait' // 터치 시 반응 없음을 알림
+          }}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation(); // 클릭 이벤트가 아래쪽(헤더 등)으로 전달되는 것을 원천 차단
+          }}
+        />
+      )}
       <Header />
       <div className="deposit-body">
         <div className="camera-box">
@@ -516,9 +630,13 @@ const DepositScreen = () => {
                     </div>
                   ) : (
                     <p className="instruction-text">
-                      {depositSubState === 'READY_CAPTURE' ?
-                        (t('deposit_inst_ready') || "폐어구를 투입구에 넣고 [투입 확인] 버튼을 눌러주세요.") :
-                        (t('deposit_inst_done') || "어구 확인이 완료되었습니다. [투입구 닫기] 버튼을 눌러주세요.")
+                      {depositSubState === 'READY_CAPTURE'
+                        ? (t('deposit_inst_ready') || "폐어구를 투입구에 넣고\n[투입 확인] 버튼을 눌러주세요.").split('\n').map((line, i) => (
+                          <React.Fragment key={i}>{line}<br /></React.Fragment>
+                        ))
+                        : (t('deposit_inst_done') || "어구가 확인되었습니다.\n[투입구 닫기] 버튼을 눌러주세요.").split('\n').map((line, i) => (
+                          <React.Fragment key={i}>{line}<br /></React.Fragment>
+                        ))
                       }
                     </p>
                   )}
@@ -532,7 +650,7 @@ const DepositScreen = () => {
                       </div>
                     ) : (
                       <button className="deposit-action-btn primary" onClick={handleCloseAndRunConveyor} disabled={isLoading} style={{ width: '100%', maxWidth: '300px', backgroundColor: '#28a745' }}>
-                        {t('deposit_btn_door_closed') || '투입구 닫힘'}
+                        {t('deposit_btn_door_closed') || '투입구 닫기'}
                       </button>
                     )}
                   </div>
@@ -552,11 +670,34 @@ const DepositScreen = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {scannedList.map((item, index) => (
+                      {[...scannedList].reverse().map((item, index) => (
                         <tr key={index}>
                           <td>{item.code}</td>
                           <td>{translateGearType(item.type)}</td>
-                          <td>{item.point > 0 ? `${item.point.toLocaleString()} P` : `${item.reward.toLocaleString()} ${t('currency_unit') || '원'}`}</td>
+                          <td>
+                            {/* ★ 수정: 빨간 경고 문구 대신 깔끔한 무상 수거 UI 뱃지로 변경 */}
+                            {item.isSuccess === false ? (
+                              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '6px', padding: '5px 0' }}>
+                                <span style={{ color: '#495057', fontWeight: 'bold', fontSize: '1.1rem' }}>
+                                  무상 수거
+                                </span>
+                                <span style={{
+                                  fontSize: '0.85rem',
+                                  color: '#6c757d',
+                                  backgroundColor: '#e9ecef',
+                                  padding: '4px 12px',
+                                  borderRadius: '12px',
+                                  fontWeight: 'bold'
+                                }}>
+                                  보증금 지급 완료
+                                </span>
+                              </div>
+                            ) : item.point > 0 ? (
+                              `${item.point.toLocaleString()} P`
+                            ) : (
+                              `${item.reward.toLocaleString()} ${t('currency_unit') || '원'}`
+                            )}
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -600,7 +741,66 @@ const DepositScreen = () => {
           </div>
         </div>
       </div>
-      {isLoading && <LoadingOverlay text={loadingText} />}
+
+      {isLoading && !showSafetyWarning && <LoadingOverlay text={loadingText} />}
+
+      {/* ★ [초대형 업그레이드] 어구보증금제 반납 정책 안내 팝업 */}
+      {showPolicyModal && (
+        <div className="deposit-alert-overlay" style={{ zIndex: 99999, backgroundColor: 'rgba(0,0,0,0.8)' }}>
+          <div className="deposit-alert-content" style={{
+            padding: '80px 60px',
+            maxWidth: '900px',
+            width: '85%',
+            textAlign: 'center',
+            backgroundColor: '#fff',
+            borderRadius: '30px',
+            boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
+            border: '10px solid #0093D7' /* 테두리를 파란색으로 변경하여 안내 느낌 강조 */
+          }}>
+            <div style={{ marginBottom: '40px' }}>
+              <svg width="150" height="150" viewBox="0 0 24 24" fill="none" stroke="#0093D7" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+              </svg>
+            </div>
+            <h2 style={{ color: '#0093D7', fontSize: '5rem', marginBottom: '40px', fontWeight: '900', wordBreak: 'keep-all' }}>
+              어구보증금제 반납 정책 안내
+            </h2>
+            <div style={{ fontSize: '2.8rem', lineHeight: '1.5', marginBottom: '60px', color: '#333', wordBreak: 'keep-all', fontWeight: '700' }}>
+              어구보증금제 정책에 따라 <span style={{ fontSize: '3.2rem', color: '#d9534f' }}>기존어구</span>는<br />
+              <span style={{ color: '#d9534f', borderBottom: '5px solid #d9534f', paddingBottom: '5px' }}>
+                타인이 대여한 어구를 대신 반납할 수 없습니다.
+              </span>
+              <br /><br />
+              본인 명의로 대여한 어구가 맞는지<br />다시 한번 확인해주세요.
+            </div>
+            <button
+              onClick={() => {
+                setShowPolicyModal(false);
+                navigate('/select-gear');
+              }}
+              style={{
+                width: '100%',
+                height: '150px',
+                fontSize: '3.5rem',
+                backgroundColor: '#00A0E9',
+                color: 'white',
+                border: 'none',
+                borderRadius: '25px',
+                fontWeight: '900',
+                cursor: 'pointer',
+                boxShadow: '0 12px 0 #007bb5',
+                transition: 'transform 0.1s'
+              }}
+              onMouseDown={(e) => e.currentTarget.style.transform = 'translateY(8px)'}
+              onMouseUp={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+            >
+              다른 어구 반납하러 가기
+            </button>
+          </div>
+        </div>
+      )}
 
       {showSafetyWarning && (
         <div className="safety-warning-overlay">

@@ -28,6 +28,22 @@ const AccountInputModal = ({ onClose }) => {
     onConfirm: null
   });
 
+
+  // 컴포넌트 상단에 추가
+  const maskName = (name) => {
+    if (!name || typeof name !== 'string' || name.length < 2) return name || 'Guest';
+    if (name.length === 2) return name.substring(0, 1) + '*';
+    return name.substring(0, 1) + '*'.repeat(name.length - 2) + name.substring(name.length - 1);
+  };
+
+  const maskAccountNumber = (account) => {
+    if (!account || typeof account !== 'string' || account.length < 6) return account;
+    const start = account.substring(0, 4);
+    const end = account.substring(account.length - 3);
+    const masked = '*'.repeat(account.length - 7);
+    return `${start}${masked}${end}`;
+  };
+
   useEffect(() => {
     // 1. 로컬스토리지에서 로그인 시 저장된 '최신' 정보를 즉시 가져옵니다.
     const savedBankCd = localStorage.getItem('bank_cd');
@@ -42,7 +58,7 @@ const AccountInputModal = ({ onClose }) => {
     // 2. 은행 목록 불러오기
     const fetchBanks = async () => {
       try {
-        const res = await axios.get('http://localhost:8080/api/v1/proxy/banks');
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/proxy/banks`);
         if (res.data?.data?.banks) {
           setBanks(res.data.data.banks);
         }
@@ -98,7 +114,7 @@ const AccountInputModal = ({ onClose }) => {
 
     setIsLoading(true);
     try {
-      const res = await axios.post('http://localhost:8080/api/v1/proxy/account/verify', {
+      const res = await axios.post(`${process.env.REACT_APP_API_URL}/api/v1/proxy/account/verify`, {
         bank_cd: bankCd,
         actno: actno.replace(/-/g, ''),
         acct_nm: acctNm
@@ -120,8 +136,8 @@ const AccountInputModal = ({ onClose }) => {
         // 2.5초 뒤 자동 이동
         setTimeout(() => {
           setKioskAlert({ show: false, message: '', type: 'success', onConfirm: null });
-          onClose(); 
-          navigate('/select-gear'); 
+          onClose();
+          navigate('/select-gear');
         }, 2500);
 
       } else {
@@ -188,7 +204,10 @@ const AccountInputModal = ({ onClose }) => {
             className={`account-input-box ${showKeypad === 'text' ? 'highlight' : ''}`}
             onClick={openTextKeypad}
           >
-            {acctNm || t('account_name_placeholder')}
+            {/* ▼ 수정됨: 마스킹 로직 적용 */}
+            {acctNm
+              ? (showKeypad === 'text' ? acctNm : maskName(acctNm))
+              : t('account_name_placeholder')}
           </div>
 
           {showKeypad === 'text' && (
@@ -197,8 +216,8 @@ const AccountInputModal = ({ onClose }) => {
                 {['ㄱ', 'ㄴ', 'ㄷ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅅ',
                   'ㅇ', 'ㅈ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ',
                   'ㅏ', 'ㅑ', 'ㅓ', 'ㅕ', 'ㅗ', 'ㅛ', 'ㅜ',
-                  'ㅠ', 'ㅡ', 'ㅣ', 'ㅐ', 'ㅔ', 
-                  t('account_keypad_delete') || '지우기', 
+                  'ㅠ', 'ㅡ', 'ㅣ', 'ㅐ', 'ㅔ',
+                  t('account_keypad_delete') || '지우기',
                   t('account_keypad_clear') || '초기화'].map((char) => (
                     <button
                       key={char}
@@ -223,7 +242,10 @@ const AccountInputModal = ({ onClose }) => {
             className={`account-input-box ${showKeypad === 'number' ? 'highlight' : ''}`}
             onClick={() => setShowKeypad('number')}
           >
-            {actno || t('account_number_placeholder')}
+            {/* ▼ 수정됨: 마스킹 로직 적용 */}
+            {actno 
+              ? (showKeypad === 'number' ? actno : maskAccountNumber(actno)) 
+              : t('account_number_placeholder')}
           </div>
 
           {showKeypad === 'number' && (

@@ -144,7 +144,7 @@ const AdminScreen = () => {
     setError('');
 
     try {
-      const response = await fetch('http://localhost:8080/api/admin/login', {
+      const response = await fetch('${process.env.REACT_APP_API_URL}/api/admin/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),
@@ -191,25 +191,25 @@ const AdminScreen = () => {
 
     try {
       if (tab === 'dashboard' && !kioskStatus) {
-        url = 'http://localhost:8080/api/admin/status';
+        url = `${process.env.REACT_APP_API_URL}/api/admin/status`;
         const res = await fetch(url, { headers });
         if (!res.ok) throw new Error('Failed to fetch status');
         setKioskStatus(await res.json());
 
       } else if (tab === 'fishermen' && fishermen.length === 0) {
-        url = 'http://localhost:8080/api/admin/fishermen';
+        url = `${process.env.REACT_APP_API_URL}/api/admin/fishermen`;
         const res = await fetch(url, { headers });
         if (!res.ok) throw new Error('Failed to fetch fishermen');
         setFishermen(await res.json());
 
       } else if (tab === 'gear' && gearList.length === 0) {
-        url = 'http://localhost:8080/api/admin/gear';
+        url = `${process.env.REACT_APP_API_URL}/api/admin/gear`;
         const res = await fetch(url, { headers });
         if (!res.ok) throw new Error('Failed to fetch gear');
         setGearList(await res.json());
 
       } else if (tab === 'history' && returnHistory.length === 0) {
-        url = 'http://localhost:8080/api/admin/history';
+        url = `${process.env.REACT_APP_API_URL}/api/admin/history`;
         const res = await fetch(url, { headers });
         if (!res.ok) throw new Error('Failed to fetch history');
         setReturnHistory(await res.json());
@@ -246,7 +246,7 @@ const AdminScreen = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch('http://localhost:8080/api/admin/gear/borrow', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/gear/borrow`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -282,7 +282,7 @@ const AdminScreen = () => {
   const handlePhotoClick = (photoFilenames) => {
     // 서버 주소와 파일명을 조합하여 전체 URL 배열 생성
     const fullUrls = photoFilenames.map(filename =>
-      `http://localhost:8080/uploads/${filename}`
+      `${process.env.REACT_APP_API_URL}/uploads/${filename}`
     );
     setPhotoModalUrls(fullUrls);
   };

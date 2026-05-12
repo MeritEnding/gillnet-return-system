@@ -8,7 +8,7 @@
   "main_guide_button": "Hướng dẫn sử dụng",
   "status_returnable": "Có thể trả",
   "status_returned": "Đã trả",
-  "go_home":"Quay lại",
+  "go_home": "Quay lại",
   "btn_back": "Quay lại",
   "barcode_label": "Số mã vạch",
   "gear_conical_crab_trap": "Lồng bẫy hình nón (Cua/Ghẹ đỏ)",
@@ -21,7 +21,7 @@
   "guide_faq_button": "Câu hỏi thường gặp (FAQ)",
   "guide_caution_title": "Hướng dẫn sử dụng",
   "guide_caution_text": "Để mọi người sử dụng thuận tiện, vui lòng chạm và sử dụng ki-ốt cũng như máy quét theo đúng trình tự quy định. Nếu thiết bị bị hỏng, những người tiếp theo sẽ không thể sử dụng.",
-   "auth_pass_btn_sub": "(Xác minh danh tính bằng điện thoại)",
+  "auth_pass_btn_sub": "(Xác minh danh tính bằng điện thoại)",
   "pass_modal_title": "Xác minh PASS",
   "pass_modal_desc": "Chúng tôi sẽ tiến hành xác minh danh tính qua điện thoại (PASS).",
   "pass_modal_desc2": "Vui lòng xác nhận yêu cầu xác minh trong ứng dụng PASS trên điện thoại.",
@@ -54,7 +54,8 @@
   "policy_text2_strong": "Bất cứ lúc nào, 24 giờ",
   "policy_text2": " bạn đều có thể trả lại ngư cụ phế thải một cách thuận tiện.",
   "policy_text3": "Cảm ơn bạn đã tham gia vào việc làm sạch biển của chúng ta thông qua việc thu gom ngư cụ đúng cách.",
-
+  "deposit_msg_finishing": "Sắp xong rồi! Đang chuyển sang màn hình hoàn tất.",
+  "deposit_loading_title": "Vui lòng đợi một lát",
   "faq_modal_title": "Câu hỏi thường gặp (FAQ)",
   "faq_q1": "Xác thực người dùng (Quét QR) liên tục thất bại.",
   "faq_a1": "Vui lòng quét lại một lần nữa thật rõ ràng sao cho mã QR trên màn hình điện thoại khớp với máy quét. Nếu liên tục thất bại, vui lòng nhấn nút 'Thử lại' hoặc sử dụng phương thức 'Xác thực thay thế'.",
@@ -65,7 +66,9 @@
   "faq_a3_strong": "Số điện thoại người phụ trách (010-0000-0000)",
   "faq_a3": "Nếu gặp sự cố trong khi sử dụng ki-ốt, vui lòng liên hệ ngay với số luôn hiển thị trên màn hình.",
   "auth_register_guide": "Đăng ký thành viên có sẵn thông qua ứng dụng hoặc trang web chuyên dụng.",
-
+  "label_deposit_gear_short": "Ngư cụ đặt cọc",
+  "label_existing_gear_short": "Ngư cụ hiện có",
+  
   "auth_step_1": "1. Xác thực người dùng",
   "auth_step_2": "2. Xác thực thẻ",
   "auth_step_3": "3. Bỏ vào",
@@ -76,12 +79,10 @@
   "auth_test_success_button": "(Test) Quét QR đã đăng ký",
   "auth_test_fail_button": "(Test) Quét QR chưa đăng ký",
   "auth_contact_label": "Người phụ trách:",
-
   "auth_fail_popup_title": "⚠️ Xác thực người dùng thất bại",
   "auth_fail_popup_message": "Vui lòng quét lại mã QR hoặc mã vạch\nmột lần nữa thật rõ ràng.",
   "auth_fail_popup_retry_button": "Thử lại",
   "auth_fail_popup_alternate_button": "Xác thực thay thế",
-
   "auth_success_popup_title": "Xác thực người dùng hoàn tất",
   "auth_success_popup_welcome_strong": " xin chào.",
   "auth_success_popup_welcome": "Chuẩn bị trả lại ngư cụ.",
@@ -90,7 +91,6 @@
   "auth_mascot_alt": "Linh vật",
   "auth_qr_alt": "Mã QR ngư dân",
   "auth_success_mascot_alt": "Linh vật thành công",
-
   "alt_auth_title": "Bước 1: Xác thực thay thế",
   "alt_auth_pin_instruction": "Sau khi nhập thông tin, nhấn nút [Xác thực].",
   "alt_auth_label_name": "Tên",
@@ -103,14 +103,12 @@
   "alt_auth_submit_button": "Xác thực",
   "alt_auth_alert_all_fields": "Vui lòng nhập tất cả các mục.",
   "alt_auth_alert_invalid_format": "Vui lòng kiểm tra định dạng nhập (Ngày sinh 8 số, SĐT 10-11 số, PIN 4 số).",
-
   "alt_auth_fail_popup_title": "⚠️ Xác thực người dùng thất bại",
   "alt_auth_fail_popup_message": "Không tìm thấy thông tin đã nhập.\nVui lòng kiểm tra lại.",
   "alt_auth_fail_popup_retry_button": "Thử lại",
   "alt_auth_fail_popup_goback_button": "Về quét QR",
   "auth_success_popup_welcome_suffix": " xin chào.",
-  "guide_admin_button":"giám đốc",
-
+  "guide_admin_button": "giám đốc",
   "tagging_step_label": "Bước 2",
   "tagging_title": "Bước 2: Quét mã vạch dấu hiệu",
   "tagging_instruction_top": "Vui lòng nhập số lượng ngư cụ cần trả.",
@@ -124,7 +122,6 @@
   "tagging_alert_session_expired": "Phiên người dùng đã hết hạn. Quay lại màn hình xác thực bước 1.",
   "tagging_alert_api_error_prefix": "Lỗi: ",
   "tagging_alert_network_error": "Có lỗi khi giao tiếp với máy chủ. Vui lòng thử lại sau giây lát.",
-
   "gearscan_fail_popup_title": "⚠️ Quét mã vạch thất bại",
   "gearscan_fail_popup_message": "Không thể nhận diện mã vạch.\nLau sạch và thử lại hoặc\nliên hệ với người phụ trách.",
   "gearscan_success_popup_title": "Quét mã vạch hoàn tất",
@@ -135,7 +132,6 @@
   "gearscan_instruction_single": "Sử dụng máy quét để<br/>quét <strong>mã vạch ngư cụ</strong>",
   "gearscan_test_button_success": "(Test) Mã vạch hợp lệ",
   "gearscan_test_button_fail_owner": "(Test) Không có quyền sở hữu",
-
   "tagscan_fail_popup_title": "⚠️ Không thể xác thực thẻ",
   "tagscan_fail_popup_message": "Lau sạch thẻ và thử lại\nhoặc liên hệ với\nngười phụ trách.",
   "tagscan_fail_popup_retry_button": "Thử lại",
@@ -151,7 +147,6 @@
   "tagscan_test_button_fail": "(Tạm thời) Quét thẻ giả",
   "tagscan_img_alt_ref_tag": "Ví dụ quét thẻ",
   "tagscan_img_alt_ref_net": "Ví dụ quét lưới",
-
   "gearscan_popup_title": "Xác nhận thẻ hoàn tất",
   "gearscan_popup_message": "Hiện tại {{totalCount}} ngư cụ đã được đăng ký.<1/>Bạn có muốn trả thêm ngư cụ không?",
   "gearscan_popup_yes": "Có",
@@ -170,11 +165,9 @@
   "gearscan_table_deposit_amount": "{{amount}} Won",
   "gearscan_table_footer_total": "Tổng tiền ký gửi tích lũy",
   "gearscan_test_button_prefix": "Quét: ",
-
   "scan_error_alert_prefix": "Lỗi quét:",
   "session_expired_alert": "Thông tin phiên đã hết hạn. Bắt đầu lại từ bước 1.",
   "error_server_communication": "Có lỗi khi giao tiếp với máy chủ. Vui lòng thử lại sau giây lát.",
-
   "deposit_loading_default": "Đang xử lý...",
   "deposit_loading_alt": "Đang tải",
   "deposit_webcam_error": "Không thể khởi động webcam. Vui lòng kiểm tra quyền camera.",
@@ -191,8 +184,8 @@
   "deposit_live_label": "Đang quay trực tiếp",
   "deposit_mascot_alt": "Linh vật bỏ vào",
   "deposit_instruction_strong": "<strong>Bỏ ngư cụ phế thải vào cửa nạp và</strong><1/>",
-  "deposit_state_ready":"Vui lòng nhấn nút chụp ảnh.",
-  "deposit_button_capture":"Chụp ảnh",
+  "deposit_state_ready": "Vui lòng nhấn nút chụp ảnh.",
+  "deposit_button_capture": "Chụp ảnh",
   "deposit_state_idle": "Khi sẵn sàng, nhấn nút 'Chụp'.",
   "deposit_state_detecting": "Đang phát hiện ngư cụ...",
   "deposit_state_capturing": "Phát hiện xong! Sẽ chụp sau 3 giây.",
@@ -206,7 +199,6 @@
   "deposit_popup_yes": "Có (Bỏ thêm)",
   "deposit_popup_no": "Không (Hoàn tất)",
   "deposit_alert_no_image": "Không có hình ảnh được chụp. Phải bỏ ít nhất 1 ngư cụ.",
-
   "deposit_alert_no_items": "Không có ngư cụ để trả. Vui lòng quét ngư cụ trước.",
   "completion_loading_receipt": "Đang tải danh sách trả lại...",
   "deposit_confirm_title": "Bước 3: Xác nhận danh sách trả lại",
@@ -219,7 +211,6 @@
   "deposit_photo_count": "Hiện tại đã chụp {{count}} tấm ảnh.",
   "deposit_state_loading_camera": "Đang chuẩn bị camera...",
   "deposit_button_loading_camera": "Đang chuẩn bị camera...",
-
   "completion_loading_alt": "Đang tải",
   "completion_error_no_session": "Không tìm thấy thông tin phiên trả lại. Vui lòng thử lại từ bước 1.",
   "completion_error_fetch_failed": "Tải thông tin biên lai thất bại.",
@@ -232,7 +223,7 @@
   "completion_message_title": "Tất cả việc trả lại<1/>đã hoàn tất.",
   "completion_message_subtitle": "Cảm ơn bạn<1/>đã cùng tham gia.",
   "completion_icon_alt_money": "Tiền ký gửi",
-  "completion_summary_deposit_label": "Tiền cọc dự kiến hoàn trả", 
+  "completion_summary_deposit_label": "Tiền cọc dự kiến hoàn trả",
   "completion_summary_deposit_value": "{{amount}} Won",
   "completion_icon_alt_earth": "Đóng góp môi trường",
   "completion_summary_weight_label": "Ngư cụ thu gom hôm nay",
@@ -242,13 +233,11 @@
   "completion_summary_weight_value": "{{weight}}Kg",
   "completion_icon_alt_collected": "Lượng thu gom",
   "completion_summary_collected_label": "Ngư cụ thu gom hôm nay",
-
   "auth_choice_title": "Chọn phương thức xác thực người dùng",
   "auth_qr_btn_main": "Xác thực thành viên",
   "auth_qr_btn_sub": "(Mã QR)",
   "auth_doc_btn_main": "Xác thực khách",
   "auth_doc_btn_sub": "(Đăng ký thành viên)",
-
   "privacy_third_party_title": "Đồng ý cung cấp thông tin bên thứ 3",
   "privacy_third_party_main": "'Ki-ốt trả lại ngư cụ tự động'",
   "privacy_third_party_sub": "Liên kết thông tin thành viên của bạn để sử dụng dịch vụ.",
@@ -256,7 +245,6 @@
   "privacy_tp_item": "- Mục cung cấp: Họ tên, Số đăng ký ngư dân",
   "privacy_tp_purpose": "- Mục đích: Xác minh bản thân và quản lý lịch sử trả lại",
   "privacy_tp_ask": "Bạn có đồng ý không?",
-
   "privacy_modal_title": "Đồng ý thu thập và sử dụng thông tin cá nhân",
   "privacy_modal_desc": "Để xử lý thuận lợi việc trả lại ngư cụ và hoàn trả tiền ký gửi\nvui lòng đồng ý với các điều khoản dưới đây.",
   "privacy_req_label": "[Bắt buộc] Đồng ý thu thập và sử dụng thông tin cá nhân",
@@ -264,21 +252,17 @@
   "privacy_opt_label": "[Tùy chọn] Đồng ý nhận thông tin tiếp thị (Không bắt buộc)",
   "privacy_agree_check": "Tôi đã xác nhận nội dung trên và đồng ý.",
   "privacy_view_full": "[Xem toàn bộ]",
-
   "btn_agree": "Đồng ý",
   "btn_cancel": "Hủy",
   "full_text_title": "Toàn văn điều khoản",
   "video_close_hint": "Chạm vào màn hình để đóng",
   "alert_agree_required": "Bạn phải đồng ý với các mục bắt buộc.",
-
   "agreement_text_required": "[Toàn văn đồng ý thu thập và sử dụng thông tin cá nhân]\n\n1. Các mục thông tin cá nhân được thu thập\nCông ty CP KETG thu thập các thông tin cá nhân sau để xử lý thuận lợi việc trả lại ngư cụ và hoàn tiền ký gửi.\n- Mục bắt buộc: Tên, ngày sinh, số điện thoại, số tài khoản (bao gồm tên ngân hàng, chủ tài khoản)\n- Mục thu thập tự động: Hồ sơ sử dụng dịch vụ, nhật ký truy cập, cookie, thông tin IP truy cập\n\n2. Mục đích thu thập và sử dụng thông tin cá nhân\nThông tin cá nhân được thu thập sẽ được sử dụng cho các mục đích sau.\n- Xác minh bản thân: Nhận diện đối tượng trả lại ngư cụ và xác nhận chính chủ\n- Hoàn tiền ký gửi: Chi trả tiền ký gửi cho ngư cụ đã trả và xác thực tên thật tài khoản\n- Xử lý khiếu nại: Xử lý thắc mắc của người dùng và phản hồi kết quả\n\n3. Thời gian lưu trữ và sử dụng thông tin cá nhân\nVề nguyên tắc, sau khi đạt được mục đích thu thập và sử dụng thông tin cá nhân, thông tin đó sẽ được hủy ngay lập tức. Tuy nhiên, trong trường hợp cần bảo quản theo quy định của pháp luật liên quan, thông tin thành viên sẽ được lưu trữ trong một khoảng thời gian nhất định như sau.\n- Mục bảo quản: Tên, ngày sinh, số điện thoại, số tài khoản, lịch sử trả lại\n- Căn cứ bảo quản: Luật quản lý tài nguyên thủy sản và Luật quản lý trợ cấp\n- Thời gian bảo quản: 3 năm sau khi hoàn tất hoàn tiền",
-
   "agreement_text_optional": "[Toàn văn đồng ý nhận thông tin tiếp thị]\n\n1. Sử dụng cho tiếp thị và quảng cáo\n- Phát triển dịch vụ (sản phẩm) mới và cung cấp dịch vụ tùy chỉnh\n- Cung cấp thông tin sự kiện, quảng cáo và cơ hội tham gia\n- Cung cấp dịch vụ và đăng tải quảng cáo theo đặc điểm nhân khẩu học\n- Xác nhận tính hiệu quả của dịch vụ, nắm bắt tần suất truy cập hoặc thống kê về việc sử dụng dịch vụ của thành viên\n\n2. Bất lợi khi từ chối nhận tin\nBạn có thể từ chối đồng ý nhận thông tin tiếp thị, và ngay cả khi từ chối, không có hạn chế nào đối với việc sử dụng dịch vụ cơ bản (trả lại ngư cụ và hoàn tiền). Tuy nhiên, bạn sẽ không thể nhận được hướng dẫn về sự kiện và thông tin ưu đãi.",
   "gear_type_trap": "Lồng bẫy",
   "gear_type_gillnet": "Lưới rê",
   "error_gear_not_owner": "Ngư cụ này hiện không phải do bạn thuê.",
   "error_gear_unknown": "Cụm từ này đã được quét.",
-
   "alt_auth_title": "Xác thực thay thế",
   "alt_auth_label_name": "Tên",
   "alt_auth_label_birthdate": "Ngày sinh",
@@ -308,11 +292,9 @@
   "AUTH_10": "Ngư cụ đã được xử lý. Vui lòng quét ngư cụ khác.",
   "AUTH_11": "Mã vạch không hợp lệ. Vui lòng quét lại.",
   "AUTH_12": "Quét hoàn tất. Lát nữa khi cửa nhận mở ra, vui lòng bỏ ngư cụ vào theo hướng dẫn.",
-
   "PROC_02": "Sẽ chụp ảnh ngư cụ. Vui lòng bỏ ngư cụ vào cửa nhận và nhấn nút chụp.",
   "PROC_03": "Chụp ảnh hoàn tất.",
   "PROC_04": "Bạn có thêm ngư cụ nào cần trả không?",
-
   "COMP_01": "Sau khi kiểm tra ngư cụ đã trả, vui lòng nhấn nút 'Hoàn tất trả lại'.",
   "COMP_02": "Cảm ơn bạn đã sử dụng. Cảm ơn bạn đã cùng tham gia làm sạch biển.",
   "DEPOSIT_H_01": "Vui lòng gắn chặt ngư cụ lồng bẫy vào khóa đang mở và đóng cửa lại.",
@@ -321,8 +303,7 @@
   "STATUS_01": "Đang xử lý ngư cụ. Vui lòng đợi trong giây lát.",
   "STATUS_H_01": "Đang chuyển ngư cụ an toàn vào kho lưu trữ.",
   "STATUS_G_01": "Đang nén và buộc bao lưới rê. Đây là quá trình để tăng hiệu quả lưu trữ.",
-  "STATUS_02": "Vui lòng đợi trong giây lát."
-  ,
+  "STATUS_02": "Vui lòng đợi trong giây lát.",
   "rentals_title": "Danh sách thiết bị đã thuê",
   "rentals_title_suffix": "'s Danh sách thiết bị đã thuê",
   "rentals_deposit_gear_tab": "Thiết bị đặt cọc",
@@ -380,7 +361,6 @@
   "privacy_term2_detail": "Tôi đồng ý với việc xử lý thông tin nhận dạng duy nhất như Số đăng ký thường trú theo luật pháp hiện hành.",
   "btn_agree_and_auth": "Đồng ý & Xác thực",
   "btn_cancel": "Hủy",
-
   "step_1_auth": "Xác thực",
   "step_2_gear": "Xác thực thẻ",
   "step_3_input": "Nhập",
@@ -412,9 +392,6 @@
   "contact_label_deposit": "Tiền đặt cọc",
   "contact_label_general": "Hỏi đáp chung",
   "btn_close": "Đóng",
-
-
-
   "auth_choice_title": "Chọn phương thức xác thực",
   "auth_nonmember_guide": "Khách không phải là thành viên, vui lòng tiếp tục với <1>'Xác thực PASS'</1> ở bên phải.",
   "auth_qr_btn_main": "Xác thực thành viên",
@@ -424,7 +401,6 @@
   "auth_pass_btn_main": "Xác thực PASS",
   "auth_pass_btn_sub": "(Xác minh qua điện thoại)",
   "auth_register_guide": "Đăng ký thành viên có sẵn qua ứng dụng hoặc trang web chuyên dụng.",
-  
   "login_alert_empty": "Vui lòng nhập cả ID và mật khẩu.",
   "login_alert_fail": "ID hoặc mật khẩu không khớp.",
   "login_alert_error": "Đã xảy ra lỗi trong quá trình đăng nhập.",
@@ -442,7 +418,6 @@
   "login_success_greeting_1": "Chào mừng,",
   "login_success_greeting_2": "!",
   "login_success_auto_move": "Sắp chuyển đến màn hình xác minh tài khoản...",
-
   "account_title": "Vui lòng xác minh tài khoản hoàn tiền của bạn",
   "account_subtitle": "(Chạm vào một mục để chỉnh sửa)",
   "account_bank_label": "Ngân hàng (Bắt buộc)",
@@ -466,13 +441,11 @@
   "account_alert_title_success": "Xác minh hoàn tất",
   "account_alert_title_error": "Cần xác nhận",
   "account_alert_btn_confirm": "OK",
-
   "auth_btn_reset": "Về trang chủ",
   "auth_step_1": "Xác thực người dùng",
   "auth_step_2": "Xác thực thiết bị",
   "auth_step_3": "Đưa vào",
   "auth_success_redirect_msg": "Đang chuyển đến màn hình tài khoản...",
-
   "gear_btn_home": "Trang chủ",
   "gear_page_title": "Chạm vào ngư cụ bạn muốn trả lại",
   "gear_page_subtitle": "Bạn phải chọn và trả lại đúng loại ngư cụ để nhận lại tiền cọc.",
@@ -488,8 +461,7 @@
   "gear_type_eel": "Lồng bắt lươn",
   "gear_type_gill_net": "Lưới bén",
   "gear_type_cone": "Lồng hình nón",
-  "gear_type_existing_trap": "Lồng hiện có" ,
-
+  "gear_type_existing_trap": "Lồng hiện có",
   "scan_page_title": "Bước 2: Quét mã vạch ngư cụ",
   "scan_instruction_msg": "Vui lòng quét mã vạch\ntrên thẻ ngư cụ.",
   "scan_list_title": "Mã vạch đã quét",
@@ -503,7 +475,6 @@
   "scan_total_points": "Tổng điểm tích lũy dự kiến",
   "duplicate_barcode_warning": "Mã vạch này đã được quét.",
   "scan_btn_next": "Tiếp theo (Hoàn tất quét)",
-
   "deposit_loading_default": "Đang xử lý...",
   "deposit_alert_no_items": "Chưa có ngư cụ nào được quét.",
   "deposit_msg_capture_loading": "Đang chụp ảnh máy ảnh...",
@@ -547,7 +518,6 @@
   "deposit_warn_desc_1": "Vì sự an toàn của bạn,",
   "deposit_warn_desc_2": "vui lòng ",
   "deposit_warn_desc_3": "lùi lại!",
-
   "pass_default_guest_name": "Khách",
   "pass_alert_verify_error": "Đã xảy ra lỗi trong quá trình xác minh thông tin người dùng.",
   "pass_alert_auth_fail": "Xác thực không thành công.",
@@ -563,7 +533,68 @@
   "pass_loading_desc_2": "thông tin người dùng...",
   "pass_loading_wait": "Vui lòng đợi trong giây lát.",
   "pass_success_member": "Xác thực thành viên thành công",
-  "pass_success_non_member": "Xác thực không phải thành viên thành công"
-
-
+  "pass_success_non_member": "Xác thực không phải thành viên thành công",
+  "system_maintenance_title": "Hệ thống đang bảo trì",
+  "system_maintenance_wait": "⚠️ Đang chờ kiểm tra và xử lý từ xa...",
+  "system_maintenance_admin_unlock": "[Quản trị viên] Mở khóa màn hình bắt buộc",
+  
+  "error_software_msg": "[Lỗi phần mềm hệ thống]\nĐã xảy ra lỗi kết nối máy chủ tạm thời.\nĐã báo cáo cho quản trị viên và sẽ được kiểm tra ngay.",
+  
+  "alarm_88_title": "🚨 Cảnh báo đầy (Toàn bộ)",
+  "alarm_88_detail": "Thùng chứa ngư cụ phế thải đã đầy, không thể bỏ thêm.\nPhải đặt lại hệ thống sau khi thu gom.",
+  
+  "alarm_83_title": "🚨 Cảnh báo đầy (Phía sau)",
+  "alarm_83_detail": "Thùng chứa phía sau đã đầy.\nCần thu gom nhanh chóng.",
+  
+  "alarm_85_title": "🚨 Cảnh báo đầy (Ở giữa)",
+  "alarm_85_detail": "Thùng chứa ở giữa đã đầy.\nCần thu gom nhanh chóng.",
+  
+  "alarm_87_title": "🚨 Cảnh báo đầy (Phía trước)",
+  "alarm_87_detail": "Thùng chứa phía trước đã đầy.\nCần thu gom nhanh chóng.",
+  
+  "alarm_97_title": "🚪 Cảnh báo cửa sau mở",
+  "alarm_97_detail": "Hệ thống đã dừng vì cửa sau đang mở.\nVui lòng đóng cửa và kiểm tra khóa.",
+  
+  "alarm_99_title": "⚠️ Cảnh báo cửa trước mở",
+  "alarm_99_detail": "Cửa trước (khe nạp) đang mở bất thường.\nHoạt động đã tạm dừng để đảm bảo an toàn.",
+  
+  "alarm_104_title": "🛑 Tín hiệu khẩn cấp được kích hoạt",
+  "alarm_104_detail": "Nút dừng khẩn cấp đã được nhấn hoặc có tình huống khẩn cấp.\nVui lòng kiểm tra tình trạng máy ngay lập tức.",
+  
+  "alarm_105_title": "🛑 Cảnh báo quá tải động cơ",
+  "alarm_105_detail": "Phát hiện quá tải động cơ trong máy.\nVui lòng kiểm tra tình trạng động cơ và băng chuyền.",
+  "AUTH_CHOICE_VOICE": "Vui lòng chọn phương thức xác thực người dùng mà bạn muốn. Nếu bạn không phải là thành viên, vui lòng chọn xác thực PASS ở bên phải.",
+  "gear_voice_guide": "Vui lòng chọn loại ngư cụ bạn muốn trả lại.",
+  "confirm_go_home": "Bạn có muốn quay lại màn hình đầu tiên không?\nNội dung đang tiến hành sẽ không được lưu.",
+  "deposit_voice_close_barcode_door": "Sau khi kiểm tra chi tiết ký gửi, vui lòng đóng cửa mã vạch.",
+  "deposit_voice_confirm_complete": "Cửa mã vạch đã đóng. Vui lòng nhấn nút Xác nhận hoàn tất.",
+  "auth_login_voice_guide": "Vui lòng nhập ID và mật khẩu để đăng nhập.",
+  "pass_auth_voice_guide": "Khi cửa sổ xác thực xuất hiện, vui lòng tiến hành xác thực trên điện thoại của bạn.",
+  "login_alert_fail": "ID hoặc\nmật khẩu không hợp lệ.\nVui lòng nhập chính xác ID và mật khẩu của bạn.",
+  "login_alert_title_warning": "Đăng nhập thất bại",
+  "login_alert_btn_confirm": "Xác nhận",
+  "footer_terms": "Điều khoản",
+  "footer_privacy": "Bảo mật",
+  "modal_terms_title": "Điều khoản Dịch vụ",
+  "modal_privacy_title": "Chính sách Bảo mật",
+  "btn_confirm": "Xác nhận",
+  "policy_terms_content": "<h3>Điều khoản Hệ thống Trả lại Ngư cụ</h3><p class='version'>Ngày hiệu lực: 6 tháng 4, 2026</p><h4>Chương 1. Quy định chung</h4><p class='article-title'>Điều 1 (Mục đích)</p><p>Các điều khoản này xác định điều kiện, quyền và nghĩa vụ khi sử dụng Kiosk do KETG cung cấp.</p><p class='article-title'>Điều 2 (Định nghĩa)</p><p>1. <strong>Ngư cụ đặt cọc</strong>: Hoàn tiền mặt.<br/>2. <strong>Ngư cụ hiện tại</strong>: Hoàn bằng điểm.</p><h4>Chương 2. Nghĩa vụ</h4><p class='article-title'>Điều 3 (Nghĩa vụ Người dùng)</p><p>1. Nghiêm cấm trả thay ngư cụ bằng ID của người khác.<br/>2. Gian lận tiền hoàn lại sẽ phải chịu trách nhiệm pháp lý.</p><h4>Chương 3. Khác</h4><p class='article-title'>Điều 4 (Miễn trừ)</p><p>Công ty không chịu trách nhiệm nếu nhập sai số tài khoản hoặc lỗi mạng.</p>",
+  "policy_privacy_content": "<h3>Chính sách Bảo mật</h3><p class='version'>Ngày hiệu lực: 6 tháng 4, 2026</p><h4>1. Mục đích Thu thập</h4><p>Xác minh danh tính, xử lý hoàn tiền, và phòng chống gian lận.</p><h4>2. Thông tin Thu thập</h4><table class='policy-table'><tr><th>Mục đích</th><th>Thông tin</th></tr><tr><td>Xác minh</td><td>Tên, Mã ngư dân, SĐT, Ngày sinh</td></tr><tr><td>Hoàn tiền</td><td>Tên ngân hàng, Chủ TK, Số TK</td></tr></table><h4>3. Thời gian Lưu trữ</h4><p>Hồ sơ thanh toán: 5 năm. Lịch sử truy cập: 3 tháng.</p><h4>4. Cung cấp Bên thứ ba</h4><p>Xác minh: KCB, NICE. Chuyển tiền: KFTC.</p><h4>5. Liên hệ</h4><p>Email: jiseob@ketg.co.kr</p>",
+  "scan_alert_title_warning": "Thông báo",
+  "scan_err_not_gear": "Không phải mã vạch ngư cụ.\nVui lòng quét ngư cụ hợp lệ.",
+  "duplicate_barcode_warning": "Mã vạch đã được quét.",
+  "scan_err_not_found": "Không tìm thấy thông tin ngư cụ.",
+  "scan_err_not_available": "Không thể trả lại ngư cụ này.",
+  "scan_err_not_deposit": "Không phải ngư cụ đặt cọc.\nVui lòng chọn ngư cụ hiện tại ở màn hình trước.",
+  "scan_err_not_existing": "Không phải ngư cụ hiện tại.\nVui lòng chọn ngư cụ đặt cọc ở màn hình trước.",
+  "scan_err_stolen": "Không thể trả lại ngư cụ\nđăng ký tên người khác.",
+  "auth_manual_placeholder": "Chạm để nhập mã xác thực",
+  "auth_manual_submit": "Xác nhận",
+  "account_keypad_delete": "Xóa",
+  "account_keypad_clear": "Xóa hết",
+  "account_keypad_close": "Đóng",
+  "1.장구형의 통발": "1. Bẫy hình trống",
+  "장구형의 통발": "Bẫy hình trống",
+  "기존통발(흰색 바코드)": "Bẫy hiện tại (Mã vạch trắng)",
+  "이미 반환 처리됨": "Đã được trả lại"
 }

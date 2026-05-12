@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import LoadingSpinner from '../assets/loading-spinner.png';
 
-const PROXY_API_URL = 'http://localhost:8080/api/v1/proxy';
+const PROXY_API_URL = `${process.env.REACT_APP_API_URL}/api/v1/proxy`;
 
 const ReturnProcessModal = ({ onClose }) => {
   const navigate = useNavigate();

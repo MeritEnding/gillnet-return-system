@@ -8,7 +8,7 @@ import './MyRentalsScreen.css';
 import Header from '../mainPage/Header';
 import BgAll from '../assets/bg_all.png'; 
 
-const API_BASE_URL = 'http://localhost:8080/api/v1/proxy';
+const API_BASE_URL = `${process.env.REACT_APP_API_URL}/api/v1/proxy`;
 
 /* 뒤로가기 아이콘 (SVG) */
 const BackIcon = () => (

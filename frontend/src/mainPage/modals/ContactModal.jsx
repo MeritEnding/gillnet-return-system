@@ -15,9 +15,9 @@ const ContactModal = ({ onClose }) => {
 
   // 연락처 목록 데이터
   const contactList = [
-    { label: t('contact_label_machine'), phone: '010-1111-2222' },
-    { label: t('contact_label_deposit'), phone: '02-345-6789' }, // 길이가 다른 번호
-    { label: t('contact_label_general'), phone: '1588-0000' }     // 짧은 번호
+    { label: t('contact_label_machine') || '기기 장애 문의', phone: '010-6667-1987' },
+    { label: t('contact_label_deposit') || '보증금 문의', phone: '051-718-2452' },
+    { label: t('contact_label_general') || '일반 문의', phone: '051-742-3391' } 
   ];
 
   return (

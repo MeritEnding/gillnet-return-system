@@ -1,5 +1,5 @@
 // src/mainPage/modals/LoginModal.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
@@ -7,8 +7,39 @@ import './LoginModal.css';
 import AccountInputModal from './AccountInputModal';
 
 const LoginModal = ({ onClose }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
+
+  // ★ 음성 제어용 참조 추가
+  const voiceListCache = useRef([]);
+  window.utterances = window.utterances || [];
+
+  // ★ TTS 함수 정의
+  const speak = (text) => {
+    if (!('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    window.utterances.push(utterance);
+    const langMap = { 'ko': 'ko-KR', 'en': 'en-US', 'vi': 'vi-VN', 'tl': 'fil-PH', 'id': 'id-ID', 'my': 'my-MM' };
+    utterance.lang = langMap[i18n.language.substring(0, 2)] || 'ko-KR';
+    const voices = window.speechSynthesis.getVoices();
+    const selectedVoice = voices.find(v => v.lang.includes(utterance.lang));
+    if (selectedVoice) utterance.voice = selectedVoice;
+    utterance.onend = () => {
+      const idx = window.utterances.indexOf(utterance);
+      if (idx > -1) window.utterances.splice(idx, 1);
+    };
+    window.speechSynthesis.speak(utterance);
+  };
+  useEffect(() => {
+    // ★ 화면 진입 시 나레이션 실행 (아이디 로그인 안내)
+    // JSON에 관련 키가 없다면 직접 텍스트를 넣거나 t('login_title') 등을 활용하세요.
+    const loginGuide = t('auth_login_voice_guide');
+    speak(loginGuide);
+
+    return () => window.speechSynthesis.cancel();
+  }, []);
+
   const [userId, setUserId] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -17,22 +48,34 @@ const LoginModal = ({ onClose }) => {
   const [isShift, setIsShift] = useState(false);
   const [showAccountModal, setShowAccountModal] = useState(false);
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+  const [kioskAlert, setKioskAlert] = useState({ show: false, message: '' });
+
+
+  // 컴포넌트 상단에 추가
+  const maskName = (name) => {
+    if (!name || typeof name !== 'string' || name.length < 2) return name || 'Guest';
+    if (name.length === 2) return name.substring(0, 1) + '*';
+    return name.substring(0, 1) + '*'.repeat(name.length - 2) + name.substring(name.length - 1);
+  };
 
   const handleLoginSubmit = async (e) => {
     if (e) e.preventDefault();
     if (!userId || !password) {
-      alert(t('login_alert_empty') || "아이디와 비밀번호를 모두 입력해주세요.");
+      setKioskAlert({ 
+        show: true, 
+        message: t('login_alert_empty') || "입력되지 않은 정보가 있습니다.\n아이디와 비밀번호를 모두 채워주세요." 
+      });
       return;
     }
     setIsLoading(true);
     try {
-      const response = await axios.post('http://localhost:8080/api/v1/proxy/user/login', {
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/v1/proxy/user/login`, {
         id: userId, password: password
       });
 
       if (response.data.status === "200" || response.data.message.includes("성공")) {
         const userData = response.data.data;
-        
+
         localStorage.setItem('mbr_no', userData.mbr_no);
         localStorage.setItem('fisherman_id', userData.user_fshnd_no);
         localStorage.setItem('fisherman_name', userData.mbr_nm);
@@ -45,18 +88,24 @@ const LoginModal = ({ onClose }) => {
           localStorage.setItem('acct_nm', userData.dpstr_nm || userData.mbr_nm || '');
         }
 
-
-
         setShowSuccessAlert(true);
         setTimeout(() => {
           setShowSuccessAlert(false);
           setShowAccountModal(true);
         }, 2000);
       } else {
-        alert(t('login_alert_fail') || "아이디 또는 비밀번호가 일치하지 않습니다.");
+        // ▼ 정보 불일치 시
+        setKioskAlert({ 
+          show: true, 
+          message: t('login_alert_fail') || "아이디(로그인 전화번호, 로그인 전용 아이디) 또는\n비밀번호가 잘못 되었습니다.\n아이디와 비밀번호를 정확히 입력해 주세요." 
+        });
       }
     } catch (error) {
-      alert(t('login_alert_error') || "로그인 처리 중 오류가 발생했습니다.");
+      // ▼ 통신 지연/오류 시에도 똑같은 메시지로 통일
+      setKioskAlert({ 
+        show: true, 
+        message: t('login_alert_fail') || "아이디(로그인 전화번호, 로그인 전용 아이디) 또는\n비밀번호가 잘못 되었습니다.\n아이디와 비밀번호를 정확히 입력해 주세요." 
+      });
     } finally {
       setIsLoading(false);
     }
@@ -159,7 +208,7 @@ const LoginModal = ({ onClose }) => {
               <input
                 type="text" readOnly value={userId}
                 onClick={() => setActiveField('userId')}
-                className="login-input" 
+                className="login-input"
                 placeholder={t('login_id_placeholder') || '아이디를 입력하세요'}
               />
             </div>
@@ -169,7 +218,7 @@ const LoginModal = ({ onClose }) => {
               <input
                 type="password" readOnly value={password}
                 onClick={() => setActiveField('password')}
-                className="login-input" 
+                className="login-input"
                 placeholder={t('login_pw_placeholder') || '비밀번호를 입력하세요'}
               />
             </div>
@@ -203,12 +252,59 @@ const LoginModal = ({ onClose }) => {
               <p className="alert-msg-v2">
                 <span className="greeting-text-top">{t('login_success_greeting_1')}</span>
                 <br />
-                <strong>{localStorage.getItem('fisherman_name')}</strong>{t('login_success_greeting_2')}
+                <strong>{maskName(localStorage.getItem('fisherman_name'))}</strong>{t('login_success_greeting_2')}
               </p>
               <div className="loading-bar-container">
                 <div className="loading-bar-fill"></div>
               </div>
               <p className="auto-move-text">{t('login_success_auto_move') || '잠시 후 계좌 확인 화면으로 이동합니다...'}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {kioskAlert.show && (
+        <div className="alert-overlay" onClick={(e) => e.stopPropagation()} style={{ zIndex: 10005 }}>
+          <div className="alert-content" style={{ 
+            backgroundColor: 'white', 
+            borderRadius: '40px', 
+            border: '8px solid #FF9800', /* 새빨간색 -> 주황색으로 변경 */
+            overflow: 'hidden', 
+            width: '95%', 
+            maxWidth: '800px', 
+            textAlign: 'center', 
+            animation: 'popIn 0.3s ease-out', 
+            boxShadow: '0 40px 80px rgba(0,0,0,0.4)' 
+          }}>
+            <div style={{ backgroundColor: '#FF9800', padding: '35px' }}> {/* 배경도 주황색 */}
+              <h2 style={{ color: 'white', margin: 0, fontSize: '4rem', fontWeight: '900' }}>
+                {/* 에러가 아닌 단순 확인 텍스트로 변경 */}
+                {t('login_alert_title_warning') || '확인이 필요해요'}
+              </h2>
+            </div>
+            
+            <div style={{ padding: '70px 40px' }}>
+              <p style={{ fontSize: '3.4rem', marginBottom: '50px', lineHeight: '1.6', color: '#333', fontWeight: '800', wordBreak: 'keep-all' }}>
+                {kioskAlert.message.split('\n').map((line, index) => (
+                  <React.Fragment key={index}>
+                    {line}<br />
+                  </React.Fragment>
+                ))}
+              </p>
+              
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <button
+                  onClick={() => setKioskAlert({ show: false, message: '' })}
+                  style={{ 
+                    backgroundColor: '#495057', color: 'white', border: 'none', 
+                    borderRadius: '15px', width: '250px', height: '90px', 
+                    fontSize: '2.5rem', fontWeight: 'bold', cursor: 'pointer', 
+                    boxShadow: '0 5px 0 #343a40' 
+                  }}
+                >
+                  {t('login_alert_btn_confirm') || '확인'}
+                </button>
+              </div>
             </div>
           </div>
         </div>

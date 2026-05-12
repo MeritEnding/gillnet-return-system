@@ -8,7 +8,7 @@
   "main_guide_button": "Panduan Penggunaan",
   "status_returnable": "Dapat dikembalikan",
   "status_returned": "Sudah dikembalikan",
-  "go_home":"Kembali",
+  "go_home": "Kembali",
   "btn_back": "Kembali",
   "barcode_label": "Nomor Barcode",
   "gear_conical_crab_trap": "Bubu Kerucut (Kepiting)",
@@ -21,7 +21,7 @@
   "guide_faq_button": "Pertanyaan Umum (FAQ)",
   "guide_caution_title": "Panduan Penggunaan",
   "guide_caution_text": "Demi kelancaran penggunaan bersama, harap sentuh dan gunakan kios serta pemindai sesuai urutan yang ditentukan. Jika perangkat rusak, orang berikutnya tidak dapat menggunakannya.",
-   "auth_pass_btn_sub": "(Verifikasi identitas melalui ponsel)",
+  "auth_pass_btn_sub": "(Verifikasi identitas melalui ponsel)",
   "pass_modal_title": "Verifikasi PASS",
   "pass_modal_desc": "Verifikasi identitas akan dilakukan melalui ponsel (PASS).",
   "pass_modal_desc2": "Silakan konfirmasi permintaan verifikasi di aplikasi PASS pada ponsel Anda.",
@@ -45,7 +45,8 @@
   "status_error": "Kesalahan Proses",
   "status_fail": "Gagal Kembali",
   "gear_voice_guide": "Silakan pilih alat yang ingin Anda kembalikan.",
-
+  "deposit_loading_title": "Mohon tunggu sebentar",
+  "deposit_msg_finishing": "Hampir selesai! Pindah ke layar penyelesaian.",
   "policy_modal_title": "Sistem Jaminan Alat Tangkap",
   "policy_title_1": "Ayo lakukan bersama! Sistem Jaminan Alat Tangkap\"",
   "policy_text1_strong": "Sistem Jaminan Alat Tangkap",
@@ -66,7 +67,6 @@
   "auth_register_guide": "Pendaftaran anggota tersedia melalui aplikasi atau situs web khusus.",
   "msg_loading_rentals": "Sedang memuat daftar sewa...\nMohon tunggu sebentar.",
   "msg_loading_details": "Mohon tunggu sebentar...",
-
   "auth_step_1": "1. Autentikasi",
   "auth_step_2": "2. Tag",
   "auth_step_3": "3. Input",
@@ -77,12 +77,12 @@
   "auth_test_success_button": "(Test) QR Terdaftar",
   "auth_test_fail_button": "(Test) QR Tidak Terdaftar",
   "auth_contact_label": "Penanggung Jawab:",
-
+  "label_deposit_gear_short": "Alat Tangkap Deposit",
+  "label_existing_gear_short": "Alat Tangkap Lama",
   "auth_fail_popup_title": "⚠️ Autentikasi Gagal",
   "auth_fail_popup_message": "Harap pindai kode QR atau barcode\nsekali lagi dengan jelas.",
   "auth_fail_popup_retry_button": "Coba Lagi",
   "auth_fail_popup_alternate_button": "Autentikasi Alternatif",
-
   "auth_success_popup_title": "Autentikasi Selesai",
   "auth_success_popup_welcome_strong": ", Selamat Datang.",
   "auth_success_popup_welcome": "Mempersiapkan pengembalian alat tangkap.",
@@ -91,7 +91,6 @@
   "auth_mascot_alt": "Maskot",
   "auth_qr_alt": "QR Code Nelayan",
   "auth_success_mascot_alt": "Maskot Sukses",
-
   "alt_auth_title": "Langkah 1: Autentikasi Alternatif",
   "alt_auth_pin_instruction": "Setelah memasukkan info, tekan tombol [Autentikasi].",
   "alt_auth_label_name": "Nama",
@@ -104,13 +103,11 @@
   "alt_auth_submit_button": "Autentikasi",
   "alt_auth_alert_all_fields": "Harap isi semua kolom.",
   "alt_auth_alert_invalid_format": "Periksa format input (Tgl Lahir 8 digit, No HP 10-11 digit, PIN 4 digit).",
-
   "alt_auth_fail_popup_title": "⚠️ Autentikasi Gagal",
   "alt_auth_fail_popup_message": "Informasi tidak ditemukan.\nHarap periksa kembali.",
   "alt_auth_fail_popup_retry_button": "Coba Lagi",
   "alt_auth_fail_popup_goback_button": "Ke Pindai QR",
   "auth_success_popup_welcome_suffix": ", Selamat Datang.",
-
   "tagging_step_label": "Langkah 2",
   "tagging_title": "Langkah 2: Pindai barcode penanda",
   "tagging_instruction_top": "Masukkan jumlah alat tangkap yang akan dikembalikan.",
@@ -124,7 +121,6 @@
   "tagging_alert_session_expired": "Sesi pengguna telah berakhir. Kembali ke layar autentikasi langkah 1.",
   "tagging_alert_api_error_prefix": "Error: ",
   "tagging_alert_network_error": "Terjadi kesalahan komunikasi dengan server. Harap coba lagi beberapa saat.",
-
   "gearscan_fail_popup_title": "⚠️ Pindai Barcode Gagal",
   "gearscan_fail_popup_message": "Tidak dapat mengenali barcode.\nBersihkan dan coba lagi atau\nhubungi penanggung jawab.",
   "gearscan_success_popup_title": "Pindai Barcode Selesai",
@@ -135,7 +131,6 @@
   "gearscan_instruction_single": "Gunakan pemindai untuk<br/>memindai <strong>Barcode Alat Tangkap</strong>",
   "gearscan_test_button_success": "(Test) Barcode Valid",
   "gearscan_test_button_fail_owner": "(Test) Tidak Ada Kepemilikan",
-
   "tagscan_fail_popup_title": "⚠️ Tag Tidak Terverifikasi",
   "tagscan_fail_popup_message": "Bersihkan tag dan coba lagi\natau hubungi\npenanggung jawab.",
   "tagscan_fail_popup_retry_button": "Coba Lagi",
@@ -151,7 +146,6 @@
   "tagscan_test_button_fail": "(Temp) Tag Palsu",
   "tagscan_img_alt_ref_tag": "Ref Pindai Tag",
   "tagscan_img_alt_ref_net": "Ref Pindai Jaring",
-
   "gearscan_popup_title": "Cek Tag Selesai",
   "gearscan_popup_message": "Saat ini {{totalCount}} alat tangkap terdaftar.<1/>Apakah ada alat tangkap tambahan?",
   "gearscan_popup_yes": "Ya",
@@ -170,11 +164,9 @@
   "gearscan_table_deposit_amount": "{{amount}} Won",
   "gearscan_table_footer_total": "Total Jaminan",
   "gearscan_test_button_prefix": "Scan: ",
-
   "scan_error_alert_prefix": "Error Scan:",
   "session_expired_alert": "Informasi sesi telah berakhir. Mulai ulang dari langkah 1.",
   "error_server_communication": "Terjadi kesalahan komunikasi dengan server. Harap coba lagi beberapa saat.",
-
   "deposit_loading_default": "Memproses...",
   "deposit_loading_alt": "Memuat",
   "deposit_webcam_error": "Tidak dapat memulai webcam. Periksa izin kamera.",
@@ -191,8 +183,8 @@
   "deposit_live_label": "Rekaman Langsung",
   "deposit_mascot_alt": "Maskot Input",
   "deposit_instruction_strong": "<strong>Masukkan alat tangkap bekas ke dalam lubang dan</strong><1/>",
-  "deposit_state_ready":"Silakan tekan tombol ambil gambar.",
-  "deposit_button_capture":"Ambil Gambar",
+  "deposit_state_ready": "Silakan tekan tombol ambil gambar.",
+  "deposit_button_capture": "Ambil Gambar",
   "deposit_state_idle": "Jika siap, tekan tombol 'Ambil Foto'.",
   "deposit_state_detecting": "Mendeteksi alat tangkap...",
   "deposit_state_capturing": "Terdeteksi! Mengambil foto dalam 3 detik.",
@@ -206,7 +198,6 @@
   "deposit_popup_yes": "Ya (Tambah)",
   "deposit_popup_no": "Tidak (Selesai)",
   "deposit_alert_no_image": "Tidak ada gambar yang diambil. Harus memasukkan minimal 1 alat.",
-
   "deposit_alert_no_items": "Tidak ada alat untuk dikembalikan. Harap pindai alat terlebih dahulu.",
   "completion_loading_receipt": "Memuat daftar pengembalian...",
   "deposit_confirm_title": "Langkah 3: Konfirmasi Daftar",
@@ -219,7 +210,6 @@
   "deposit_photo_count": "Saat ini {{count}} foto telah diambil.",
   "deposit_state_loading_camera": "Menyiapkan kamera...",
   "deposit_button_loading_camera": "Menyiapkan kamera...",
-
   "completion_loading_alt": "Memuat",
   "completion_error_no_session": "Informasi sesi tidak ditemukan. Harap coba lagi dari langkah 1.",
   "completion_error_fetch_failed": "Gagal memuat informasi struk.",
@@ -242,13 +232,11 @@
   "completion_summary_weight_value": "{{weight}}Kg",
   "completion_icon_alt_collected": "Jumlah Terkumpul",
   "completion_summary_collected_label": "Alat Terkumpul Hari Ini",
-
   "auth_choice_title": "Pilih Metode Autentikasi Pengguna",
   "auth_qr_btn_main": "Autentikasi Anggota",
   "auth_qr_btn_sub": "(Kode QR)",
   "auth_doc_btn_main": "Autentikasi Tamu",
   "auth_doc_btn_sub": "(Daftar Anggota)",
-
   "privacy_third_party_title": "Persetujuan Penyediaan Info Pihak Ketiga",
   "privacy_third_party_main": "'Kios Pengembalian Mandiri Alat Tangkap'",
   "privacy_third_party_sub": "Tautkan informasi keanggotaan Anda untuk menggunakan layanan.",
@@ -256,7 +244,6 @@
   "privacy_tp_item": "- Item: Nama, Nomor Registrasi Nelayan",
   "privacy_tp_purpose": "- Tujuan: Verifikasi identitas dan manajemen riwayat pengembalian",
   "privacy_tp_ask": "Apakah Anda setuju?",
-
   "privacy_modal_title": "Persetujuan Pengumpulan dan Penggunaan Informasi Pribadi",
   "privacy_modal_desc": "Untuk kelancaran pemrosesan pengembalian alat tangkap dan jaminan,\nharap setujui syarat di bawah ini.",
   "privacy_req_label": "[Wajib] Persetujuan Pengumpulan dan Penggunaan Informasi Pribadi",
@@ -264,20 +251,16 @@
   "privacy_opt_label": "[Opsional] Persetujuan Penerimaan Informasi Pemasaran (Tidak Wajib)",
   "privacy_agree_check": "Saya telah memeriksa dan menyetujui konten di atas.",
   "privacy_view_full": "[Lihat Lengkap]",
-
   "btn_agree": "Setuju",
   "btn_cancel": "Batal",
   "full_text_title": "Teks Lengkap Syarat",
   "video_close_hint": "Sentuh layar untuk menutup",
   "alert_agree_required": "Anda harus menyetujui item wajib.",
-
   "agreement_text_required": "[Teks Lengkap Persetujuan Pengumpulan dan Penggunaan Informasi Pribadi]\n\n1. Item Informasi Pribadi yang Dikumpulkan\nPT KETG mengumpulkan informasi pribadi berikut untuk kelancaran pemrosesan pengembalian alat tangkap dan uang jaminan.\n- Item Wajib: Nama, tanggal lahir, nomor ponsel, nomor rekening (termasuk nama bank, pemilik rekening)\n- Item Otomatis: Catatan penggunaan layanan, log akses, cookie, informasi IP akses\n\n2. Tujuan Pengumpulan dan Penggunaan Informasi Pribadi\nInformasi yang dikumpulkan digunakan untuk tujuan berikut.\n- Verifikasi Identitas: Identifikasi subjek pengembalian jaminan dan konfirmasi pemilik\n- Pengembalian Jaminan: Pembayaran jaminan untuk alat yang dikembalikan dan verifikasi nama asli rekening\n- Penanganan Keluhan: Pemrosesan pertanyaan pengguna dan balasan hasil\n\n3. Masa Simpan dan Penggunaan Informasi Pribadi\nPada prinsipnya, setelah tujuan pengumpulan dan penggunaan tercapai, informasi tersebut akan segera dimusnahkan. Namun, jika diperlukan penyimpanan berdasarkan undang-undang terkait, informasi anggota akan disimpan selama periode tertentu sebagai berikut.\n- Item Disimpan: Nama, tanggal lahir, nomor ponsel, nomor rekening, riwayat pengembalian\n- Dasar Penyimpanan: Undang-Undang Pengelolaan Sumber Daya Perikanan dan UU Pengelolaan Subsidi\n- Masa Simpan: 3 tahun setelah pengembalian dana selesai",
-
   "agreement_text_optional": "[Teks Lengkap Persetujuan Penerimaan Informasi Pemasaran]\n\n1. Penggunaan untuk Pemasaran dan Iklan\n- Pengembangan layanan (produk) baru dan penyediaan layanan yang disesuaikan\n- Penyediaan informasi acara dan iklan serta kesempatan berpartisipasi\n- Penyediaan layanan dan pemasangan iklan berdasarkan karakteristik demografis\n- Konfirmasi efektivitas layanan, pemahaman frekuensi akses, atau statistik penggunaan layanan anggota\n\n2. Kerugian jika Menolak Persetujuan\nAnda dapat menolak persetujuan penerimaan informasi pemasaran, dan meskipun menolak, tidak ada batasan dalam penggunaan layanan dasar (pengembalian alat tangkap dan pengembalian dana). Namun, Anda tidak akan dapat menerima panduan acara dan informasi manfaat.",
   "error_gear_not_owner": "Alat ini bukan yang Anda sewa saat ini.",
-  "error_gear_unknown": "Frasa ini telah dipindai."
-  ,
-  "guide_admin_button":"manajer",
+  "error_gear_unknown": "Frasa ini telah dipindai.",
+  "guide_admin_button": "manajer",
   "gear_type_trap": "Bubu (Trap)",
   "gear_type_gillnet": "Jaring Insang",
   "alt_auth_title": "Autentikasi Alternatif",
@@ -309,11 +292,9 @@
   "AUTH_10": "Alat tangkap ini sudah diproses. Pindai alat tangkap lain.",
   "AUTH_11": "Barcode tidak valid. Harap pindai lagi.",
   "AUTH_12": "Pemindaian selesai. Beberapa saat lagi pintu masuk akan terbuka, silakan masukkan alat sesuai panduan.",
-
   "PROC_02": "Akan mengambil foto alat tangkap. Masukkan alat ke pintu masuk dan tekan tombol ambil foto.",
   "PROC_03": "Pengambilan foto selesai.",
   "PROC_04": "Apakah ada alat tangkap tambahan yang ingin dikembalikan?",
-
   "COMP_01": "Setelah memeriksa alat yang dikembalikan, tekan tombol 'Pengembalian Selesai'.",
   "COMP_02": "Terima kasih telah menggunakan layanan ini. Terima kasih telah berpartisipasi membuat laut bersih.",
   "DEPOSIT_H_01": "Kaitkan alat tangkap bubu (trap) dengan kuat pada kunci yang terbuka, lalu tutup pintunya.",
@@ -322,8 +303,7 @@
   "STATUS_01": "Sedang memproses alat tangkap. Mohon tunggu sebentar.",
   "STATUS_H_01": "Sedang memindahkan alat tangkap dengan aman ke penyimpanan.",
   "STATUS_G_01": "Sedang memadatkan dan mengikat karung jaring insang. Ini adalah proses untuk meningkatkan efisiensi penyimpanan.",
-  "STATUS_02": "Mohon tunggu sebentar."
-  ,
+  "STATUS_02": "Mohon tunggu sebentar.",
   "rentals_title": "Daftar Perlengkapan yang Disewa",
   "rentals_title_suffix": "'s Daftar Perlengkapan yang Disewa",
   "rentals_deposit_gear_tab": "Perlengkapan Deposit",
@@ -362,8 +342,8 @@
   "auth_qr_btn_sub": "(Kode QR)",
   "auth_pass_btn_main": "Autentikasi PASS",
   "auth_pass_btn_sub": "(Verifikasi Ponsel)",
-  "auth_register_guide": "Pendaftaran anggota tersedia melalui aplikasi atau web."
-  ,"privacy_third_party_title": "Persetujuan Penyediaan Informasi Pihak Ketiga",
+  "auth_register_guide": "Pendaftaran anggota tersedia melalui aplikasi atau web.",
+  "privacy_third_party_title": "Persetujuan Penyediaan Informasi Pihak Ketiga",
   "privacy_third_party_main": "Untuk memproses pengembalian alat tangkap dan deposit,",
   "privacy_third_party_sub": "kami bermaksud memberikan informasi pribadi sebagai berikut.",
   "privacy_tp_recipient": "• Penerima: Korea Fisheries Resources Agency",
@@ -381,7 +361,6 @@
   "privacy_term2_detail": "Saya setuju untuk memproses informasi identifikasi unik seperti Nomor Induk Kependudukan berdasarkan undang-undang.",
   "btn_agree_and_auth": "Setuju & Verifikasi",
   "btn_cancel": "Batal",
-
   "step_1_auth": "Autentikasi",
   "step_2_gear": "Verifikasi Tag",
   "step_3_input": "Masukan",
@@ -413,8 +392,6 @@
   "contact_label_deposit": "Pertanyaan Deposit",
   "contact_label_general": "Pertanyaan Umum",
   "btn_close": "Tutup",
-
-
   "auth_choice_title": "Pilih Metode Autentikasi",
   "auth_nonmember_guide": "Bukan anggota, silakan lanjutkan dengan <1>'Autentikasi PASS'</1> di sebelah kanan.",
   "auth_qr_btn_main": "Autentikasi Anggota",
@@ -424,7 +401,6 @@
   "auth_pass_btn_main": "Autentikasi PASS",
   "auth_pass_btn_sub": "(Verifikasi Ponsel)",
   "auth_register_guide": "Pendaftaran anggota tersedia melalui aplikasi khusus atau web.",
-
   "login_alert_empty": "Harap masukkan ID dan kata sandi.",
   "login_alert_fail": "ID atau kata sandi tidak cocok.",
   "login_alert_error": "Terjadi kesalahan saat masuk.",
@@ -442,7 +418,6 @@
   "login_success_greeting_1": "Selamat datang,",
   "login_success_greeting_2": "!",
   "login_success_auto_move": "Pindah ke layar verifikasi akun segera...",
-
   "account_title": "Harap verifikasi akun pengembalian dana Anda",
   "account_subtitle": "(Sentuh item untuk mengedit)",
   "account_bank_label": "Bank (Wajib)",
@@ -466,13 +441,11 @@
   "account_alert_title_success": "Verifikasi Selesai",
   "account_alert_title_error": "Perlu Tindakan",
   "account_alert_btn_confirm": "OK",
-
   "auth_btn_reset": "Ke Awal",
   "auth_step_1": "Autentikasi Pengguna",
   "auth_step_2": "Autentikasi Alat",
   "auth_step_3": "Masukkan",
   "auth_success_redirect_msg": "Pindah ke layar informasi akun...",
-
   "gear_btn_home": "Beranda",
   "gear_page_title": "Sentuh alat yang ingin dikembalikan",
   "gear_page_subtitle": "Anda harus memilih dan mengembalikan alat yang sama persis untuk menerima pengembalian dana.",
@@ -483,14 +456,12 @@
   "gear_type_cone": "Perangkap Kerucut",
   "gear_section_existing": "Pengembalian Alat Lama (Poin)",
   "gear_type_existing_trap": "Perangkap Lama (Poin)",
-
   "gear_page_title": "Sentuh alat yang ingin dikembalikan",
   "gear_type_hourglass": "Perangkap Jam Pasir",
   "gear_type_eel": "Perangkap Belut",
   "gear_type_gill_net": "Jaring Insang",
   "gear_type_cone": "Perangkap Kerucut",
   "gear_type_existing_trap": "Perangkap Lama",
-
   "scan_page_title": "Langkah 2: Pindai Barcode Alat",
   "scan_instruction_msg": "Harap pindai barcode\nTag Deposit Alat.",
   "scan_list_title": "Barcode yang Dipindai",
@@ -504,7 +475,6 @@
   "scan_total_points": "Total Estimasi Poin",
   "duplicate_barcode_warning": "Barcode ini sudah dipindai.",
   "scan_btn_next": "Selanjutnya (Selesai Pemindaian)",
-
   "deposit_loading_default": "Memproses...",
   "deposit_alert_no_items": "Tidak ada alat yang dipindai.",
   "deposit_msg_capture_loading": "Menangkap gambar kamera...",
@@ -548,7 +518,6 @@
   "deposit_warn_desc_1": "Demi keamanan Anda,",
   "deposit_warn_desc_2": "harap ",
   "deposit_warn_desc_3": "mundur!",
-
   "pass_default_guest_name": "Tamu",
   "pass_alert_verify_error": "Terjadi kesalahan saat memverifikasi informasi pengguna.",
   "pass_alert_auth_fail": "Autentikasi gagal.",
@@ -564,5 +533,68 @@
   "pass_loading_desc_2": "informasi pengguna...",
   "pass_loading_wait": "Harap tunggu sebentar.",
   "pass_success_member": "Autentikasi Anggota Berhasil",
-  "pass_success_non_member": "Autentikasi Non-Anggota Berhasil"
+  "pass_success_non_member": "Autentikasi Non-Anggota Berhasil",
+  "system_maintenance_title": "Sistem Sedang Dalam Pemeliharaan",
+  "system_maintenance_wait": "⚠️ Menunggu pemeriksaan dan tindakan jarak jauh...",
+  "system_maintenance_admin_unlock": "[Admin] Paksa Buka Kunci Layar",
+  
+  "error_software_msg": "[Kesalahan Sistem Perangkat Lunak]\nTerjadi kegagalan komunikasi server sementara.\nAdministrator telah diberitahu dan akan segera diperiksa.",
+  
+  "alarm_88_title": "🚨 Alarm Kapasitas Penuh (Semua)",
+  "alarm_88_detail": "Wadah penyimpanan alat tangkap bekas sudah penuh. Tidak dapat menambah lagi.\nSistem harus diatur ulang setelah pengumpulan.",
+  
+  "alarm_83_title": "🚨 Alarm Kapasitas Penuh (Belakang)",
+  "alarm_83_detail": "Penyimpanan bagian belakang penuh.\nDiperlukan pengumpulan segera.",
+  
+  "alarm_85_title": "🚨 Alarm Kapasitas Penuh (Tengah)",
+  "alarm_85_detail": "Penyimpanan bagian tengah penuh.\nDiperlukan pengumpulan segera.",
+  
+  "alarm_87_title": "🚨 Alarm Kapasitas Penuh (Depan)",
+  "alarm_87_detail": "Penyimpanan bagian depan penuh.\nDiperlukan pengumpulan segera.",
+  
+  "alarm_97_title": "🚪 Peringatan Pintu Belakang Terbuka",
+  "alarm_97_detail": "Sistem berhenti karena pintu belakang terbuka.\nHarap tutup pintu dan periksa kuncinya.",
+  
+  "alarm_99_title": "⚠️ Peringatan Pintu Depan Terbuka",
+  "alarm_99_detail": "Pintu depan (slot masuk) terbuka secara tidak normal.\nOperasi telah ditangguhkan demi keamanan.",
+  
+  "alarm_104_title": "🛑 Sinyal Darurat Diaktifkan",
+  "alarm_104_detail": "Tombol berhenti darurat ditekan atau terjadi situasi mendesak.\nHarap segera periksa status mesin.",
+  
+  "alarm_105_title": "🛑 Peringatan Kelebihan Beban Motor",
+  "alarm_105_detail": "Terdeteksi kelebihan beban motor pada mesin.\nHarap periksa status motor dan konveyor.",
+  "AUTH_CHOICE_VOICE": "Silakan pilih metode autentikasi pengguna yang Anda inginkan. Jika Anda bukan anggota, silakan pilih autentikasi PASS di sebelah kanan.",
+  "confirm_go_home": "Apakah Anda ingin kembali ke layar awal?\nProgres saat ini tidak akan disimpan.",
+  "deposit_voice_close_barcode_door": "Setelah memeriksa detail setoran, harap tutup lubang kode vạch.",
+  "deposit_voice_confirm_complete": "Lubang kode vạch sudah ditutup. Silakan tekan tombol Konfirmasi Selesai.",
+  "auth_login_voice_guide": "Silakan masukkan ID dan kata sandi Anda para masuk.",
+  "pass_auth_voice_guide": "Saat muncul jendela verifikasi, silakan lakukan verifikasi di ponsel Anda.",
+  "login_alert_fail": "ID atau\nkata sandi salah.\nHarap masukkan ID dan kata sandi Anda dengan benar.",
+
+  "login_alert_title_warning": "Gagal Masuk",
+  "login_alert_btn_confirm": "Konfirmasi",
+  "footer_terms": "Syarat",
+  "footer_privacy": "Privasi",
+  "modal_terms_title": "Syarat Layanan",
+  "modal_privacy_title": "Kebijakan Privasi",
+  "btn_confirm": "Konfirmasi",
+  "policy_terms_content": "<h3>Syarat Sistem Pengembalian Alat Tangkap</h3><p class='version'>Berlaku: 6 April 2026</p><h4>Bab 1. Ketentuan Umum</h4><p class='article-title'>Pasal 1 (Tujuan)</p><p>Menetapkan syarat dan kewajiban penggunaan Kiosk KETG.</p><p class='article-title'>Pasal 2 (Kewajiban)</p><p>Dilarang keras mengembalikan alat menggunakan identitas orang lain. Kecurangan akan ditindak secara hukum.</p><h4>Bab 2. Lain-lain</h4><p class='article-title'>Pasal 3 (Pelepasan Tanggung Jawab)</p><p>Perusahaan tidak bertanggung jawab atas kesalahan input rekening oleh pengguna.</p>",
+  "policy_privacy_content": "<h3>Kebijakan Privasi</h3><p class='version'>Berlaku: 6 April 2026</p><h4>1. Tujuan Pengumpulan</h4><p>Verifikasi identitas, proses pengembalian dana, dan pencegahan penipuan.</p><h4>2. Data yang Dikumpulkan</h4><table class='policy-table'><tr><th>Tujuan</th><th>Data</th></tr><tr><td>Verifikasi</td><td>Nama, Kode Nelayan, No. HP</td></tr><tr><td>Pengembalian Dana</td><td>Bank, Nama Rekening, No. Rekening</td></tr></table><h4>3. Masa Penyimpanan</h4><p>Catatan pembayaran: 5 tahun. Log akses: 3 bulan.</p><h4>4. Kontak</h4><p>Email: jiseob@ketg.co.kr</p>",
+  "scan_alert_title_warning": "Pemberitahuan",
+  "scan_err_not_gear": "Bukan barcode alat tangkap.\nSilakan pindai alat yang valid.",
+  "duplicate_barcode_warning": "Barcode sudah dipindai.",
+  "scan_err_not_found": "Informasi alat tangkap tidak ditemukan.",
+  "scan_err_not_available": "Alat tangkap ini tidak dapat dikembalikan.",
+  "scan_err_not_deposit": "Bukan alat tangkap deposit.\nSilakan pilih alat tangkap yang ada di layar sebelumnya.",
+  "scan_err_not_existing": "Bukan alat tangkap yang ada.\nSilakan pilih alat tangkap deposit di layar sebelumnya.",
+  "scan_err_stolen": "Tidak dapat mengembalikan alat tangkap\nyang terdaftar atas nama orang lain.",
+  "auth_manual_placeholder": "Sentuh untuk masukkan kode otentikasi",
+  "auth_manual_submit": "Konfirmasi",
+  "account_keypad_delete": "Hapus",
+  "account_keypad_clear": "Bersihkan",
+  "account_keypad_close": "Tutup Keypad",
+  "1.장구형의 통발": "1. Perangkap Drum",
+  "장구형의 통발": "Perangkap Drum",
+  "기존통발(흰색 바코드)": "Perangkap Lama (Barcode Putih)",
+  "이미 반환 처리됨": "Sudah dikembalikan"
 }

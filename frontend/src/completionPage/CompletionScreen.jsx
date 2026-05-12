@@ -1,20 +1,19 @@
+// src/App.js (이전 경로가 같다면 파일명 확인)
 import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios'; // ★ 추가
+import axios from 'axios';
 import './CompletionScreen.css';
 
 import Header from '../mainPage/Header';
 import BgImage from '../assets/bg_all.png'; 
 
-// ★ 영상 및 이미지 경로 확인 필수
 import FinalGreetingVideo from '../assets/최종인사.mp4'; 
 import IconMoney from '../assets/image_2.png';
 import IconScale from '../assets/image_3.png';
 import IconEarth from '../assets/image_4.png';
 import IconPoint from '../assets/image_5.png'; 
 import LoadingSpinner from '../assets/loading-spinner.png';
-
 
 /* --- 1. TTS 헬퍼 함수 --- */
 const getBestVoice = (langCode, voiceList) => {
@@ -76,23 +75,26 @@ const CompletionScreen = () => {
     }
   }, []);
 
-  // --- 이전 페이지에서 넘겨준 데이터 받기 ---
+  // --- 환경 기여도 계산 로직 및 데이터 세팅 ---
   useEffect(() => {
     if (location.state) {
       const { totalDeposit, totalPoint, totalCount } = location.state;
-      const count = totalCount || 1;
-      const calculatedWeight = (count * 2.5).toFixed(1); 
-      const calculatedCo2 = (count * 0.15).toFixed(1);
+      const count = totalCount || 0; // 데이터가 없을 경우 0으로 처리
+      
+      // 1. 무게 계산: 어구 1개당 평균 2.5kg
+      const calculatedWeight = count * 2.5; 
+      
+      // 2. CO2 절감량 계산: 폐어구 1kg 재활용 시 약 1.5kg의 CO2 감축
+      const calculatedCo2 = calculatedWeight * 1.5;
 
       setReceiptData({
         totalDeposit: totalDeposit || 0,
         totalPoint: totalPoint || 0, 
-        weightCollected: `${calculatedWeight} kg`,
-        co2Saved: `${calculatedCo2} kg`,
+        weightCollected: `${calculatedWeight.toFixed(1)} kg`,
+        co2Saved: `${calculatedCo2.toFixed(1)} kg`,
       });
     }
   }, [location.state]);
-
 
   // --- TTS 및 자동 이동 ---
   useEffect(() => {
@@ -104,36 +106,29 @@ const CompletionScreen = () => {
       }
     }, 300);
 
-    // ★ [수정] 자동 종료 시간 연장 (8초 -> 30초)
     const timer = setTimeout(() => {
-      handleFinish(); // 시간이 다 되면 '종료' 처리
+      handleFinish(); 
     }, 30000); 
 
     return () => clearTimeout(timer);
     
   }, [t, i18n.language]);
 
-  // --- [수정] 완전 종료 (로그아웃 및 홈으로) ---
+  // --- 완전 종료 ---
   const handleFinish = () => {
     localStorage.removeItem('session_token');
     localStorage.removeItem('return_session_id');
     navigate('/');
   };
 
- // --- [수정] 추가 반납 (로그인 유지, 바코드 스캐너 투입구 열기 및 스캔 페이지로) ---
-  // --- [추가] 추가 반납 (로그인 유지 및 스캔 페이지로) ---
-  // --- [수정] 추가 반납 (로그인 유지, 바코드 스캐너 투입구 열기 및 스캔 페이지로) ---
-  // --- [추가] 추가 반납 (로그인 유지 및 스캔 페이지로) ---
+  // --- 추가 반납 ---
   const handleAddMore = () => {
-    // 음성 안내 중단
     window.speechSynthesis.cancel();
-    // 세션 정보 삭제하지 않고 스캔 페이지로 이동
     navigate('/select-gear');
   };
 
   if (isLoading) return <LoadingOverlay />;
   
-  // 에러 화면
   if (error) {
       return (
         <div className="completion-wrapper">
@@ -148,7 +143,6 @@ const CompletionScreen = () => {
         </div>
       );
   }
-
 
   if (!receiptData) return null;
 
@@ -211,26 +205,24 @@ const CompletionScreen = () => {
                     {/* 오늘 수거된 어구 */}
                     <div className="info-row">
                         <img src={IconScale} alt="Net" className="info-icon" />
-                        <span className="info-label">{t('completion_summary_collected_label')} :</span>
+                        <span className="info-label">{t('completion_summary_collected_label') || '오늘 수거된 어구'} :</span>
                         <span className="info-value">{receiptData.weightCollected}</span>
                     </div>
 
-                    {/* CO2 감소 */}
+                    {/* CO2 감소 (아래첨자 적용) */}
                     <div className="info-row">
                         <img src={IconEarth} alt="Leaf" className="info-icon" />
-                        <span className="info-label">{t('completion_summary_co2_label_short')} :</span>
+                        <span className="info-label">CO<sub>2</sub> 감소량 :</span>
                         <span className="info-value">{receiptData.co2Saved}</span>
                     </div>
                 </div> 
 
-                {/* ★ [수정] 버튼 그룹 (추가 반납 & 종료) */}
+                {/* 버튼 그룹 */}
                 <div className="completion-btn-group">
-                  {/* 추가 반납 버튼 (파란색 계열) */}
                   <button className="btn-add-more" onClick={handleAddMore}>
                     {t('completion_add_more') || '추가 반납하기'}
                   </button>
 
-                  {/* 종료 버튼 (초록색 계열) */}
                   <button className="btn-finish-green" onClick={handleFinish}>
                       {t('tagscan_fail_popup_exit_button').split(' ')[2] || '종료'} 
                   </button>

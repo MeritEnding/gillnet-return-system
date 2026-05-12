@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios'; // ★ [추가] API 호출을 위해 axios 임포트
+import axios from 'axios';
 import './Home.css';
 import BgAll from '../assets/bg_all.png';
 import LoginModal from './modals/LoginModal'; 
@@ -10,6 +10,12 @@ import LoginModal from './modals/LoginModal';
 // [영상 파일 임포트]
 import VideoKo from '../assets/어구보증금관리센터_제도확대_국문영상_최종본.mp4';
 import VideoEn from '../assets/어구보증금관리센터_제도확대_영문영상_최종본.mp4';
+
+// [자막 파일 임포트]
+import SubVi from '../assets/subtitles/vi.vtt';
+import SubId from '../assets/subtitles/id.vtt';
+import SubTl from '../assets/subtitles/tl.vtt';
+import SubMy from '../assets/subtitles/my.vtt';
 
 // [컴포넌트 임포트]
 import Header from './Header';
@@ -28,20 +34,23 @@ import PrivacyConsentModal from './modals/PrivacyConsentModal';
 import GuideContainerModal from './modals/GuideContainerModal';
 import ContactModal from './modals/ContactModal';
 import AccountInputModal from './modals/AccountInputModal';
-// src/mainPage/Home.jsx 최상단 근처
-import GearTypeSelectModal from '../certificationPage/GearTypeSelectModal'; // ★ 추가
+import GearTypeSelectModal from '../certificationPage/GearTypeSelectModal'; 
 
 const Home = () => {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
+  
   const voiceListCache = useRef([]);
   const init02PlayedRef = useRef(false);
+  
+  // ★ [핵심 1] 발화 객체(Utterance)가 중간에 날아가지 않도록 보관하는 전역 참조
+  window.utterances = window.utterances || []; 
+  const currentUtteranceRef = useRef(null);
+
   const [showLoginModal, setShowLoginModal] = useState(false);
-  // 모달 상태 관리
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showGuideModal, setShowGuideModal] = useState(false);
   const [showAltAuthModal, setShowAltAuthModal] = useState(false);
-  
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
   const [showPrivacyConsent, setShowPrivacyConsent] = useState(false);
   const [showThirdPartyModal, setShowThirdPartyModal] = useState(false);
@@ -49,34 +58,23 @@ const Home = () => {
   const [showPassModal, setShowPassModal] = useState(false);
   const [showContactModal, setShowContactModal] = useState(false);
   const [showGearTypeModal, setShowGearTypeModal] = useState(false);
-  // 전문 보기 내용
   const [fullTextContent, setFullTextContent] = useState('');
 
-  // 체크박스 상태
   const [agreements, setAgreements] = useState({ required: false, optional: false });
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const [showAccountInputModal, setShowAccountInputModal] = useState(false);
   
-
-  // ★ [신규 안전 로직] 홈 화면 진입 시 모든 투입구 닫기 (완전 초기화)
   useEffect(() => {
     localStorage.clear();
     sessionStorage.clear();
     const closeAllDoors = async () => {
       try {
-        // 1. 폐어구 투입구와 바코드 투입구를 모두 닫으라는 명령을 백엔드에 전송
-        // (방금 백엔드 코드에서 isLast: true 일 때 둘 다 닫히게 만들었으므로 파라미터를 추가해줍니다)
-        await axios.post('http://localhost:8080/api/deposit/action/close-doors', { isLast: true });
-        console.log("🏠 HOME: 안전을 위해 모든 투입구 닫힘 요청 완료 (폐어구 + 바코드)");
-
+        await axios.post(`${process.env.REACT_APP_API_URL}/api/deposit/action/close-doors`, { isLast: true });
+        console.log("🏠 HOME: 안전을 위해 모든 투입구 닫힘 요청 완료");
       } catch (error) {
-        console.warn("🏠 HOME: 통합 문 닫기 요청 실패, 개별 닫기 재시도...", error);
-        
-        // 2. 통합 API가 실패할 경우를 대비한 2차 안전장치 (Fallback)
-        // 각각의 문을 제어하는 기본 API를 한 번 더 호출해서 억지로라도 닫습니다.
+        console.warn("🏠 HOME: 통합 문 닫기 요청 실패, 개별 닫기 재시도...");
         try {
-          // 바코드 투입구 개별 닫기 (하드웨어 제어 라우터가 있다면)
-          fetch('http://localhost:8080/api/auth/hw/barcode-door', {
+          fetch(`${process.env.REACT_APP_API_URL}/api/auth/hw/barcode-door`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ open: false })
@@ -84,47 +82,82 @@ const Home = () => {
         } catch(e) {}
       }
     };
-
     closeAllDoors();
-  }, []); // [] : 페이지가 처음 렌더링될 때 딱 한 번 실행됨
 
-  /* --- TTS 로직 --- */
+    // ★ [핵심 2] 컴포넌트가 꺼질 때(다른 화면으로 갈 때) 목소리도 확실하게 꺼줌
+    return () => {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, []);
+
   const getBestVoice = (langCode, voiceList) => {
     if (voiceList.length === 0) return null;
     let bestVoice = null;
-    if (langCode.includes('ko')) {
-      bestVoice = voiceList.find(v => v.lang.includes('ko'));
-    } else if (langCode.includes('vi')) {
-      bestVoice = voiceList.find(v => v.lang.includes('vi'));
-    } else if (langCode.includes('id')) {
-      bestVoice = voiceList.find(v => v.lang.includes('id'));
-    } else if (langCode.includes('tl') || langCode.includes('fil')) {
-      bestVoice = voiceList.find(v => v.lang.includes('fil') || v.lang.includes('tl'));
-    } else if (langCode.includes('my')) {
-      bestVoice = voiceList.find(v => v.lang.includes('my'));
-    } else {
-      bestVoice = voiceList.find(v => v.lang.includes('en-US') || v.lang.includes('en'));
-    }
+    if (langCode.includes('ko')) bestVoice = voiceList.find(v => v.lang.includes('ko'));
+    else if (langCode.includes('vi')) bestVoice = voiceList.find(v => v.lang.includes('vi'));
+    else if (langCode.includes('id')) bestVoice = voiceList.find(v => v.lang.includes('id'));
+    else if (langCode.includes('tl') || langCode.includes('fil')) bestVoice = voiceList.find(v => v.lang.includes('fil') || v.lang.includes('tl'));
+    else if (langCode.includes('my')) bestVoice = voiceList.find(v => v.lang.includes('my'));
+    else bestVoice = voiceList.find(v => v.lang.includes('en-US') || v.lang.includes('en'));
     return bestVoice;
   };
 
+  // ★ [핵심 3] 개선된 완벽한 TTS 재생 함수
   const speak = (text, lang, voiceList, onEndCallback = null) => {
     if (!('speechSynthesis' in window)) {
       if (onEndCallback) onEndCallback();
       return;
     }
+
+    // 1. 기존에 떠들고 있던 모든 말들을 즉시 취소! (겹침 방지)
     window.speechSynthesis.cancel();
+
+    // 2. 새로운 발화 객체 생성
     const utterance = new SpeechSynthesisUtterance(text);
+    
+    // 3. 브라우저 버그(가비지 컬렉션) 방지를 위해 전역 배열에 담아둠
+    window.utterances.push(utterance);
+    currentUtteranceRef.current = utterance;
+
     const langMap = {
       'ko': 'ko-KR', 'en': 'en-US', 'vi': 'vi-VN',
       'tl': 'fil-PH', 'id': 'id-ID', 'my': 'my-MM'
     };
+    
     const shortLang = lang.substring(0, 2);
     utterance.lang = langMap[shortLang] || 'en-US';
+    
     const selectedVoice = getBestVoice(utterance.lang, voiceList);
     if (selectedVoice) utterance.voice = selectedVoice;
-    if (onEndCallback) utterance.onend = onEndCallback;
+
+    // 4. 말이 끝났을 때의 처리
+    utterance.onend = () => {
+      // 다 말했으면 쓰레기통(배열) 비워주기
+      const index = window.utterances.indexOf(utterance);
+      if (index > -1) window.utterances.splice(index, 1);
+      
+      if (onEndCallback) onEndCallback();
+    };
+
+    // 혹시라도 에러가 나면 큐 비우고 다음으로 넘기기
+    utterance.onerror = (e) => {
+      console.warn('Speech synthesis error:', e);
+      if (onEndCallback) onEndCallback();
+    };
+
+    // 5. 드디어 말하기 시작
     window.speechSynthesis.speak(utterance);
+
+    // ★ [핵심 4] 크롬 버그(15초 멈춤) 방지용 주기적 Resume
+    const timer = setInterval(() => {
+      if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.resume();
+      } else {
+        clearInterval(timer);
+      }
+    }, 5000);
   };
 
   useEffect(() => {
@@ -147,20 +180,19 @@ const Home = () => {
 
     const textInit01 = t('INIT_01');
     init02PlayedRef.current = false;
+    
     const timer = setTimeout(() => {
       const onInit01End = () => document.addEventListener('click', playInit02AndRemoveListener);
+      // 첫 진입 시 (자동재생 막혀있을 수 있음) 실행 시도
       speak(textInit01, i18n.language, voiceListCache.current, onInit01End);
-    }, 300);
+    }, 500); // 브라우저가 준비할 수 있도록 여유시간을 500ms로 조금 늘렸습니다.
+
     return () => {
       clearTimeout(timer);
-      window.speechSynthesis.cancel();
       document.removeEventListener('click', playInit02AndRemoveListener);
     };
   }, [t, i18n.language]);
 
-  // --- 인증 및 모달 플로우 핸들러 ---
-
-  // 1. QR(회원) 인증 선택 시
   const openMemberAuthFlow = () => { 
     setShowAuthModal(false); 
     setShowThirdPartyModal(true); 
@@ -176,24 +208,22 @@ const Home = () => {
     navigate('/auth'); 
   };
 
-  // 2. PASS 인증 선택 시
   const handlePassChoice = () => {
     setShowAuthModal(false);
     setShowPrivacyConsent(true);
   };
 
-  // 3. PASS 동의 완료 시
   const handlePrivacyConfirm = () => {
     setShowPrivacyConsent(false);
     setShowPassModal(true);
   };
 
-  // (구) 비회원 관련 핸들러
   const openNonMemberAuthFlow = () => {
     setShowAuthModal(false);
     setShowPrivacyModal(true);
     setAgreements({ required: false, optional: false });
   };
+
   const handlePrivacyAgree = () => {
     if (!agreements.required) {
       alert(t('alert_agree_required'));
@@ -203,7 +233,6 @@ const Home = () => {
     setShowAltAuthModal(true);
   };
 
-  // --- 기타 UI 핸들러 ---
   const openFullText = (type) => {
     const contentKey = type === 'required' ? 'agreement_text_required' : 'agreement_text_optional';
     setFullTextContent(t(contentKey));
@@ -212,8 +241,16 @@ const Home = () => {
 
   const toggleAgreement = (key) => { setAgreements(prev => ({ ...prev, [key]: !prev[key] })); };
 
-  // 현재 언어에 맞는 비디오 소스 결정
-  const currentVideoSrc = i18n.language.startsWith('ko') ? VideoKo : VideoEn;
+
+  const currentLang = i18n.language;
+  const currentVideoSrc = currentLang.startsWith('en') ? VideoEn : VideoKo;
+
+  let currentSubtitleSrc = null;
+  if (currentLang.startsWith('vi')) currentSubtitleSrc = SubVi;
+  else if (currentLang.startsWith('id')) currentSubtitleSrc = SubId;
+  else if (currentLang.startsWith('tl') || currentLang.startsWith('fil')) currentSubtitleSrc = SubTl;
+  else if (currentLang.startsWith('my')) currentSubtitleSrc = SubMy;
+
 
   return (
     <div className="kiosk-wrapper" style={{ backgroundImage: `url(${BgAll})` }}>
@@ -223,6 +260,8 @@ const Home = () => {
         isVideoPlaying={isVideoPlaying}
         setIsVideoPlaying={setIsVideoPlaying}
         currentVideoSrc={currentVideoSrc}
+        currentSubtitleSrc={currentSubtitleSrc}
+        currentLang={currentLang}
       />
 
       <section className="bottom-wave-section">
@@ -234,9 +273,6 @@ const Home = () => {
       </section>
       <Footer/>
       
-
-      {/* --- 모달 렌더링 --- */}
-      
       {showAuthModal && (
         <AuthChoiceModal
           onClose={() => setShowAuthModal(false)}
@@ -245,40 +281,19 @@ const Home = () => {
           onLogin={handleLoginChoice} 
         />
       )}
-
-      {showLoginModal && (
-        <LoginModal onClose={() => setShowLoginModal(false)} />
-      )}
-
-      {showPrivacyConsent && (
-        <PrivacyConsentModal
-          onClose={() => setShowPrivacyConsent(false)}
-          onConfirm={handlePrivacyConfirm}
-        />
-      )}
-
+      {showLoginModal && <LoginModal onClose={() => setShowLoginModal(false)} />}
+      {showPrivacyConsent && <PrivacyConsentModal onClose={() => setShowPrivacyConsent(false)} onConfirm={handlePrivacyConfirm} />}
       {showPassModal && (
         <PassModal 
           onClose={() => setShowPassModal(false)} 
           onNonMember={() => {
-            setShowPassModal(false); // 먼저 PASS 모달을 끄고
-            setTimeout(() => {
-              setShowAccountInputModal(true); // 아주 잠깐 뒤에 계좌 모달을 염
-            }, 100); 
+            setShowPassModal(false); 
+            setTimeout(() => { setShowAccountInputModal(true); }, 100); 
           }}
         />
       )}
-      {/* ★ 비회원 계좌 입력 팝업 렌더링 */}
-      {showAccountInputModal && (
-        <AccountInputModal onClose={() => setShowAccountInputModal(false)} />
-      )}
-      {showThirdPartyModal && (
-        <ThirdPartyModal
-          onClose={() => setShowThirdPartyModal(false)}
-          onAgree={handleThirdPartyAgree}
-        />
-      )}
-
+      {showAccountInputModal && <AccountInputModal onClose={() => setShowAccountInputModal(false)} />}
+      {showThirdPartyModal && <ThirdPartyModal onClose={() => setShowThirdPartyModal(false)} onAgree={handleThirdPartyAgree} />}
       {showPrivacyModal && (
         <PrivacyModal
           onClose={() => setShowPrivacyModal(false)}
@@ -288,11 +303,7 @@ const Home = () => {
           openFullText={openFullText}
         />
       )}
-
-      {showContactModal && (
-        <ContactModal onClose={() => setShowContactModal(false)} />
-      )}
-
+      {showContactModal && <ContactModal onClose={() => setShowContactModal(false)} />}
       {showFullTextModal && (
         <div className="modal-backdrop" onClick={() => setShowFullTextModal(false)}>
           <div className="full-text-modal" onClick={(e) => e.stopPropagation()}>
@@ -306,17 +317,9 @@ const Home = () => {
           </div>
         </div>
       )}
-
-      {showGuideModal && (
-        <GuideContainerModal onClose={() => setShowGuideModal(false)} />
-      )}
-      
-      {showGearTypeModal && (
-        <GearTypeSelectModal onClose={() => setShowGearTypeModal(false)} />
-      )}
-
+      {showGuideModal && <GuideContainerModal onClose={() => setShowGuideModal(false)} />}
+      {showGearTypeModal && <GearTypeSelectModal onClose={() => setShowGearTypeModal(false)} />}
       {showAltAuthModal && <AlternateAuthModal onClose={() => setShowAltAuthModal(false)} />}
-      
     </div>
   );
 };

@@ -10,7 +10,7 @@ import BgImage from '../assets/bg_all.png';
 import Header from '../mainPage/Header';
 import GearBarcodeVideo from '../assets/어구바코드.mp4';
 
-const API_BASE_URL = 'http://localhost:8080/api/v1/proxy';
+const API_BASE_URL = `${process.env.REACT_APP_API_URL}/api/v1/proxy`;
 
 // 아이콘 컴포넌트 생략 (기존 코드 그대로 유지)
 const BackIcon = () => (<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15 19L8 12L15 5" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg>);
@@ -59,7 +59,7 @@ const GearScanScreen = () => {
     const ensureBarcodeDoorOpen = async () => {
       try {
         // 주의: 이전에 확인하신 정확한 API 경로를 넣어주세요. (예: /api/auth/hw/barcode-door)
-        await axios.post('http://localhost:8080/api/auth/hw/barcode-door', { 
+        await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/hw/barcode-door`, { 
           open: true 
         });
         console.log('✅ 바코드 투입구 개방 상태 확보 완료');
@@ -129,48 +129,80 @@ const GearScanScreen = () => {
     if (!barcodeInput) return;
     const inputTimer = setTimeout(() => {
       handleBarcodeScan(barcodeInput);
-    }, 300);
+    }, 500);
     return () => clearTimeout(inputTimer);
   }, [barcodeInput]);
 
   // ★ 2. 바코드 스캔 핸들러 (서버 대기 없이 즉각 처리)
-  const handleBarcodeScan = useCallback((scannedData) => {
+ const handleBarcodeScan = useCallback(async (scannedData) => {
     const cleanBarcode = scannedData.trim();
     if (!cleanBarcode || !isDataLoaded) return;
 
-    if (scannedGears.some(gear => gear.bacod_nm === cleanBarcode)) {
-      setIsDuplicate(true);
-      setTimeout(() => setIsDuplicate(false), 1500);
+    const isNumeric = /^\d+$/.test(cleanBarcode);
+    if (!isNumeric) {
+      // 다국어 적용
+      setErrorMessage(t('scan_err_not_gear') || '어구 바코드가 아닙니다.\n정상적인 어구를 스캔해주세요.');
       setBarcodeScanInput('');
       return;
     }
 
-    const selectedTypeNm = localStorage.getItem('selected_fsgr_clsf_nm') || '장구형의통발';
-    const selectedCd = localStorage.getItem('selected_fsgr_clsf_cd') || 'FISGE';
+    if (scannedGears.some(gear => gear.bacod_nm === cleanBarcode)) {
+      // 다국어 적용
+      setErrorMessage(t('duplicate_barcode_warning') || '이미 스캔된 바코드입니다.');
+      setBarcodeScanInput('');
+      return;
+    }
 
-    let depositAmount = 0; 
-    if (selectedTypeNm.includes('장구형')) depositAmount = 1000;       
-    else if (selectedTypeNm.includes('장어')) depositAmount = 300;   
-    else if (selectedTypeNm.includes('자망')) depositAmount = 2000;  
-    else if (selectedTypeNm.includes('원뿔대형')) depositAmount = 2000;  
-    else if (selectedTypeNm.includes('사각형')) depositAmount = 3000;  
-    else depositAmount = 1000; // 기본값
-
-    // 기존 어구일 경우 포인트 400P 고정
-    const pointAmount = gearType === '2' ? 400 : 0;
-
-    const newGear = {
-      bacod_nm: cleanBarcode,
-      fsgr_nm: selectedTypeNm,
-      gvbk_type: gearType === '1' ? '보증금어구' : '기존어구',
-      gvbk_amt: gearType === '1' ? depositAmount : 0,
-      gvbk_pnt: pointAmount,
-    };
-    
-    setScannedGears(prev => [...prev, newGear]);
+    setIsLoading(true);
+    setLoadingText(t('deposit_loading_default') || '바코드 정보를 확인 중입니다...');
     setErrorMessage('');
-    setBarcodeScanInput('');
-  }, [scannedGears, isDataLoaded, gearType]);
+
+    try {
+      const res = await axios.get(`${API_BASE_URL}/barcode/${cleanBarcode}/info`);
+      
+      if (res.data?.status !== "200" && res.data?.status !== 200) {
+        throw new Error(t('scan_err_not_found') || '어구 정보를 찾을 수 없습니다.');
+      }
+
+      const gearInfo = res.data.data;
+
+      if (gearInfo.return_status !== "AVAILABLE") {
+        // 서버에서 온 문구도 번역(t)을 거치도록 수정
+        throw new Error(`${t('scan_err_not_available') || '반환 불가 어구입니다.'}\n(${t(gearInfo.return_status_desc) || gearInfo.return_status_desc})`);
+      }
+
+      if (gearType === '1' && gearInfo.gvbk_type !== '01') {
+        throw new Error(t('scan_err_not_deposit') || '보증금어구가 아닙니다.\n이전 화면에서 기존어구를 선택해주세요.');
+      }
+      if (gearType === '2' && gearInfo.gvbk_type !== '02') {
+        throw new Error(t('scan_err_not_existing') || '기존어구가 아닙니다.\n이전 화면에서 보증금어구를 선택해주세요.');
+      }
+
+      if (gearInfo.gvbk_type === '02') {
+        const myFishermanId = localStorage.getItem('fisherman_id');
+        if (gearInfo.user_fshnd_no !== myFishermanId) {
+          throw new Error(t('scan_err_stolen') || '타인 명의의 기존어구는\n반납할 수 없습니다.');
+        }
+      }
+
+      const newGear = {
+        bacod_nm: gearInfo.bacod_nm,
+        fsgr_nm: gearInfo.fsgr_nm,
+        gvbk_type: gearInfo.gvbk_type_nm,
+        gvbk_amt: gearInfo.gvbk_amt || 0,
+        gvbk_pnt: gearInfo.rmbr_pnt || 0,
+      };
+      
+      setScannedGears(prev => [...prev, newGear]);
+
+    } catch (err) {
+      const errorMsg = err.response?.data?.message || err.message;
+      setErrorMessage(errorMsg);
+    } finally {
+      setIsLoading(false);
+      setBarcodeScanInput('');
+    }
+  }, [scannedGears, isDataLoaded, gearType, t]);
 
   const totalAmount = scannedGears.reduce((sum, gear) => sum + gear.gvbk_amt, 0);
   const totalPoints = scannedGears.reduce((sum, gear) => sum + gear.gvbk_pnt, 0);
@@ -289,6 +321,51 @@ const GearScanScreen = () => {
         </div>
       </div>
       {isLoading && <LoadingOverlay text={loadingText} />}
+      {errorMessage && (
+        <div className="deposit-alert-overlay" onClick={() => setErrorMessage('')} style={{ zIndex: 99999 }}>
+          <div className="deposit-alert-content" onClick={(e) => e.stopPropagation()} style={{
+            backgroundColor: 'white',
+            borderRadius: '40px',
+            border: '8px solid #00A0E9', // ★ 테두리 하늘색
+            overflow: 'hidden',
+            width: '95%',
+            maxWidth: '800px',
+            textAlign: 'center',
+            animation: 'popIn 0.3s ease-out',
+            boxShadow: '0 40px 80px rgba(0,0,0,0.4)'
+          }}>
+            <div style={{ backgroundColor: '#00A0E9', padding: '35px' }}> {/* ★ 헤더 하늘색 */}
+              <h2 style={{ color: 'white', margin: 0, fontSize: '4rem', fontWeight: '900' }}>
+                {t('scan_alert_title_warning') || '안내'}
+              </h2>
+            </div>
+            
+            <div style={{ padding: '70px 40px' }}>
+              <p style={{ fontSize: '3.4rem', marginBottom: '50px', lineHeight: '1.6', color: '#333', fontWeight: '800', wordBreak: 'keep-all' }}>
+                {errorMessage.split('\n').map((line, index) => (
+                  <React.Fragment key={index}>
+                    {line}<br />
+                  </React.Fragment>
+                ))}
+              </p>
+              
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <button
+                  onClick={() => setErrorMessage('')}
+                  style={{
+                    backgroundColor: '#495057', color: 'white', border: 'none',
+                    borderRadius: '15px', width: '250px', height: '90px',
+                    fontSize: '2.5rem', fontWeight: 'bold', cursor: 'pointer',
+                    boxShadow: '0 5px 0 #343a40'
+                  }}
+                >
+                  {t('btn_confirm') || '확인'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -1,20 +1,17 @@
 // src/certificationPage/GearTypeSelectScreen.jsx
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next'; // ★ 다국어 훅 추가
+import { useTranslation } from 'react-i18next';
 import Header from '../mainPage/Header';
 import BgImage from '../assets/bg_all.png';
 import './GearTypeSelectScreen.css';
 
-// ★ 실제 어구 이미지 import
+// ★ 불필요한 이미지 삭제하고 딱 필요한 2개만 남겼습니다.
 import ImgHourglass from '../assets/스프링이 설치된 장구형의 통발.png';
-import ImgCylinder from '../assets/장어 통발.png';
-import ImgGillNet from '../assets/자망어구.png';
-import ImgConeSemi from '../assets/원뿔대형(반구형)의 통발.png';
 import ImgConeCrab from '../assets/기존 어구.png';
 
 const GearTypeSelectScreen = () => {
-  const { t } = useTranslation(); // ★ 번역 함수 선언
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [isMember, setIsMember] = useState(false);
 
@@ -32,7 +29,6 @@ const GearTypeSelectScreen = () => {
   };
 
   const handleSelect = (gvbkType, clsfCd, clsfNm) => {
-    // ★ 서버 코드와 명칭 매칭 저장 (백엔드 오류 방지를 위해 clsfNm은 한국어 원본 값 유지)
     localStorage.setItem('selected_gvbk_type', gvbkType); 
     localStorage.setItem('selected_fsgr_clsf_cd', clsfCd); 
     localStorage.setItem('selected_fsgr_clsf_nm', clsfNm); 
@@ -56,54 +52,32 @@ const GearTypeSelectScreen = () => {
         <h2 className="gear-page-title">{t('gear_page_title') || '반환하실 어구를 터치해주세요'}</h2>
         <p className="gear-page-subtitle">{t('gear_page_subtitle') || '동일한 어구를 선택하고 반납을 해야 보증금이 환급됩니다.'}</p>
         
-        <div className="gear-card">
+        <div className="gear-card massive-layout">
           
-          {/* 1. 보증금어구 섹션 */}
-          <div className="gear-section">
-            <h3 className="gear-section-title deposit">
-             {t('gear_section_deposit') || '보증금어구 반환 (현금 환급)'}
-            </h3>
-            
-            <div className="gear-grid">
-              {/* API 1: FISGE (장구형의통발) */}
-              <button className="gear-btn deposit" onClick={() => handleSelect('1', 'FISGE', '장구형의통발')}>
-                <img src={ImgHourglass} alt="장구형의 통발" className="gear-btn-img" />
-                <div className="gear-btn-text">{t('gear_type_hourglass') || '장구형의 통발'}</div>
-              </button>
-
-              {/* API 2: EELTP (장어통발) */}
-              <button className="gear-btn deposit" onClick={() => handleSelect('1', 'EELTP', '장어통발')}>
-                <img src={ImgCylinder} alt="장어통발" className="gear-btn-img" />
-                <div className="gear-btn-text">{t('gear_type_eel') || '장어통발'}</div>
-              </button>
-
-              {/* API 3: GILNT (자망) */}
-              <button className="gear-btn deposit" onClick={() => handleSelect('1', 'GILNT', '자망(그물)')}>
-                <img src={ImgGillNet} alt="자망 (그물)" className="gear-btn-img" />
-                <div className="gear-btn-text">{t('gear_type_gill_net') || '자망 (그물)'}</div>
-              </button>
-
-              {/* API 4: FISGE (원뿔대형 통발) */}
-              <button className="gear-btn deposit" onClick={() => handleSelect('1', 'FISGE', '원뿔대형(반구형)의 통발')}>
-                <img src={ImgConeSemi} alt="원뿔대형 통발" className="gear-btn-img" />
-                <div className="gear-btn-text">{t('gear_type_cone') || '원뿔대형 통발'}</div>
-              </button>
+          {/* 1. 보증금어구 버튼 (초대형) */}
+          <button 
+            className="gear-btn-massive deposit-massive" 
+            onClick={() => handleSelect('1', 'FISGE', '장구형의통발')}
+          >
+            <div className="massive-badge deposit-badge">
+              {t('gear_section_deposit') || '보증금어구 반환 (현금 환급)'}
             </div>
-          </div>
+            <img src={ImgHourglass} alt="장구형의 통발" className="gear-img-massive" />
+            <div className="gear-text-massive">{t('gear_type_hourglass') || '장구형의 통발'}</div>
+          </button>
 
-          {/* 2. 기존어구 섹션 */}
+          {/* 2. 기존어구 버튼 (초대형) - 회원일 경우에만 노출 */}
           {isMember && (
-            <div className="gear-section">
-              <h3 className="gear-section-title existing">
+            <button 
+              className="gear-btn-massive existing-massive" 
+              onClick={() => handleSelect('2', 'FISGE', '기존통발어구(바코드)')}
+            >
+              <div className="massive-badge existing-badge">
                 {t('gear_section_existing') || '기존어구 반환 (포인트 적립)'}
-              </h3>
-              <div className="gear-grid single">
-                <button className="gear-btn existing" onClick={() => handleSelect('2', 'FISGE', '기존통발어구(바코드)')}>
-                  <img src={ImgConeCrab} alt="기존 통발 어구" className="gear-btn-img" />
-                  <div className="gear-btn-text">{t('gear_type_existing_trap') || '기존 통발 어구 (포인트)'}</div>
-                </button>
               </div>
-            </div>
+              <img src={ImgConeCrab} alt="기존 통발 어구" className="gear-img-massive" />
+              <div className="gear-text-massive">{t('gear_type_existing_trap') || '기존 통발 어구 (포인트)'}</div>
+            </button>
           )}
 
         </div>

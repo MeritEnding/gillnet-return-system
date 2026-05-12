@@ -1,0 +1,148 @@
+/* src/components/PolicyModal.css */
+.policy-modal-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(5px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10005;
+}
+
+.policy-modal-content {
+  background: #fff;
+  /* ★ 가로를 대폭 넓히고(1100px), 세로 높이는 살짝 줄임(75vh) */
+  width: 95%;
+  max-width: 1100px; 
+  height: 75vh; 
+  border-radius: 30px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+  animation: popIn 0.3s ease-out;
+}
+
+.policy-modal-header {
+  background-color: #f8fafc;
+  padding: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.policy-modal-title {
+  margin: 0;
+  font-size: 2.8rem;
+  font-weight: 900;
+  color: #1e293b;
+}
+
+.policy-close-icon {
+  background: none;
+  border: none;
+  font-size: 4rem;
+  line-height: 1;
+  color: #94a3b8;
+  cursor: pointer;
+}
+
+.policy-modal-body {
+  flex: 1;
+  padding: 40px;
+  overflow-y: auto;
+  background-color: #fff;
+}
+
+.policy-text-area {
+  font-size: 1.8rem;
+  line-height: 1.8;
+  color: #334155;
+  word-break: keep-all;
+  /* ★ 핵심: 무조건 좌측 정렬하여 전문적인 문서처럼 보이게 함 */
+  text-align: left; 
+}
+
+/* 동적으로 주입되는 HTML 태그 디자인 */
+.policy-text-area h3 {
+  font-size: 2.4rem;
+  color: #0f172a;
+  margin: 0 0 10px 0;
+  padding-bottom: 15px;
+  border-bottom: 3px solid #1e293b;
+}
+
+.policy-text-area .version {
+  font-size: 1.4rem;
+  color: #64748b;
+  font-weight: bold;
+  margin-bottom: 30px;
+}
+
+.policy-text-area h4 {
+  font-size: 2.2rem;
+  color: #00A0E9;
+  margin: 40px 0 15px 0;
+  padding-bottom: 10px;
+  border-bottom: 1px dashed #cbd5e1;
+}
+
+.policy-text-area .article-title {
+  font-size: 2rem;
+  font-weight: 900;
+  color: #1e293b;
+  margin: 25px 0 10px 0;
+}
+
+.policy-text-area p {
+  margin-bottom: 20px;
+  padding-left: 10px;
+}
+
+.policy-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 1.6rem;
+}
+
+.policy-table th, .policy-table td {
+  border: 1px solid #cbd5e1;
+  padding: 15px;
+  text-align: left;
+}
+
+.policy-table th {
+  background-color: #f1f5f9;
+  font-weight: bold;
+  color: #1e293b;
+  text-align: center;
+}
+
+.policy-modal-footer {
+  padding: 20px 30px 30px 30px;
+  background-color: #fff;
+  display: flex;
+  justify-content: center;
+  border-top: 1px solid #f1f5f9;
+}
+
+.policy-confirm-btn {
+  width: 100%;
+  height: 90px;
+  background-color: #00A0E9;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  font-size: 2.5rem;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 6px 0 #007bb5;
+}
+
+.policy-confirm-btn:active {
+  transform: translateY(6px);
+  box-shadow: none;
+}

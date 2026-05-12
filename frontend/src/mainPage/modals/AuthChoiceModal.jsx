@@ -1,17 +1,79 @@
 // src/mainPage/modals/AuthChoiceModal.jsx
-import React from 'react';
-import { useTranslation, Trans } from 'react-i18next'; // ★ Trans 컴포넌트 추가
+import React, { useEffect, useRef } from 'react';
+import { useTranslation, Trans } from 'react-i18next';
 import PassLogo from '../../assets/PassLogo.png';
 
 const AuthChoiceModal = ({ onClose, onQr, onPass, onLogin }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const voiceListCache = useRef([]);
+
+  const isMyanmar = i18n.language.startsWith('my');
+
+  // TTS(음성 합성) 함수 구현
+  const speak = (text, lang) => {
+    if (!('speechSynthesis' in window)) return;
+    
+    // 기존에 나오던 음성이 있다면 멈추고 새 음성 시작
+    window.speechSynthesis.cancel();
+    
+    const utterance = new SpeechSynthesisUtterance(text);
+    
+    // 언어 설정 매핑
+    const langMap = {
+      'ko': 'ko-KR', 'en': 'en-US', 'vi': 'vi-VN',
+      'tl': 'fil-PH', 'id': 'id-ID', 'my': 'my-MM'
+    };
+    const shortLang = lang.substring(0, 2);
+    utterance.lang = langMap[shortLang] || 'ko-KR'; // 기본값 한국어
+    
+    // 알맞은 목소리 찾기 (선택사항)
+    let bestVoice = null;
+    const voices = window.speechSynthesis.getVoices();
+    if (voices.length > 0) {
+        if (shortLang === 'ko') bestVoice = voices.find(v => v.lang.includes('ko'));
+        else if (shortLang === 'vi') bestVoice = voices.find(v => v.lang.includes('vi'));
+        else if (shortLang === 'id') bestVoice = voices.find(v => v.lang.includes('id'));
+        else if (shortLang === 'tl') bestVoice = voices.find(v => v.lang.includes('fil') || v.lang.includes('tl'));
+        else if (shortLang === 'my') bestVoice = voices.find(v => v.lang.includes('my'));
+        else bestVoice = voices.find(v => v.lang.includes('en'));
+        
+        if (bestVoice) utterance.voice = bestVoice;
+    }
+
+    // 약간 천천히 또박또박 읽도록 설정 (0.9 ~ 1.0)
+    utterance.rate = 1.0; 
+    
+    window.speechSynthesis.speak(utterance);
+  };
+
+  // 모달이 처음 켜질 때 음성 안내 실행
+  useEffect(() => {
+    // 음성 목록 미리 로드
+    if ('speechSynthesis' in window) {
+        const loadVoices = () => { voiceListCache.current = window.speechSynthesis.getVoices(); };
+        loadVoices();
+        window.speechSynthesis.onvoiceschanged = loadVoices;
+    }
+
+    // 번역본 파일(ko.json 등)에서 텍스트를 가져옵니다. 
+    // 만약 AUTH_CHOICE_VOICE 키를 안 만드셨다면 기본 안내 멘트가 나오게 폴백(Fallback) 처리했습니다.
+    const voiceText = t('AUTH_CHOICE_VOICE') || "원하시는 사용자 인증 방법을 선택해 주세요. 비회원이신 경우 패스 인증을 선택해 주세요.";
+    
+    // 화면이 뜨자마자 음성 출력!
+    speak(voiceText, i18n.language);
+
+    // 모달이 꺼질 때 음성도 같이 끄기
+    return () => {
+      window.speechSynthesis.cancel();
+    };
+  }, [t, i18n.language]);
+
 
   return (
     <div className="modal-backdrop" onClick={onClose}>
-      <div className="modal-content auth-choice-modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '1100px' }}>
+      <div className={`modal-content auth-choice-modal ${isMyanmar ? 'lang-my' : ''}`} onClick={(e) => e.stopPropagation()} style={{ maxWidth: '1100px' }}>
         <h2 className="modal-title">{t('auth_choice_title')}</h2>
         
-        {/* ★ 비회원 안내 문구 다국어 처리 (Trans 컴포넌트 사용) ★ */}
         <p className="auth-nonmember-guide">
           <Trans i18nKey="auth_nonmember_guide">
             비회원님은 오른쪽의 <strong>'PASS 인증'</strong>으로 진행해 주세요.
@@ -51,7 +113,6 @@ const AuthChoiceModal = ({ onClose, onQr, onPass, onLogin }) => {
               </svg>
             </div>
             <div className="btn-text-area-large">
-              {/* ★ 아이디 로그인 부분 다국어 처리 ★ */}
               <span className="auth-main-text">{t('auth_login_btn_main')}</span>
               <span className="auth-sub-text">{t('auth_login_btn_sub')}</span>
             </div>

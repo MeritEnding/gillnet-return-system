@@ -22,8 +22,7 @@
   "msg_loading_details": "Mangyaring maghintay sandali...",
   "completion_add_more": "Magbalik Pa",
   "gear_voice_guide": "Mangyaring piliin ang gear na gusto mong ibalik.",
-
-  "go_home":"Bumalik",
+  "go_home": "Bumalik",
   "barcode_label": "Numero ng Barcode",
   "btn_back": "Bumalik",
   "guide_title": "Gabay sa Paggamit",
@@ -32,7 +31,7 @@
   "guide_faq_button": "Madalas Itanong (FAQ)",
   "guide_caution_title": "Paunawa",
   "guide_caution_text": "Para sa maayos na paggamit ng lahat, mangyaring gamitin ang kiosk at scanner sa tamang pagkakasunod-sunod. Kapag nasira ang makina, hindi ito magagamit ng susunod.",
-    "auth_pass_btn_sub": "(Pagpapatunay ng pagkakakilanlan sa mobile)",
+  "auth_pass_btn_sub": "(Pagpapatunay ng pagkakakilanlan sa mobile)",
   "pass_modal_title": "PASS na Pagpapatunay",
   "pass_modal_desc": "Isasagawa ang pagpapatunay ng pagkakakilanlan gamit ang mobile phone (PASS).",
   "pass_modal_desc2": "Pakisuri at kumpirmahin ang kahilingan sa PASS app sa iyong telepono.",
@@ -49,7 +48,10 @@
   "method_step4_desc": "Kapag naipasok na, tingnan sa monitor ang kabuuang detalye ng isinauli at ang halaga ng deposito na ibabalik.",
   "modal_confirm_btn": "Naintindihan ko",
   "faq_a2_sub": "Pakilinis ang tag at subukang muli.",
-
+  "deposit_msg_finishing": "Malapit na! Papunta na sa completion screen.",
+  "label_deposit_gear_short": "Kagamitang may Deposito",
+  "label_existing_gear_short": "Kasalukuyang Kagamitan",
+  "deposit_loading_title": "Mangyaring maghintay sandali",
   "policy_modal_title": "Sistema ng Deposito sa Gamit Pangisda",
   "policy_title_1": "Gawin nating magkasama! Sistema ng Deposito",
   "policy_text1_strong": "Ang Sistema ng Deposito",
@@ -57,7 +59,6 @@
   "policy_text2_strong": "Kahit kailan, 24 oras",
   "policy_text2": " ay maaari mong isauli nang maayos ang mga gamit pangisda.",
   "policy_text3": "Salamat sa iyong pakikiisa sa pagpapanatiling malinis ng ating karagatan sa pamamagitan ng tamang pagsasauli.",
-
   "faq_modal_title": "Madalas Itanong (FAQ)",
   "faq_q1": "Laging nabibigo ang Pagpapatunay (QR Scan).",
   "faq_a1": "Paki-scan muli nang malinaw at siguraduhing pasok sa scanner ang QR code sa screen ng cellphone. Kung patuloy na nabibigo, pindutin ang 'Subukan Muli' o gamitin ang 'Alternatibong Paraan'.",
@@ -68,8 +69,6 @@
   "faq_a3_strong": "Numero ng Tagapamahala (010-0000-0000)",
   "faq_a3": "Kung may problema habang ginagamit ang kiosk, tumawag agad sa numerong laging nakikita sa screen.",
   "auth_register_guide": "Ang pagpaparehistro ng miyembro ay magagamit sa pamamagitan ng nakatuong app o website.",
-
-
   "auth_step_1": "1. Pagpapatunay",
   "auth_step_2": "2. Tag",
   "auth_step_3": "3. Pagpasok",
@@ -80,12 +79,10 @@
   "auth_test_success_button": "(Test) Rehistradong QR",
   "auth_test_fail_button": "(Test) Di-rehistradong QR",
   "auth_contact_label": "Tagapamahala:",
-
   "auth_fail_popup_title": "⚠️ Nabigo ang Pagpapatunay",
   "auth_fail_popup_message": "Paki-scan muli nang malinaw\nang QR code o barcode.",
   "auth_fail_popup_retry_button": "Subukan Muli",
   "auth_fail_popup_alternate_button": "Alternatibong Paraan",
-
   "auth_success_popup_title": "Tapos na ang Pagpapatunay",
   "auth_success_popup_welcome_strong": ", Maligayang pagdating.",
   "auth_success_popup_welcome": "Inihahanda ang pagsasauli ng gamit.",
@@ -94,7 +91,6 @@
   "auth_mascot_alt": "Mascot",
   "auth_qr_alt": "QR Code ng Mangingisda",
   "auth_success_mascot_alt": "Tagumpay na Mascot",
-
   "alt_auth_title": "Hakbang 1: Alternatibong Paraan",
   "alt_auth_pin_instruction": "Pagkatapos ilagay ang impormasyon, pindutin ang [Patunayan].",
   "alt_auth_label_name": "Pangalan",
@@ -107,13 +103,11 @@
   "alt_auth_submit_button": "Patunayan",
   "alt_auth_alert_all_fields": "Pakilagyan ang lahat ng patlang.",
   "alt_auth_alert_invalid_format": "Pakisuri ang format (Kaarawan 8 numero, Telepono 10-11 numero, PIN 4 numero).",
-
   "alt_auth_fail_popup_title": "⚠️ Nabigo ang Pagpapatunay",
   "alt_auth_fail_popup_message": "Hindi mahanap ang impormasyon.\nMangyaring suriin muli.",
   "alt_auth_fail_popup_retry_button": "Subukan Muli",
   "alt_auth_fail_popup_goback_button": "Bumalik sa QR",
   "auth_success_popup_welcome_suffix": ", Maligayang pagdating.",
-
   "tagging_step_label": "Hakbang 2",
   "tagging_title": "Hakbang 2: I-scan ang marker barcode",
   "tagging_instruction_top": "Ilagay ang bilang ng gamit na isasauli.",
@@ -127,7 +121,6 @@
   "tagging_alert_session_expired": "Nag-expire na ang sesyon. Babalik sa Hakbang 1.",
   "tagging_alert_api_error_prefix": "Error: ",
   "tagging_alert_network_error": "May error sa komunikasyon sa server. Pakisubukan muli mamaya.",
-
   "gearscan_fail_popup_title": "⚠️ Nabigo ang Pag-scan ng Barcode",
   "gearscan_fail_popup_message": "Hindi makilala ang barcode.\nLinisin at subukan muli\no kontakin ang tagapamahala.",
   "gearscan_success_popup_title": "Tapos na ang Pag-scan",
@@ -138,7 +131,6 @@
   "gearscan_instruction_single": "Gamitin ang scanner para<br/>i-scan ang <strong>Barcode ng Gamit</strong>",
   "gearscan_test_button_success": "(Test) Valid na Barcode",
   "gearscan_test_button_fail_owner": "(Test) Walang Pagmamay-ari",
-
   "tagscan_fail_popup_title": "⚠️ Hindi Makumpirma ang Tag",
   "tagscan_fail_popup_message": "Linisin ang tag at subukan muli\no makipag-ugnayan sa\ntagapamahala.",
   "tagscan_fail_popup_retry_button": "Subukan Muli",
@@ -154,7 +146,6 @@
   "tagscan_test_button_fail": "(Temp) Pekeng Tag",
   "tagscan_img_alt_ref_tag": "Ref ng Pag-scan ng Tag",
   "tagscan_img_alt_ref_net": "Ref ng Pag-scan ng Lambat",
-
   "gearscan_popup_title": "Tapos na ang Pagsuri ng Tag",
   "gearscan_popup_message": "Kasalukuyang {{totalCount}} na gamit ang nairehistro.<1/>May idadagdag ka pa ba?",
   "gearscan_popup_yes": "Oo",
@@ -173,11 +164,9 @@
   "gearscan_table_deposit_amount": "{{amount}} Won",
   "gearscan_table_footer_total": "Kabuuang Deposito",
   "gearscan_test_button_prefix": "Scan: ",
-
   "scan_error_alert_prefix": "Error sa Scan:",
   "session_expired_alert": "Nag-expire na ang impormasyon ng sesyon. Magsimula muli sa Hakbang 1.",
   "error_server_communication": "May error sa komunikasyon sa server. Pakisubukan muli mamaya.",
-
   "deposit_loading_default": "Pinoproseso...",
   "deposit_loading_alt": "Naglo-load",
   "deposit_webcam_error": "Hindi masimulan ang webcam. Pakisuri ang pahintulot sa camera.",
@@ -194,8 +183,8 @@
   "deposit_live_label": "Live na Kinukunan",
   "deposit_mascot_alt": "Input Mascot",
   "deposit_instruction_strong": "<strong>Ipasok ang kagamitan sa pangingisda sa lagayan at</strong><1/>",
-  "deposit_state_ready":"Pakipindot ang button para sa pagkuha ng litrato.",
-  "deposit_button_capture":"Kumuha",
+  "deposit_state_ready": "Pakipindot ang button para sa pagkuha ng litrato.",
+  "deposit_button_capture": "Kumuha",
   "deposit_state_idle": "Kapag handa na, pindutin ang 'Kunan'.",
   "deposit_state_detecting": "Hinahanap ang gamit...",
   "deposit_state_capturing": "Nakita na! Kukuha ng litrato sa 3 segundo.",
@@ -209,7 +198,6 @@
   "deposit_popup_yes": "Oo (Magdagdag)",
   "deposit_popup_no": "Hindi (Tapos na)",
   "deposit_alert_no_image": "Walang nakuhanang litrato. Dapat magpasok ng kahit 1 gamit.",
-
   "deposit_alert_no_items": "Walang gamit na isasauli. Paki-scan muna ang gamit.",
   "completion_loading_receipt": "Kinukuha ang listahan ng pagsasauli...",
   "deposit_confirm_title": "Hakbang 3: Kumpirmahin ang Listahan",
@@ -222,7 +210,6 @@
   "deposit_photo_count": "Kasalukuyang may {{count}} litratong nakuha.",
   "deposit_state_loading_camera": "Inihahanda ang camera...",
   "deposit_button_loading_camera": "Inihahanda ang camera...",
-
   "completion_loading_alt": "Naglo-load",
   "completion_error_no_session": "Hindi mahanap ang impormasyon ng sesyon. Pakisubukan muli sa Hakbang 1.",
   "completion_error_fetch_failed": "Nabigong kunin ang impormasyon ng resibo.",
@@ -245,17 +232,14 @@
   "completion_summary_weight_value": "{{weight}}Kg",
   "completion_icon_alt_collected": "Dami ng Nakolekta",
   "completion_summary_collected_label": "Nakolektang Gamit Ngayon",
-
-  "guide_admin_button":"manager",
+  "guide_admin_button": "manager",
   "auth_choice_title": "Pumili ng Paraan ng Pagpapatunay",
   "auth_qr_btn_main": "Miyembro",
   "auth_qr_btn_sub": "(QR Code)",
   "auth_doc_btn_main": "Bisita",
   "auth_doc_btn_sub": "(Magparehistro)",
-
   "error_gear_not_owner": "Ang gamit na ito ay hindi kasalukuyang nire-rentahan mo.",
   "error_gear_unknown": "Na-scan na ang pariralang ito.",
-
   "privacy_third_party_title": "Pahintulot sa Ikatlong Partido",
   "privacy_third_party_main": "'Kiosk ng Pagbabalik ng Gamit'",
   "privacy_third_party_sub": "I-link ang iyong impormasyon ng miyembro para sa serbisyo.",
@@ -263,7 +247,6 @@
   "privacy_tp_item": "- Mga Item: Pangalan, Numero ng Pagpaparehistro",
   "privacy_tp_purpose": "- Layunin: Pagpapatunay ng Pagkakakilanlan at Kasaysayan",
   "privacy_tp_ask": "Sumasang-ayon ka ba?",
-
   "privacy_modal_title": "Pahintulot sa Pagkolekta at Paggamit ng Impormasyon",
   "privacy_modal_desc": "Para sa maayos na pagproseso ng pagsasauli at refund,\nmangyaring sumang-ayon sa mga tuntunin sa ibaba.",
   "privacy_req_label": "[Kinakailangan] Pahintulot sa Pagkolekta ng Impormasyon",
@@ -271,15 +254,12 @@
   "privacy_opt_label": "[Opsyonal] Pahintulot sa Marketing (Di-sapilitan)",
   "privacy_agree_check": "Kinumpirma ko at sumasang-ayon ako sa nasa itaas.",
   "privacy_view_full": "[Tingnan ang Buo]",
-
   "btn_agree": "Sumasang-ayon",
   "btn_cancel": "Kanselahin",
   "full_text_title": "Buong Tuntunin",
   "video_close_hint": "Pindutin ang screen upang isara",
   "alert_agree_required": "Dapat kang sumang-ayon sa mga kinakailangang item.",
-
   "agreement_text_required": "[Buong Teksto ng Pahintulot sa Pagkolekta at Paggamit ng Personal na Impormasyon]\n\n1. Mga Kinokolektang Impormasyon\nKinokolekta ng KETG Co., Ltd. ang mga sumusunod para sa maayos na pagproseso.\n- Kinakailangan: Pangalan, Kaarawan, Telepono, Numero ng Account (kasama ang Bangko)\n- Awtomatikong Kinokolekta: Log ng serbisyo, cookies, IP address\n\n2. Layunin ng Pagkolekta at Paggamit\n- Pagpapatunay: Pagkilala sa nagsasauli at pag-verify ng pagkakakilanlan\n- Refund ng Deposito: Pagbabayad ng deposito at pagpapatunay ng tunay na pangalan sa account\n- Serbisyo sa Customer: Pagsagot sa mga katanungan\n\n3. Panahon ng Pagtatago at Paggamit\nSa prinsipyo, ang impormasyon ay sisirain agad pagkatapos makamit ang layunin. Gayunpaman, kung kinakailangan ng batas:\n- Mga Item: Pangalan, Kaarawan, Telepono, Account, Kasaysayan ng Pagsasauli\n- Batayan: Batas sa Pamamahala ng Yamang Pangisdaan\n- Panahon: 3 taon pagkatapos ng refund",
-
   "agreement_text_optional": "[Buong Teksto ng Pahintulot sa Pagtanggap ng Impormasyon sa Marketing]\n\n1. Paggamit sa Marketing at Patalastas\n- Pagbuo ng bagong serbisyo at produkto\n- Pagbibigay ng impormasyon sa mga kaganapan at patalastas\n- Pagsusuri ng demograpiko at istatistika ng paggamit\n\n2. Karapatang Tumanggi at Epekto\nMaaari kang tumanggi sa pahintulot na ito. Kahit tumanggi, maaari pa ring gamitin ang pangunahing serbisyo (pagsasauli at refund). Gayunpaman, hindi ka makakatanggap ng impormasyon tungkol sa mga benepisyo at kaganapan.",
   "gear_type_trap": "Bubo (Trap)",
   "gear_type_gillnet": "Lambat (Gill Net)",
@@ -298,7 +278,6 @@
   "alt_auth_alert_all_fields": "Pakilagay nang tama ang lahat ng impormasyon.",
   "btn_cancel": "Kanselahin",
   "btn_close": "Isara",
-
   "INIT_01": "Kamusta. Ito ang sistema ng awtomatikong pagsasauli ng gamit pangisda. Pindutin ang screen upang magsimula.",
   "INIT_02": "Upang magsauli, pindutin ang pindutang 'Simulan ang Pagsasauli' sa screen.",
   "AUTH_01": "Para sa pagpapatunay, buksan ang app ng Ministry of Oceans and Fisheries at i-scan ang barcode.",
@@ -313,11 +292,9 @@
   "AUTH_10": "Naproseso na ang gamit na ito. Mag-scan ng iba.",
   "AUTH_11": "Hindi valid ang barcode. Paki-scan muli.",
   "AUTH_12": "Tapos na ang pag-scan. Kapag bumukas ang pinto, ipasok ang gamit ayon sa gabay.",
-
   "PROC_02": "Kukunan ng litrato ang gamit. Ipasok ang gamit sa pinto at pindutin ang button ng pagkuha.",
   "PROC_03": "Tapos na ang pagkuha ng litrato.",
   "PROC_04": "May isasauli ka pa bang ibang gamit?",
-
   "COMP_01": "Pagkatapos suriin ang isinauling gamit, pindutin ang 'Tapusin ang Pagsasauli'.",
   "COMP_02": "Salamat sa paggamit. Salamat sa iyong tulong sa paglilinis ng karagatan.",
   "DEPOSIT_H_01": "Ikabit nang maayos ang bubo (trap) sa nakabukas na lock at isara ang pinto.",
@@ -326,8 +303,7 @@
   "STATUS_01": "Pinoproseso ang gamit. Mangyaring maghintay.",
   "STATUS_H_01": "Ligtas na inililipat ang gamit sa imbakan.",
   "STATUS_G_01": "Sinisiksik at tinatalian ang sako ng lambat. Ito ay para sa maayos na pag-iimbak.",
-  "STATUS_02": "Pakihintay."
-  ,
+  "STATUS_02": "Pakihintay.",
   "rentals_title": "Listahan ng mga Inupahang Gamit",
   "rentals_title_suffix": "'s Listahan ng mga Inupahang Gamit",
   "rentals_deposit_gear_tab": "Depositong Gamit",
@@ -361,14 +337,13 @@
   "pass_alert_request_fail": "Nabigo ang paghiling ng data ng pagpapatunay.",
   "pass_alert_server_error": "Error sa komunikasyon ng server.",
   "btn_cancel": "Kanselahin",
-
   "auth_choice_title": "Piliin ang Paraan ng Pagpapatunay",
   "auth_qr_btn_main": "Miyembro",
   "auth_qr_btn_sub": "(QR Code)",
   "auth_pass_btn_main": "PASS Auth",
   "auth_pass_btn_sub": "(Pagpapatunay sa Telepono)",
-  "auth_register_guide": "Available ang pagpaparehistro ng miyembro sa app o web."
-  ,"privacy_third_party_title": "Pahintulot sa Pagbibigay ng Impormasyon sa Ikatlong Partido",
+  "auth_register_guide": "Available ang pagpaparehistro ng miyembro sa app o web.",
+  "privacy_third_party_title": "Pahintulot sa Pagbibigay ng Impormasyon sa Ikatlong Partido",
   "privacy_third_party_main": "Upang maproseso ang pagsasauli ng gamit at refund ng deposito,",
   "privacy_third_party_sub": "nais naming ibigay ang personal na impormasyon tulad ng sumusunod.",
   "privacy_tp_recipient": "• Tatanggap: Korea Fisheries Resources Agency",
@@ -386,7 +361,6 @@
   "privacy_term2_detail": "Sumasang-ayon ako sa pagproseso ng natatanging impormasyon ng pagkakakilanlan tulad ng Resident Registration Number batay sa mga batas.",
   "btn_agree_and_auth": "Sumang-ayon at Patunayan",
   "btn_cancel": "Kanselahin",
-
   "step_1_auth": "Pagpapatunay",
   "step_2_gear": "Pag-verify ng Tag",
   "step_3_input": "Input",
@@ -418,9 +392,6 @@
   "contact_label_deposit": "Tungkol sa Deposito",
   "contact_label_general": "Pangkalahatang Tanong",
   "btn_close": "Isara",
-
-
-  
   "auth_choice_title": "Piliin ang Paraan ng Pag-verify",
   "auth_nonmember_guide": "Para sa mga hindi miyembro, mangyaring magpatuloy sa <1>'PASS Auth'</1> sa kanan.",
   "auth_qr_btn_main": "Pag-verify ng Miyembro",
@@ -430,8 +401,6 @@
   "auth_pass_btn_main": "PASS Auth",
   "auth_pass_btn_sub": "(Pag-verify sa Mobile)",
   "auth_register_guide": "Maaaring magparehistro bilang miyembro gamit ang nakalaang app o website.",
-
-
   "login_alert_empty": "Mangyaring ilagay ang ID at password.",
   "login_alert_fail": "Hindi tumutugma ang ID o password.",
   "login_alert_error": "May naganap na error sa pag-login.",
@@ -472,14 +441,11 @@
   "account_alert_title_success": "Kumpleto ang Pag-verify",
   "account_alert_title_error": "Kailangan ng Aksyon",
   "account_alert_btn_confirm": "OK",
-
-
   "auth_btn_reset": "Sa Una",
   "auth_step_1": "Auth ng User",
   "auth_step_2": "Auth ng Gear",
   "auth_step_3": "Ipasok",
   "auth_success_redirect_msg": "Lumilipat sa screen ng account...",
-
   "gear_btn_home": "Home",
   "gear_page_title": "Piliin ang gear na ibabalik",
   "gear_page_subtitle": "Dapat mong ibalik ang eksaktong parehong gear para makuha ang refund ng deposit.",
@@ -496,8 +462,6 @@
   "gear_type_gill_net": "Gill Net",
   "gear_type_cone": "Cone Trap",
   "gear_type_existing_trap": "Existing Trap",
-
-
   "scan_page_title": "Hakbang 2: I-scan ang Barcode",
   "scan_instruction_msg": "Mangyaring i-scan ang\nbarcode ng Gear Tag.",
   "scan_list_title": "Na-scan na Barcode",
@@ -511,7 +475,6 @@
   "scan_total_points": "Kabuuang Tinantyang Puntos",
   "duplicate_barcode_warning": "Na-scan na ang barcode na ito.",
   "scan_btn_next": "Susunod (Tapos na ang pag-scan)",
-
   "deposit_loading_default": "Pinoproseso...",
   "deposit_alert_no_items": "Walang na-scan na gear.",
   "deposit_msg_capture_loading": "Kinukuha ang larawan ng camera...",
@@ -555,7 +518,6 @@
   "deposit_warn_desc_1": "Para sa iyong kaligtasan,",
   "deposit_warn_desc_2": "mangyaring ",
   "deposit_warn_desc_3": "umatras!",
-
   "pass_default_guest_name": "Guest",
   "pass_alert_verify_error": "May naganap na error habang bini-verify ang impormasyon ng user.",
   "pass_alert_auth_fail": "Nabigo ang pag-authenticate.",
@@ -571,5 +533,69 @@
   "pass_loading_desc_2": "ang impormasyon ng user...",
   "pass_loading_wait": "Mangyaring maghintay sandali.",
   "pass_success_member": "Matagumpay na Authentication ng Miyembro",
-  "pass_success_non_member": "Matagumpay na Authentication ng Hindi Miyembro"
+  "pass_success_non_member": "Matagumpay na Authentication ng Hindi Miyembro",
+  "system_maintenance_title": "Kasalukuyang Inaayos ang Sistema",
+  "system_maintenance_wait": "⚠️ Naghihintay ng remote inspection at aksyon...",
+  "system_maintenance_admin_unlock": "[Admin] Sapilitang i-unlock ang screen",
+  
+  "error_software_msg": "[Error sa Software ng Sistema]\nMay nangyaring pansamantalang problema sa koneksyon ng server.\nNai-report na ito sa admin at susuriin sa lalong madaling panahon.",
+  
+  "alarm_88_title": "🚨 Puno Na (Lahat) Alarm",
+  "alarm_88_detail": "Puno na ang lalagyan ng mga sirang kagamitan. Hindi na maaaring maghulog.\nKailangang i-reset pagkatapos makolekta.",
+  
+  "alarm_83_title": "🚨 Puno Na (Likod) Alarm",
+  "alarm_83_detail": "Puno na ang lalagyan sa likod.\nKinakailangan ang agarang pagkolekta.",
+  
+  "alarm_85_title": "🚨 Puno Na (Gitna) Alarm",
+  "alarm_85_detail": "Puno na ang lalagyan sa gitna.\nKinakailangan ang agarang pagkolekta.",
+  
+  "alarm_87_title": "🚨 Puno Na (Harap) Alarm",
+  "alarm_87_detail": "Puno na ang lalagyan sa harap.\nKinakailangan ang agarang pagkolekta.",
+  
+  "alarm_97_title": "🚪 Bukas ang Pinto sa Likod",
+  "alarm_97_detail": "Huminto ang sistema dahil bukas ang pinto sa likod.\nPakisara ang pinto at suriin ang lock.",
+  
+  "alarm_99_title": "⚠️ Bukas ang Pinto sa Harap",
+  "alarm_99_detail": "Hindi normal na nakabukas ang pinto sa harap (deposit slot).\nItinuloy ang operasyon para sa kaligtasan.",
+  
+  "alarm_104_title": "🛑 Na-activate ang Emergency Signal",
+  "alarm_104_detail": "Napindot ang emergency stop button o may nangyaring emergency.\nPakisuri agad ang status ng makina.",
+  
+  "alarm_105_title": "🛑 Motor Overload Alert",
+  "alarm_105_detail": "May na-detect na motor overload sa makina.\nPakisuri ang status ng motor at conveyor."
+  ,
+  "AUTH_CHOICE_VOICE": "Mangyaring piliin ang nais mong paraan ng pagpapatunay. Kung hindi ka miyembro, mangyaring piliin ang PASS authentication sa kanan.",
+  "gear_voice_guide": "Mangyaring piliin ang uri ng gamit na nais mong ibalik.",
+  "confirm_go_home": "Gusto mo bang bumalik sa unang screen?\nAng kasalukuyang ginagawa ay hindi mase-save.",
+  "deposit_voice_close_barcode_door": "Pagkatapos suriin ang detalye, pakisara ang barcode slot.",
+  "deposit_voice_confirm_complete": "Sarado na ang barcode slot. Pakipindot ang Confirm Complete button.",
+  "auth_login_voice_guide": "Mangyaring ilagay ang iyong ID at password para mag-login.",
+  "pass_auth_voice_guide": "Kapag lumabas ang verification popup, mangyaring mag-verify sa iyong telepono.",
+  "login_alert_fail": "Mali ang ID o\npassword.\nMangyaring ilagay nang tama ang iyong ID at password.",
+  "login_alert_title_warning": "Bigo ang Pag-login",
+  "login_alert_btn_confirm": "Kumpirmahin",
+  "footer_terms": "Mga Tuntunin",
+  "footer_privacy": "Privacy",
+  "modal_terms_title": "Mga Tuntunin ng Serbisyo",
+  "modal_privacy_title": "Patakaran sa Privacy",
+  "btn_confirm": "Kumpirmahin",
+  "policy_terms_content": "<h3>Mga Tuntunin ng Sistema ng Pagbabalik</h3><p class='version'>Petsa: Abril 6, 2026</p><h4>Kabanata 1. Mga Tuntunin</h4><p class='article-title'>Artikulo 1 (Layunin)</p><p>Tinutukoy ang mga karapatan at obligasyon sa paggamit ng KETG Kiosk.</p><p class='article-title'>Artikulo 2 (Obligasyon)</p><p>Mahigpit na ipinagbabawal ang pagbabalik gamit ang ID ng iba. Ang pandaraya ay may legal na parusa.</p><h4>Kabanata 2. Iba pa</h4><p class='article-title'>Artikulo 3 (Disclaimer)</p><p>Hindi sagot ng kumpanya ang maling lagay ng bank account.</p>",
+  "policy_privacy_content": "<h3>Patakaran sa Privacy</h3><p class='version'>Petsa: Abril 6, 2026</p><h4>1. Layunin ng Pangongolekta</h4><p>Pag-verify ng pagkakakilanlan, refund, at pag-iwas sa pandaraya.</p><h4>2. Kinokolektang Impormasyon</h4><table class='policy-table'><tr><th>Layunin</th><th>Impormasyon</th></tr><tr><td>Pag-verify</td><td>Pangalan, Fisherman Code, Cellphone</td></tr><tr><td>Refund</td><td>Bangko, Pangalan sa Account, Account No.</td></tr></table><h4>3. Panahon ng Pag-imbak</h4><p>Record ng pagbabayad: 5 taon. Access log: 3 buwan.</p><h4>4. Makipag-ugnayan</h4><p>Email: jiseob@ketg.co.kr</p>",
+  "scan_alert_title_warning": "Paunawa",
+  "scan_err_not_gear": "Hindi barcode ng kagamitan.\nMangyaring i-scan ang tamang kagamitan.",
+  "duplicate_barcode_warning": "Na-scan na ang barcode.",
+  "scan_err_not_found": "Hindi natagpuan ang impormasyon ng kagamitan.",
+  "scan_err_not_available": "Hindi maibabalik ang kagamitang ito.",
+  "scan_err_not_deposit": "Hindi deposit gear.\nMangyaring piliin ang existing gear sa nakaraang screen.",
+  "scan_err_not_existing": "Hindi existing gear.\nMangyaring piliin ang deposit gear sa nakaraang screen.",
+  "scan_err_stolen": "Hindi maaaring ibalik ang kagamitan\nna nakarehistro sa iba.",
+  "auth_manual_placeholder": "Pindutin para ilagay ang auth code",
+  "auth_manual_submit": "Kumpirmahin",
+  "account_keypad_delete": "Burahin",
+  "account_keypad_clear": "I-clear",
+  "account_keypad_close": "Isara",
+  "1.장구형의 통발": "1. Drum-shaped Trap",
+  "장구형의 통발": "Drum-shaped Trap",
+  "기존통발(흰색 바코드)": "Existing Trap (White Barcode)",
+  "이미 반환 처리됨": "Naibalik na"
 }

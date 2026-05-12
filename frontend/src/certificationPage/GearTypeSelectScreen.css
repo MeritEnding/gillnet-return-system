@@ -9,11 +9,10 @@
   position: relative;
   background-size: cover;
   background-position: center;
-  background-attachment: fixed;
-  overflow-y: auto;
+  overflow-y: hidden; 
 }
 
-/* ★ 상단 뒤로가기 버튼(`.gear-back-btn`) 관련 스타일은 제거합니다. */
+/* ★ 상단 뒤로가기 버튼 (.gear-back-btn) CSS 제거 완료 */
 
 /* --- 메인 콘텐츠 영역 --- */
 .gear-content-area {
@@ -22,129 +21,157 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 60px 20px 30px 20px; 
+  padding: 30px 20px; 
+  /* 상단 여백 축소 (버튼 제거 대응) */
+  margin-top: 30px; 
 }
 
-/* 타이틀 여백 축소 */
 .gear-page-title {
-  font-size: 4.8rem;
+  font-size: 4.2rem; 
   font-weight: 900;
   color: white;
-  text-shadow: 2px 2px 15px rgba(0,0,0,0.7);
-  margin: 0 0 10px 0;
-  letter-spacing: -2px;
+  text-shadow: 2px 2px 10px rgba(0,0,0,0.6);
+  margin: 0 0 15px 0;
+  letter-spacing: -1.5px;
   text-align: center;
 }
+
 .gear-page-subtitle {
-  font-size: 2.4rem;
+  font-size: 2.2rem;
   font-weight: 700;
   color: #EAF8FF;
-  text-shadow: 1px 1px 8px rgba(0,0,0,0.7);
-  margin: 0 0 25px 0;
+  margin: 0 0 30px 0;
   text-align: center;
+  word-break: keep-all;
 }
 
 /* --- 하얀색 메인 카드 --- */
 .gear-card {
   background-color: rgba(255, 255, 255, 0.98);
   border: 10px solid #00A0E9;
-  border-radius: 45px;
+  border-radius: 40px;
   width: 96%;
-  max-width: 1150px;
-  padding: 40px 50px;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
-}
-
-/* --- 섹션별 타이틀 --- */
-.gear-section { margin-bottom: 25px; } /* ★ 구역 사이 여백 축소 */
-.gear-section:last-child { margin-bottom: 0; }
-
-.gear-section-title {
-  font-size: 3rem;
-  font-weight: 900;
-  margin: 0 0 10px 0; /* ★ 여백 축소 */
-  padding-bottom: 10px;
-  border-bottom: 5px solid #eee;
-}
-.gear-section-title.deposit { color: #006090; border-bottom-color: #EAF8FF; }
-.gear-section-title.existing { color: #155724; border-bottom-color: #d4edda; }
-
-/* --- 어구 선택 버튼 그리드 --- */
-.gear-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-}
-.gear-grid.single {
-  grid-template-columns: 1fr;
-}
-
-/* ★ 버튼 사이즈 최적화 및 유연한 레이아웃 적용 (다국어 줄바꿈 대응) */
-.gear-btn {
+  max-width: 900px; 
+  padding: 40px; 
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+  flex: 1; 
   display: flex;
-  flex-direction: column;
+}
+
+/* ========================================= */
+/* 세로 모드 최적화 레이아웃 (위/아래 2단 배치) */
+/* ========================================= */
+
+.massive-layout {
+  display: flex;
+  flex-direction: column; 
+  gap: 30px; 
+  width: 100%;
+  justify-content: center;
+}
+
+.gear-btn-massive {
+  flex: 1; 
+  display: flex;
+  flex-direction: row; 
   align-items: center;
-  /* ★ 고정 높이 제거, 최소 높이 설정, 자동 높이 변경으로 줄바꿈 허용 */
-  min-height: 280px; 
-  height: auto;
-  background-color: white;
-  border-radius: 25px;
+  position: relative;
+  border-radius: 30px;
+  border: 4px solid transparent;
   cursor: pointer;
-  transition: all 0.1s;
+  transition: all 0.2s ease;
   overflow: hidden;
-  padding: 0;
+  padding: 40px 30px 30px 30px; 
+  box-shadow: 0 8px 20px rgba(0,0,0,0.06); 
 }
 
-/* 사진 영역 */
-.gear-btn-img {
-  width: 100%;
-  height: 180px; /* ★ 높이 최적화 */
-  padding: 10px;
-  object-fit: contain;
-  background-color: #fff;
+.gear-btn-massive:active {
+  transform: scale(0.98);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.05);
 }
 
-/* 텍스트 영역 */
-.gear-btn-text {
-  width: 100%;
-  flex: 1;
+.deposit-massive {
+  border-color: #4DB8FF;
+  background-color: #F4FBFF; 
+}
+
+.existing-massive {
+  border-color: #85D665;
+  background-color: #F5FCF2;
+}
+
+.massive-badge {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 12px 25px;
+  border-radius: 25px 0 25px 0; 
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: white;
+  box-shadow: 2px 2px 10px rgba(0,0,0,0.15);
+}
+
+.deposit-badge { background: #00A0E9; }
+.existing-badge { background: #6CC24A; }
+
+/* --- 기존 CSS 파일에서 아래 클래스들만 찾아서 덮어씌워 주세요! --- */
+
+.gear-img-wrap-massive {
+  flex: 1.2; /* 텍스트보다 이미지 쪽에 공간을 좀 더 많이 할당합니다 */
   display: flex;
   align-items: center;
   justify-content: center;
-  /* ★ 폰트 크기 축소 (2.6rem -> 2.2rem) 및 단어 단위 줄바꿈 해제 */
-  font-size: 2.2rem; 
+  padding-left: 20px; /* 왼쪽 여백을 줘서 뱃지랑 안 겹치게 */
+}
+
+.gear-img-massive {
+  width: 100%;
+  max-width: 380px;  /* 기존 220px에서 대폭 확대! */
+  max-height: 350px; /* 기존 200px에서 대폭 확대! */
+  object-fit: contain;
+  mix-blend-mode: multiply; 
+  opacity: 1; /* 좀 더 선명하게 보이도록 0.95 -> 1로 변경 */
+  transform: scale(1.1); /* 사진을 10% 더 땡겨서 꽉 차 보이게 해줍니다 */
+}
+
+/* --- 텍스트 영역 --- */
+.gear-text-massive {
+  flex: 1; /* 이미지가 커진 만큼 텍스트 영역 비율을 살짝 양보합니다 */
+  font-size: 6.5rem; /* 사진과 밸런스를 맞추기 위해 7.0 -> 6.5로 살짝 조절 */
   font-weight: 900;
+  color: #222;
   text-align: center;
-  line-height: 1.2;
-  word-break: normal; /* ★ 영어 단어 줄바꿈을 위해 'keep-all'을 해제 */
-  padding: 5px; /* ★ 내부 여백 추가 */
+  line-height: 1.3;
+  word-break: keep-all; 
+  white-space: pre-wrap;
+  letter-spacing: -2.5px;
+  padding-right: 20px;
+}
+/* 1. 상단 뱃지 텍스트가 길어질 경우 삐져나가지 않게 줄바꿈 허용 */
+.gear-wrapper.lang-tl .massive-badge {
+  font-size: 1.4rem;
+  white-space: normal;
+  max-width: 90%;
+  line-height: 1.3;
 }
 
-/* --- 테마 색상 --- */
-.gear-btn.deposit {
-  border: 5px solid #00A0E9;
-  box-shadow: 0 8px 0 #00A0E9;
-}
-.gear-btn.deposit .gear-btn-text { 
-  background-color: #EAF8FF; 
-  color: #006090; 
-  border-top: 4px solid #bce8ff; 
-}
-.gear-btn.deposit:active {
-  transform: translateY(8px);
-  box-shadow: 0 0 0 #00A0E9;
+/* 2. 레이아웃(좌우 배치)은 그대로 두고 우측 텍스트 크기만 축소 */
+.gear-wrapper.lang-tl .gear-text-massive {
+  font-size: 3.2rem; /* 기존 6.5rem에서 긴 단어를 위해 축소 */
+  line-height: 1.3;
+  word-break: normal; /* keep-all 해제하여 자연스럽게 떨어지도록 함 */
+  overflow-wrap: break-word;
+  white-space: normal; /* pre-wrap 대신 normal로 강제 줄바꿈 허용 */
+  padding-right: 10px;
 }
 
-.gear-btn.existing {
-  border: 5px solid #28a745;
-  box-shadow: 0 8px 0 #28a745;
-}
-.gear-btn.existing .gear-btn-text { 
-  background-color: #d4edda; 
-  color: #155724; 
-  border-top: 4px solid #c3e6cb; 
-}
-.gear-btn.existing:active {
-  transform: translateY(8px);
-  box-shadow: 0 0 0 #28a745;
+/* 3. 세로 모드(키오스크 전용) 폰트 미세 조정 */
+@media (orientation: portrait) {
+  .gear-wrapper.lang-tl .gear-text-massive {
+    font-size: 3.8rem; 
+  }
+  .gear-wrapper.lang-tl .massive-badge {
+    font-size: 1.6rem;
+  }
 }

@@ -18,7 +18,7 @@ const InfoBanner = ({ onContactClick }) => {
           {/* 긴 텍스트가 와도 레이아웃 유지 */}
           <p className="banner-title">{t('main_info_1')}</p>
           <p className="banner-desc">{t('main_info_2')}</p>
-          <p className="banner-contact">{t('main_info_3')}</p>
+          
         </div>
       </div>
 

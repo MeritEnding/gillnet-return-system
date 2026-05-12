@@ -18,6 +18,7 @@ import Header from './mainPage/Header';
 import NumberInputScreen from './authPage/NumberInputScreen';
 import AccountScreen from './authPage/AccountScreen';
 import GearTypeSelectScreen from './certificationPage/GearTypeSelectScreen';
+import AdminRemote from './admin/AdminRemote';
 
 const router = createBrowserRouter([
   {
@@ -109,6 +110,11 @@ const router = createBrowserRouter([
     id:19,
     path: '/select-gear',
     element: <GearTypeSelectScreen />
+  },
+  {
+    id:20,
+    path: '/admin/remote',
+    element: <AdminRemote/>
   }
   
 

@@ -7,10 +7,33 @@ import './LoginModal.css'; // 기존 로그인 성공 스타일 재사용
 import AccountInputModal from './AccountInputModal';
 
 const PassModal = ({ onClose, onNonMember }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const isRunRef = useRef(false);
   const popupRef = useRef(null);
+
+  // ★ 음성 제어용 참조 추가
+  const voiceListCache = useRef([]);
+  window.utterances = window.utterances || [];
+
+  
+  // ★ TTS 함수 정의 (다른 기능 미세 영향 방지를 위해 내부에 정의)
+  const speak = (text) => {
+    if (!('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    window.utterances.push(utterance);
+    const langMap = { 'ko': 'ko-KR', 'en': 'en-US', 'vi': 'vi-VN', 'tl': 'fil-PH', 'id': 'id-ID', 'my': 'my-MM' };
+    utterance.lang = langMap[i18n.language.substring(0, 2)] || 'ko-KR';
+    const voices = window.speechSynthesis.getVoices();
+    const selectedVoice = voices.find(v => v.lang.includes(utterance.lang));
+    if (selectedVoice) utterance.voice = selectedVoice;
+    utterance.onend = () => {
+      const idx = window.utterances.indexOf(utterance);
+      if (idx > -1) window.utterances.splice(idx, 1);
+    };
+    window.speechSynthesis.speak(utterance);
+  };
 
   const [alertInfo, setAlertInfo] = useState({ show: false, message: '' });
   
@@ -24,9 +47,20 @@ const PassModal = ({ onClose, onNonMember }) => {
 
   const [showAccountModal, setShowAccountModal] = useState(false);
 
+  const maskName = (name) => {
+    if (!name || typeof name !== 'string' || name.length < 2) return name || 'Guest';
+    if (name.length === 2) return name.substring(0, 1) + '*';
+    return name.substring(0, 1) + '*'.repeat(name.length - 2) + name.substring(name.length - 1);
+  };
+
   useEffect(() => {
     if (isRunRef.current) return;
     isRunRef.current = true;
+
+    // ★ 화면 진입 시 나레이션 실행
+    const introMsg = t('pass_auth_voice_guide');
+    speak(introMsg);
+
     handleStartPass();
   }, []);
 
@@ -70,7 +104,7 @@ const PassModal = ({ onClose, onNonMember }) => {
     setIsProcessing(true);
 
     try {
-      const response = await axios.post('http://localhost:8080/api/v1/proxy/user/check-member', {
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/v1/proxy/user/check-member`, {
         di: diValue
       });
 
@@ -83,6 +117,8 @@ const PassModal = ({ onClose, onNonMember }) => {
         localStorage.setItem('fisherman_name', userData.mbr_nm || '');
         localStorage.setItem('mbr_no', userData.mbr_no || '');
         localStorage.setItem('is_member', 'true');
+        localStorage.setItem('mbl_telno', userData.mbl_telno || ''); 
+        localStorage.setItem('fisherman_phone', userData.telno || userData.mbl_telno || '');
 
         if (userData.actno) {
           localStorage.setItem('bank_cd', userData.bank_cd || '');
@@ -223,7 +259,7 @@ const PassModal = ({ onClose, onNonMember }) => {
                     <p className="alert-msg-v2">
                       <span className="greeting-text-top">{t('login_success_greeting_1')}</span>
                       <br />
-                      <strong>{successInfo.name}</strong>{t('login_success_greeting_2')}
+                      <strong>{maskName(successInfo.name)}</strong>{t('login_success_greeting_2')}
                     </p>
                     <div className="loading-bar-container">
                       <div className="loading-bar-fill" style={{ backgroundColor: successInfo.isMember ? '#00A0E9' : '#28a745' }}></div>

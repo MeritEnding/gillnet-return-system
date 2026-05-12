@@ -1,103 +1,95 @@
-/* 화면 밑에 붙는 팝업(Bottom Sheet) 느낌으로 세련되게 변경 */
+/* src/components/Footer.css */
+
 .bottom-bar-footer {
   position: fixed;
   bottom: 0;
   left: 0;
   width: 100%;
   background-color: #ffffff;
-  /* 윗부분 모서리를 둥글게 처리하여 최신 앱 느낌 부여 */
-  border-radius: 30px 30px 0 0; /* 곡률 살짝 줄임 */
+  border-radius: 30px 30px 0 0; /* 원래의 부드러운 둥글기 */
   box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.08); 
   display: flex;
   justify-content: center;
   z-index: 1000;
-  padding: 15px 0 20px 0; /* 위아래 여백을 대폭 줄여 전체 높이 감소 */
+  /* 위아래 패딩을 너무 크지 않게 적당히 조절 */
+  padding: 12px 0 15px 0; 
 }
 
-/* 내부 콘텐츠의 최대 넓이를 제한하여 너무 퍼지지 않게 정렬 */
 .bottom-bar-inner {
   width: 100%;
   max-width: 1024px;
   display: flex;
   flex-direction: column;
-  padding: 0 15px; /* 좌우 여백 살짝 조절 */
+  padding: 0 15px; 
 }
 
-/* 윗줄 (타이틀 & 이용안내 버튼) */
-.bottom-bar-header {
+/* ========================================= */
+/* ★ 약관 링크 영역 (작고 얇게 유지) */
+/* ========================================= */
+.bottom-bar-links {
   display: flex;
-  justify-content: space-between; 
+  justify-content: center;
   align-items: center;
-  padding: 0 10px;
+  gap: 12px;
+  margin-bottom: 8px; /* 언어 버튼과 바짝 붙게 간격 최소화 */
 }
 
-.bottom-bar-title {
-  font-size: 1.5rem; /* 글씨 크기 약간 키움 */
-  font-weight: 800;
+.policy-link-btn {
+  background: transparent;
+  border: none;
   color: #64748b;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  letter-spacing: -0.5px;
-}
-
-.title-icon {
-  font-size: 1.6rem;
-}
-
-/* 이용 안내 버튼 (포인트 컬러 적용) */
-.footer-guide-btn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 24px;
-  background-color: #fff;
-  color: #ff5252; /* 눈에 띄도록 산뜻한 붉은빛 텍스트 */
-  border: 2px solid #ffeaea; /* 부드러운 테두리 */
-  border-radius: 50px; /* 완전한 알약 모양 */
-  font-size: 1.4rem;
-  font-weight: 800;
+  font-size: 1.1rem; /* 약관 글씨는 작게 */
+  font-family: 'Pretendard', sans-serif;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
-  box-shadow: 0 4px 10px rgba(255, 82, 82, 0.1);
+  padding: 2px 8px;
+  transition: color 0.2s;
 }
 
-.footer-guide-btn:active {
-  transform: scale(0.95);
-  background-color: #fff5f5;
-  border-color: #ffbaba;
+.policy-link-btn.bold {
+  font-weight: 800;
+  color: #334155; 
 }
 
-/* 아랫줄 (언어 버튼 6개 나열) */
+.policy-link-btn:active {
+  color: #00A0E9;
+}
+
+.policy-divider {
+  color: #cbd5e1;
+  font-size: 1rem;
+}
+
+/* ========================================= */
+/* ★ 아랫줄 언어 버튼 (원래 크기로 큼직하게 복구) */
+/* ========================================= */
 .bottom-bar-row {
   display: flex;
-  justify-content: space-between; /* 양옆으로 고르게 분배 */
-  gap: 10px; /* 갭을 약간 줄여 오밀조밀하게 배치 */
+  justify-content: space-between; 
+  gap: 10px; /* 원래 갭 복구 */
 }
-/* 개별 언어 버튼 (기본 상태) */
-/* 개별 언어 버튼 (기본 상태) */
+
 .row-lang-btn {
-  flex: 1; /* 버튼들이 동일한 너비를 가지도록 설정 */
+  flex: 1; 
   display: flex;
-  flex-direction: column; /* 국기 아래에 텍스트가 오도록 세로 배치 */
+  flex-direction: column; 
   align-items: center;
   justify-content: center;
-  gap: 6px; /* 텍스트와 국기 사이 간격 축소 */
-  padding: 10px 5px; /* 내부 여백을 줄여 전체 버튼 높이 축소 */
-  background: #f8fafc; /* 아주 연한 회색 배경 */
+  gap: 6px; /* 원래 간격 */
+  padding: 10px 5px; /* 원래 패딩 복구 */
+  background: #f8fafc; 
   border: 2px solid transparent; 
-  border-radius: 20px; /* 네모난 느낌을 조금 더 줌 */
+  border-radius: 20px; 
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 .row-lang-btn:active {
-  transform: scale(0.95); /* 눌리는 느낌 정도 조절 */
+  transform: scale(0.95); 
 }
 
-/* 국기 이미지 */
+/* 국기 이미지 - 원래 크기로 큼직하게 복구 */
 .row-lang-flag {
-  width: 36px; /* 높이를 위해 국기 크기 축소 */
+  width: 36px; 
   height: 36px;
   border-radius: 50%;
   object-fit: cover;
@@ -105,28 +97,28 @@
   border: 2px solid #ffffff;
 }
 
-/* 텍스트 스타일 */
+/* 텍스트 스타일 - 원래 크기로 복구 */
 .row-lang-text {
-  font-size: 1.15rem; /* 텍스트 크기 축소 */
+  font-size: 1.15rem; 
   font-weight: 700;
-  color: #94a3b8; /* 선택 안 된 글씨는 약간 흐리게 */
+  color: #94a3b8; 
   font-family: 'Pretendard', sans-serif;
   letter-spacing: -0.5px;
 }
 
-/* ★ 선택된 언어 강조 (그라데이션 및 입체감) */
+/* 선택된 언어 강조 효과 유지 */
 .row-lang-btn.active {
   background: linear-gradient(145deg, #8ADD6D 0%, #6CC24A 100%);
   border: 2px solid #5CAF3C;
   box-shadow: 0 4px 15px rgba(108, 194, 74, 0.3);
-  transform: translateY(-3px); /* 뜨는 효과 약간 축소 */
+  transform: translateY(-3px); 
 }
 
 .row-lang-btn.active .row-lang-text {
-  color: #ffffff; /* 선택된 버튼의 텍스트는 명확한 흰색 */
+  color: #ffffff; 
   text-shadow: 0 1px 2px rgba(0,0,0,0.2);
 }
 
 .row-lang-btn.active .row-lang-flag {
-  box-shadow: 0 2px 6px rgba(0,0,0,0.3); /* 국기 그림자도 조절 */
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3); 
 }

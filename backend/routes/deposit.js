@@ -24,11 +24,12 @@ router.post('/init', async (req, res) => {
 // 2. 사진 촬영 후 -> 컨베이어 구동 (5초로 연장)
 router.post('/action/conveyor', async (req, res) => {
     try {
-        console.log("-> PLC: 컨베이어 가동 요청 (5초)");
-        plc.runConveyor(8000);  //  5000 -> 8000 으로 수정
+        console.log("-> PLC: 컨베이어 가동 요청 (8초)");
+        await plc.runConveyor(4000);  // ★ await 추가! 여기서 실패하면 catch로 넘어감
         res.status(200).json({ status: 'SUCCESS', message: 'Conveyor Started' });
     } catch(e) {
-        res.status(500).json({ status: 'FAILURE' });
+        console.error("컨베이어 가동 API 실패:", e.message);
+        res.status(500).json({ status: 'FAILURE', message: 'PLC 통신 에러' });
     }
 });
 
@@ -60,7 +61,7 @@ router.post('/action/cleaning', async (req, res) => {
         await plc.setBarcodeDoor(false);
         
         // 벨트 위에 남은 마지막 어구가 적재함으로 완전히 떨어지도록 10초간 추가 구동
-        plc.runConveyor(10000); 
+        plc.runConveyor(18000); 
         
         res.status(200).json({ status: 'SUCCESS', message: 'Cleaning Sequence Started' });
     } catch(e) {

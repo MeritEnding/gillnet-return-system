@@ -228,7 +228,7 @@ const VerifyCodeScreen = () => {
 
     try {
       // (★중요★) 백엔드에 새로 만들 인증번호 검증 API 호출
-      const response = await fetch('http://localhost:8080/api/auth/verify', { 
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/verify`, { 
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

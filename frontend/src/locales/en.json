@@ -8,7 +8,7 @@
   "main_guide_button": "User Guide",
   "status_returnable": "Returnable",
   "status_returned": "Returned",
-  "go_home":"Go Back",
+  "go_home": "Go Back",
   "btn_back": "Go Back",
   "barcode_label": "Barcode Number",
   "guide_title": "User Guide",
@@ -48,7 +48,10 @@
   "method_step4_desc": "Once input is done, check the return details and deposit refund amount on the monitor.",
   "modal_confirm_btn": "I understand",
   "faq_a2_sub": "Please wipe the tag clean and try again.",
-
+  "deposit_loading_title": "Please wait a moment",
+  "deposit_msg_finishing": "Almost done! Moving to the completion screen shortly.",
+  "label_deposit_gear_short": "Deposit Gear",
+  "label_existing_gear_short": "Existing Gear",
   "deposit_alert_no_items": "No items to return.",
   "deposit_capture_success": "Photo uploaded successfully.",
   "error_occurred": "An error occurred.",
@@ -57,7 +60,6 @@
   "deposit_loading_upload": "Uploading to server...",
   "deposit_loading_process": "Processing return data...",
   "deposit_instruction_strong": "Put the gear in the box and press <strong>Capture</strong>.",
-
   "policy_modal_title": "Gear Deposit System",
   "policy_title_1": "Let's do it together! Gear Deposit System\"",
   "policy_text1_strong": "The Gear Deposit System",
@@ -65,7 +67,6 @@
   "policy_text2_strong": "Anytime, 24 hours",
   "policy_text2": " you can conveniently return waste fishing gear.",
   "policy_text3": "Thank you for joining us in making our ocean clean through proper gear collection.",
-
   "faq_modal_title": "Frequently Asked Questions (FAQ)",
   "faq_q1": "User Authentication (QR Scan) keeps failing.",
   "faq_a1": "Please scan clearly again so the phone QR code fits the scanner. If it fails continuously, use 'Retry' or 'Alternate Auth'.",
@@ -76,8 +77,6 @@
   "faq_a3_strong": "Manager Contact (010-0000-0000)",
   "faq_a3": "If an issue occurs during kiosk use, please contact the number shown on the screen immediately.",
   "auth_register_guide": "Member registration is available via the dedicated app or website.",
-  
-
   "auth_step_1": "1. User Auth",
   "auth_step_2": "2. Tag Auth",
   "auth_step_3": "3. Input",
@@ -88,12 +87,10 @@
   "auth_test_success_button": "(Test) Reg. QR Scan",
   "auth_test_fail_button": "(Test) Unreg. QR Scan",
   "auth_contact_label": "Manager:",
-
   "auth_fail_popup_title": "⚠️ Auth Failed",
   "auth_fail_popup_message": "Please scan the QR code or barcode\nclearly once again.",
   "auth_fail_popup_retry_button": "Retry",
   "auth_fail_popup_alternate_button": "Alternate Auth",
-
   "auth_success_popup_title": "Auth Complete",
   "auth_success_popup_welcome_strong": " Welcome.",
   "auth_success_popup_welcome": "Preparing for gear return.",
@@ -102,7 +99,6 @@
   "auth_mascot_alt": "Mascot",
   "auth_qr_alt": "Fisher QR Code",
   "auth_success_mascot_alt": "Success Mascot",
-
   "alt_auth_title": "Step 1: Alternate Auth",
   "alt_auth_pin_instruction": "Enter info, then press [Authenticate].",
   "alt_auth_label_name": "Name",
@@ -115,16 +111,13 @@
   "alt_auth_submit_button": "Authenticate",
   "alt_auth_alert_all_fields": "Please fill in all fields.",
   "alt_auth_alert_invalid_format": "Check input format (DOB 8 digits, Phone 10-11 digits, PIN 4 digits).",
-
   "alt_auth_fail_popup_title": "⚠️ Auth Failed",
   "alt_auth_fail_popup_message": "Information not found.\nPlease check again.",
   "alt_auth_fail_popup_retry_button": "Retry",
   "alt_auth_fail_popup_goback_button": "To QR Scan",
   "auth_success_popup_welcome_suffix": " Welcome.",
-  
   "error_gear_not_owner": "This gear is not currently rented by you.",
   "error_gear_unknown": "This phrase has already been scanned.",
-
   "tagging_step_label": "Step 2",
   "tagging_title": "Step 2: Scan the marker barcode",
   "tagging_instruction_top": "Enter the quantity of gear to return.",
@@ -138,7 +131,6 @@
   "tagging_alert_session_expired": "Session expired. Returning to Step 1.",
   "tagging_alert_api_error_prefix": "Error: ",
   "tagging_alert_network_error": "Server communication error. Please try again later.",
-
   "gearscan_fail_popup_title": "⚠️ Barcode Scan Failed",
   "gearscan_fail_popup_message": "Cannot recognize barcode.\nWipe clean and retry\nor contact manager.",
   "gearscan_success_popup_title": "Scan Complete",
@@ -149,7 +141,6 @@
   "gearscan_instruction_single": "Use scanner to scan<br/><strong>Gear Barcode</strong>",
   "gearscan_test_button_success": "(Test) Valid Barcode",
   "gearscan_test_button_fail_owner": "(Test) No Ownership",
-
   "tagscan_fail_popup_title": "⚠️ Tag Verification Failed",
   "tagscan_fail_popup_message": "Wipe tag clean and\nretry or\ncontact manager.",
   "tagscan_fail_popup_retry_button": "Retry",
@@ -165,7 +156,6 @@
   "tagscan_test_button_fail": "(Temp) Fake Tag",
   "tagscan_img_alt_ref_tag": "Tag Scan Ref",
   "tagscan_img_alt_ref_net": "Net Scan Ref",
-
   "gearscan_popup_title": "Tag Check Complete",
   "gearscan_popup_message": "Currently {{totalCount}} gears registered.<1/>Do you have more gear to return?",
   "gearscan_popup_yes": "Yes",
@@ -184,11 +174,9 @@
   "gearscan_table_deposit_amount": "{{amount}} KRW",
   "gearscan_table_footer_total": "Total Deposit",
   "gearscan_test_button_prefix": "Scan: ",
-
   "scan_error_alert_prefix": "Scan Error:",
   "session_expired_alert": "Session expired. Restarting from Step 1.",
   "error_server_communication": "Server communication error. Please try again later.",
-
   "deposit_loading_default": "Processing...",
   "deposit_loading_alt": "Loading",
   "deposit_webcam_error": "Cannot start webcam. Check camera permissions.",
@@ -205,8 +193,8 @@
   "deposit_live_label": "Live Recording",
   "deposit_mascot_alt": "Input Mascot",
   "deposit_instruction_strong": "<strong>Put discarded fishing gear into the inlet and</strong><1/>",
-  "deposit_state_ready":"Please press the capture button.",
-  "deposit_button_capture":"Capture",
+  "deposit_state_ready": "Please press the capture button.",
+  "deposit_button_capture": "Capture",
   "deposit_state_idle": "Press 'Capture' when ready.",
   "deposit_state_detecting": "Detecting gear...",
   "deposit_state_capturing": "Detected! Capturing in 3s.",
@@ -228,7 +216,6 @@
   "deposit_photo_count": "{{count}} photos taken.",
   "deposit_state_loading_camera": "Preparing camera...",
   "deposit_button_loading_camera": "Camera Loading...",
-
   "completion_loading_alt": "Loading",
   "completion_error_no_session": "Session not found. Please restart from Step 1.",
   "completion_error_fetch_failed": "Failed to load receipt.",
@@ -269,11 +256,9 @@
   "AUTH_10": "Already processed gear. Scan another one.",
   "AUTH_11": "Invalid barcode. Please scan again.",
   "AUTH_12": "Scan complete. Wait for the slot to open and follow instructions.",
-
   "PROC_02": "Capturing gear. Put gear in slot and press capture button.",
   "PROC_03": "Capture complete.",
   "PROC_04": "Do you have additional gear to return?",
-
   "COMP_01": "Check returned gear, then press 'Return Complete' button.",
   "COMP_02": "Thank you for using. Thank you for helping make the ocean clean.",
   "DEPOSIT_H_01": "Securely fasten the trap gear to the open lock and close the door.",
@@ -282,8 +267,7 @@
   "STATUS_01": "Processing gear. Please wait.",
   "STATUS_H_01": "Moving gear safely to storage.",
   "STATUS_G_01": "Compressing and banding sack. This is for storage efficiency.",
-  "STATUS_02": "Please wait a moment."
-  ,
+  "STATUS_02": "Please wait a moment.",
   "rentals_title": "Rented Gear List",
   "rentals_title_suffix": "'s Rented Gear List",
   "rentals_deposit_gear_tab": "Deposit Gear",
@@ -322,8 +306,7 @@
   "auth_qr_btn_sub": "(QR Code)",
   "auth_pass_btn_main": "PASS Auth",
   "auth_pass_btn_sub": "(Phone Verification)",
-  "auth_register_guide": "Membership registration is available via the app or web."
-  ,
+  "auth_register_guide": "Membership registration is available via the app or web.",
   "privacy_third_party_title": "Third-Party Data Provision Consent",
   "privacy_third_party_main": "To process waste gear returns and deposit refunds,",
   "privacy_third_party_sub": "we intend to provide personal information as follows.",
@@ -341,7 +324,6 @@
   "privacy_term2_label": "[Required] Consent to Processing of Unique ID Info",
   "privacy_term2_detail": "I agree to the processing of unique identification information, such as Resident Registration Number, based on relevant laws.",
   "btn_agree_and_auth": "Agree & Verify",
-  
   "step_1_auth": "User Auth",
   "step_2_gear": "Tag Verify",
   "step_3_input": "Input",
@@ -373,8 +355,6 @@
   "contact_label_deposit": "Deposit Inquiry",
   "contact_label_general": "General Inquiry",
   "btn_close": "Close",
-
-
   "auth_choice_title": "Select Authentication Method",
   "auth_nonmember_guide": "Non-members, please proceed with <1>'PASS Auth'</1> on the right.",
   "auth_qr_btn_main": "Member Auth",
@@ -384,7 +364,6 @@
   "auth_pass_btn_main": "PASS Auth",
   "auth_pass_btn_sub": "(Mobile Verification)",
   "auth_register_guide": "Member registration is available via the dedicated app or web.",
-
   "login_alert_empty": "Please enter both ID and password.",
   "login_alert_fail": "ID or password does not match.",
   "login_alert_error": "An error occurred during login.",
@@ -402,7 +381,6 @@
   "login_success_greeting_1": "Welcome,",
   "login_success_greeting_2": "!",
   "login_success_auto_move": "Moving to the account verification screen shortly...",
-
   "account_title": "Please verify your refund account",
   "account_subtitle": "(Touch an item to edit)",
   "account_bank_label": "Bank (Required)",
@@ -426,25 +404,20 @@
   "account_alert_title_success": "Verification Complete",
   "account_alert_title_error": "Action Required",
   "account_alert_btn_confirm": "OK",
-
   "auth_btn_reset": "Home",
   "auth_step_1": "User Auth",
   "auth_step_2": "Gear Auth",
   "auth_step_3": "Insert",
   "auth_success_redirect_msg": "Moving to account information...",
-
   "gear_section_deposit": "Return of deposit (cash refund)",
   "gear_page_title": "Touch the gear you want to return",
-
   "gear_page_subtitle": "You must select the same fishing gear and return it to receive your deposit refund.",
   "gear_type_hourglass": "Hourglass Trap",
   "gear_type_eel": "Eel Trap",
-
   "gear_section_existing": "Return existing fishing gear (accumulate points)",
   "gear_type_gill_net": "Gill Net",
   "gear_type_cone": "Cone Trap",
   "gear_type_existing_trap": "Existing Trap",
-
   "scan_page_title": "Step 2: Scan Gear Barcode",
   "scan_instruction_msg": "Please scan the\nGear Deposit Tag barcode.",
   "scan_list_title": "Scanned Barcodes",
@@ -458,7 +431,6 @@
   "scan_total_points": "Total Estimated Points",
   "duplicate_barcode_warning": "This barcode has already been scanned.",
   "scan_btn_next": "Next (Scan Complete)",
-
   "deposit_loading_default": "Processing...",
   "deposit_alert_no_items": "No gear scanned.",
   "deposit_msg_capture_loading": "Capturing camera image...",
@@ -502,7 +474,6 @@
   "deposit_warn_desc_1": "For your safety,",
   "deposit_warn_desc_2": "please ",
   "deposit_warn_desc_3": "step back!",
-
   "pass_default_guest_name": "Guest",
   "pass_alert_verify_error": "An error occurred while verifying user information.",
   "pass_alert_auth_fail": "Authentication failed.",
@@ -518,6 +489,67 @@
   "pass_loading_desc_2": "user information...",
   "pass_loading_wait": "Please wait a moment.",
   "pass_success_member": "Member Authentication Successful",
-  "pass_success_non_member": "Non-Member Authentication Successful"
-
+  "pass_success_non_member": "Non-Member Authentication Successful",
+  "system_maintenance_title": "System Under Maintenance",
+  "system_maintenance_wait": "⚠️ Waiting for remote inspection and action...",
+  "system_maintenance_admin_unlock": "[Admin] Force Unlock Screen",
+  
+  "error_software_msg": "[Software System Error]\nA temporary server communication failure has occurred.\nThe administrator has been notified and it will be checked promptly.",
+  
+  "alarm_88_title": "🚨 Full Capacity (All) Alarm",
+  "alarm_88_detail": "The storage is full of waste gear. No more can be deposited.\nThe system must be reset after collection.",
+  
+  "alarm_83_title": "🚨 Full Capacity (Rear) Alarm",
+  "alarm_83_detail": "The rear storage is full.\nPrompt collection is required.",
+  
+  "alarm_85_title": "🚨 Full Capacity (Center) Alarm",
+  "alarm_85_detail": "The center storage is full.\nPrompt collection is required.",
+  
+  "alarm_87_title": "🚨 Full Capacity (Front) Alarm",
+  "alarm_87_detail": "The front storage is full.\nPrompt collection is required.",
+  
+  "alarm_97_title": "🚪 Rear Door Open Alert",
+  "alarm_97_detail": "The system is stopped because the rear door is open.\nPlease close the door and check the lock.",
+  
+  "alarm_99_title": "⚠️ Front Door Open Alert",
+  "alarm_99_detail": "The front door (deposit slot) is abnormally open.\nOperation has been suspended for safety.",
+  
+  "alarm_104_title": "🛑 Emergency Signal Activated",
+  "alarm_104_detail": "The emergency stop button was pressed or an urgent situation occurred.\nPlease check the machine status immediately.",
+  
+  "alarm_105_title": "🛑 Motor Overload Alert",
+  "alarm_105_detail": "Motor overload detected in the machine.\nPlease check the status of the motor and conveyor.",
+  "AUTH_CHOICE_VOICE": "Please select your preferred user authentication method. If you are a non-member, please select PASS authentication on the right.",
+  "confirm_go_home": "Would you like to return to the first screen?\nCurrent progress will not be saved.",
+  "deposit_voice_close_barcode_door": "After checking the deposit details, please close the barcode slot.",
+  "deposit_voice_confirm_complete": "The barcode slot is closed. Please press the Confirm Complete button.",
+  "auth_login_voice_guide": "Please enter your ID and password to log in.",
+  "pass_auth_voice_guide": "When the verification popup appears, please proceed on your phone.",
+  "login_alert_fail": "Invalid ID or\npassword.\nPlease enter your ID and password correctly.",
+  "login_alert_title_warning": "Login Failed",
+  "login_alert_btn_confirm": "Confirm",
+  "footer_terms": "Terms of Use",
+  "footer_privacy": "Privacy Policy",
+  "modal_terms_title": "Terms of Service",
+  "modal_privacy_title": "Privacy Policy",
+  "btn_confirm": "Confirm",
+  "policy_terms_content": "<h3>Unmanned Fishing Gear Return System Terms of Service</h3><p class='version'>Effective Date: April 6, 2026</p><h4>Chapter 1. General Provisions</h4><p class='article-title'>Article 1 (Purpose)</p><p>These terms define the conditions, rights, and obligations for using the Unmanned Return System (Kiosk) provided by KETG.</p><p class='article-title'>Article 2 (Definitions)</p><p>1. <strong>Deposit Gear</strong>: Gear refunded in cash.<br/>2. <strong>Existing Gear</strong>: Gear refunded in points.</p><h4>Chapter 2. Obligations</h4><p class='article-title'>Article 3 (User Obligations)</p><p>1. Returning existing gear using another person's ID or barcode is strictly prohibited.<br/>2. Attempting to fraudulently claim refunds may result in legal liability.</p><p class='article-title'>Article 4 (Refund Policy)</p><p>Refunds may be rejected or reclaimed if the barcode information does not match the actually deposited gear.</p><h4>Chapter 3. Miscellaneous</h4><p class='article-title'>Article 5 (Disclaimer)</p><p>The company is not responsible for remittance errors caused by incorrect account entry or service interruptions due to force majeure.</p>",
+  "policy_privacy_content": "<h3>Privacy Policy</h3><p class='version'>Effective Date: April 6, 2026</p><h4>1. Purpose of Processing</h4><p>A. Identity verification & preventing proxy returns.<br/>B. Processing deposit/point refunds.<br/>C. Fraud prevention and CS.</p><h4>2. Collected Items</h4><table class='policy-table'><tr><th>Purpose</th><th>Required Items</th></tr><tr><td>Verification</td><td>Name, Fisherman Code, CI/DI, Phone, DOB</td></tr><tr><td>Refund</td><td>Bank Name, Account Holder, Account No.</td></tr><tr><td>Fraud Prev.</td><td>Gear & User Video (Camera)</td></tr></table><h4>3. Retention Period</h4><p>A. Payment records: 5 years<br/>B. Dispute records: 3 years<br/>C. Access logs: 3 months</p><h4>4. Third-Party Provision</h4><p>- Identity Verification: KCB, NICE<br/>- Remittance: KFTC, Hecto Financial<br/>- Notifications: Daou Tech</p><h4>5. User Rights</h4><p>Users may request to view, modify, or withdraw consent, but deleting required information may restrict refund services.</p><h4>6. Privacy Officer</h4><p>Dept: KETG Operations<br/>Phone: 010-6667-1987<br/>Email: jiseob@ketg.co.kr</p>",
+  "scan_alert_title_warning": "Notice",
+  "scan_err_not_gear": "Not a gear barcode.\nPlease scan a valid gear.",
+  "duplicate_barcode_warning": "Barcode already scanned.",
+  "scan_err_not_found": "Gear information not found.",
+  "scan_err_not_available": "This gear cannot be returned.",
+  "scan_err_not_deposit": "Not a deposit gear.\nPlease select existing gear on the previous screen.",
+  "scan_err_not_existing": "Not an existing gear.\nPlease select deposit gear on the previous screen.",
+  "scan_err_stolen": "Cannot return existing gear\nregistered to someone else.",
+  "auth_manual_placeholder": "Touch to enter auth code",
+  "auth_manual_submit": "Confirm",
+  "account_keypad_delete": "Del",
+  "account_keypad_clear": "Clear",
+  "account_keypad_close": "Close Keypad",
+  "1.장구형의 통발": "1. Drum-shaped Trap",
+  "장구형의 통발": "Drum-shaped Trap",
+  "기존통발(흰색 바코드)": "Existing Trap (White Barcode)",
+  "이미 반환 처리됨": "Already returned"
 }

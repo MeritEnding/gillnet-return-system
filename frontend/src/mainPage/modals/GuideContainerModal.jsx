@@ -38,7 +38,7 @@ const GuideContainerModal = ({ onClose }) => {
     setEmailStatus('sending');    
 
     try {
-      await axios.post('http://localhost:8080/api/system/error-report', {
+      await axios.post(`${process.env.REACT_APP_API_URL}/api/system/error-report`, {
         kioskId: 'BUSAN-001',
         location: '부산광역시 기장군 월전리 무인 반납 1호기',
         time: new Date().toLocaleString(),
@@ -151,7 +151,7 @@ const GuideContainerModal = ({ onClose }) => {
             <span className="guide-btn-text">{t('guide_faq_button')}</span>
           </button>
 
-          <button 
+          {/* <button 
             className={`guide-menu-btn ${isIndonesian ? 'auto-height-id' : ''}`} 
             onClick={() => setShowErrorSelector(true)} 
             style={{ backgroundColor: '#fff0f0', border: '2px solid #ffcccc' }}
@@ -162,7 +162,7 @@ const GuideContainerModal = ({ onClose }) => {
             <span className="guide-btn-text" style={{ color: '#d9534f', fontWeight: 'bold' }}>
               오류 테스트
             </span>
-          </button>
+          </button> */}
         </div>
 
         <div className="guide-info-box">
