@@ -137,7 +137,7 @@ const AccountInputModal = ({ onClose }) => {
         setTimeout(() => {
           setKioskAlert({ show: false, message: '', type: 'success', onConfirm: null });
           onClose();
-          navigate('/select-gear');
+          navigate('/gillnet/type-select');
         }, 2500);
 
       } else {

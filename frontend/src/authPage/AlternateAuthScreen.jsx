@@ -264,6 +264,7 @@ const AlternateAuthModal = ({ onClose }) => {
       localStorage.setItem('fisherman_name', authData.fisherman_info.name);
       localStorage.setItem('fisherman_id', authData.fisherman_info.id);
       localStorage.setItem('return_session_id', sessionData.return_session_id);
+      localStorage.setItem('brdt', birthdate); // ★ 생년월일 추가 저장
 
       setAuthenticatedUser(authData.fisherman_info);
       setAuthStatus('success');

@@ -53,7 +53,7 @@ const AccountScreen = () => {
     localStorage.setItem('actno', regBank.actno);
     localStorage.setItem('acct_nm', regBank.acctNm);
     
-    navigate('/select-gear');
+    navigate('/gillnet/type-select');
   };
 
   // [새 계좌 인증] 버튼 클릭 시
@@ -76,7 +76,7 @@ const AccountScreen = () => {
         localStorage.setItem('acct_nm', res.data.data.acct_nm || acctNm);
         
         alert("계좌 인증이 완료되었습니다.");
-        navigate('/select-gear'); 
+        navigate('/gillnet/type-select'); 
       } else {
         alert("계좌 인증에 실패했습니다. 정보를 확인해주세요.");
       }

@@ -1,0 +1,239 @@
+/* src/gillnetPage/Gillnetdepositscreen.css */
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+:root {
+  --tab-active-bg: #009CDA;
+  --tab-inactive-bg: #7CC557;
+  --card-border-blue: #006090;
+  --inst-bg: #EAF8FF;
+  --text-dark: #333;
+}
+
+.gdep-wrapper {
+  display: flex; 
+  flex-direction: column;
+  width: 100vw; 
+  height: 100vh;
+  font-family: 'Pretendard', sans-serif;
+  overflow: hidden;
+  position: relative;
+  background-image: url('../assets/bg_all.png'); 
+  background-size: cover;
+  background-position: center;
+}
+
+/* 뒤로가기 버튼 */
+.gdep-wrapper .auth-back-btn {
+  position: absolute;
+  top: 148px;
+  left: 25px;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-radius: 30px;
+  padding: 12px 25px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+.gdep-wrapper .auth-back-btn:active {
+  background-color: rgba(0, 0, 0, 0.7);
+  transform: scale(0.96);
+}
+.gdep-wrapper .auth-back-text {
+  color: white;
+  font-size: 1.4rem;
+  font-weight: 700;
+  padding-bottom: 2px;
+  letter-spacing: -0.5px;
+}
+.gdep-wrapper .auth-back-btn svg {
+  width: 26px;
+  height: 26px;
+}
+
+/* 상단 영상 영역 */
+.gdep-video-section {
+  width: 100%;
+  height: 32vh; 
+  background-color: #000; 
+  display: flex; 
+  justify-content: center; 
+  align-items: center;
+  overflow: hidden; 
+  position: relative;
+}
+
+.gdep-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 하단 콘텐츠 영역 */
+.gdep-content-area {
+  flex: 1; 
+  position: relative;
+  display: flex; 
+  justify-content: center; 
+  align-items: flex-start; 
+  padding: 10px 20px 20px 20px; 
+  z-index: 10;
+  overflow: hidden;
+}
+
+/* 메인 카드 */
+.gdep-main-card {
+  background-color: #ffffff; 
+  width: 100%; 
+  height: 100%;
+  max-width: 1100px;
+  border-radius: 30px;
+  padding: 20px 30px;
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2); 
+  border: 6px solid var(--card-border-blue);
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* 단계 탭 (높이 축소) */
+.step-tabs {
+  display: flex; width: 100%; gap: 10px; flex-shrink: 0; 
+  height: 70px; margin-bottom: 10px;
+}
+.step-tab {
+  flex: 1; height: 100%; border-radius: 15px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  color: white; font-weight: 800; 
+  background: linear-gradient(180deg, #8EDA6D 0%, #6CC24A 100%);
+  border: 2px solid #fff; gap: 2px;
+}
+.step-tab.active {
+  background: linear-gradient(180deg, #29C2F5 0%, #0085CA 100%);
+  transform: scale(1.02); z-index: 2;
+}
+.step-num-circle {
+  width: 26px; height: 26px; background-color: white; border-radius: 50%;
+  color: #555; font-size: 1.2rem; font-weight: 900; 
+  display: flex; justify-content: center; align-items: center;
+}
+.step-label { font-size: 1.3rem; letter-spacing: -0.5px; }
+
+/* 타이틀 */
+.gdep-step-title {
+  font-size: 2.5rem;
+  font-weight: 950;
+  color: var(--card-border-blue);
+  margin: 5px 0 10px 0;
+  text-align: center;
+}
+
+/* 이너 박스 */
+.gdep-inner-blue-box {
+  background-color: var(--inst-bg);
+  border-radius: 20px;
+  width: 100%;
+  flex: 1;
+  padding: 20px 30px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* 요약 헤더 (폰트 약간 줄임) */
+.gdep-summary-header {
+  display: flex; 
+  justify-content: space-around; 
+  background: white; 
+  padding: 15px; 
+  border-radius: 15px; 
+  border: 2px solid #cce5ff;
+  margin-bottom: 15px;
+  flex-shrink: 0;
+}
+.gdep-summary-item { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+.gdep-summary-item .label { font-size: 1.4rem; font-weight: 800; color: #555; }
+.gdep-summary-item .value { font-size: 2.4rem; font-weight: 950; color: #222; }
+.gdep-summary-item .value.highlight { color: #009CDA; }
+
+/* 상태 박스 (폰트 약간 줄임) */
+.gdep-status-box {
+  background: white;
+  border: 4px solid #009CDA;
+  border-radius: 15px;
+  padding: 20px;
+  text-align: center;
+  margin-bottom: 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.gdep-status-msg { font-size: 2.8rem; font-weight: 950; color: #333; line-height: 1.4; word-break: keep-all; }
+
+/* 결과 리스트 (폰트 약간 줄임) */
+.gdep-confirm-section { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-height: 0; }
+.gdep-list-wrapper {
+  width: 100%; background-color: white; border-radius: 12px; border: 1px solid #dcdcdc;
+  display: flex; flex-direction: column; flex: 1; min-height: 0; overflow: hidden; margin-bottom: 15px;
+}
+.gdep-list-header {
+  display: grid; grid-template-columns: 60px 1.5fr 1fr 1fr; 
+  background-color: #F8F9FA; padding: 12px; border-bottom: 2px solid #eee; font-weight: 800; font-size: 1.2rem; text-align: center;
+}
+.gdep-list-scroll { list-style: none; padding: 0; margin: 0; flex: 1; overflow-y: auto; }
+.gdep-list-row {
+  display: grid; grid-template-columns: 60px 1.5fr 1fr 1fr; align-items: center; padding: 12px; border-bottom: 1px solid #f5f5f5; font-size: 1.6rem; text-align: center; font-weight: 600;
+}
+.gdep-list-row .code { font-family: 'Consolas', monospace; font-weight: 700; color: #006090; }
+.gdep-list-row .amt { text-align: right; color: #009CDA; font-weight: 800; }
+
+/* 결과 카드 (폰트 약간 줄임) */
+.gdep-result-card {
+  background: white; border-radius: 15px; padding: 15px 30px; border: 2px solid #cce5ff; margin-bottom: 15px; flex-shrink: 0;
+}
+.gdep-result-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; font-size: 1.8rem; font-weight: 800; }
+.gdep-result-row.big { font-size: 2.2rem; border-top: 2px solid #eee; margin-top: 10px; padding-top: 10px; }
+.gdep-result-row .amt { color: #d9534f; font-size: 2.8rem; font-weight: 950; }
+
+.gdep-notice { font-size: 1.4rem; color: #d9534f; font-weight: 850; text-align: center; margin-bottom: 10px; }
+
+/* 버튼 그룹 (폰트 약간 줄임) */
+.gdep-btn-group { display: flex; gap: 15px; width: 100%; flex-shrink: 0; }
+.gdep-primary-btn, .gdep-half-btn {
+  flex: 1; height: 80px; border-radius: 20px; border: none; font-size: 3.2rem; font-weight: 950; color: white; cursor: pointer; transition: all 0.1s;
+}
+.gdep-primary-btn.blue { background: #009CDA; box-shadow: 0 6px 0 #007bb5; }
+.gdep-primary-btn.green { background: #7CC557; box-shadow: 0 6px 0 #5ba337; }
+.gdep-half-btn.yellow { background: #009CDA; box-shadow: 0 6px 0 #007bb5; }
+.gdep-half-btn.green { background: #5cb85c; box-shadow: 0 6px 0 #449d44; }
+.gdep-half-btn.done { background: #888; box-shadow: none; transform: translateY(4px); cursor: not-allowed; }
+.gdep-half-btn.disabled { background: #ccc; box-shadow: none; cursor: not-allowed; }
+
+/* 팝업 모달 */
+.gdep-alert-overlay {
+  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
+  background: rgba(0,0,0,0.7); z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(5px);
+}
+.gdep-loading-spinner {
+  width: 70px; height: 70px; border: 8px solid #f3f3f3; border-top: 8px solid var(--tab-active-bg); border-radius: 50%; animation: spin 1s linear infinite;
+}
+.gdep-loading-text { margin-top: 20px; font-size: 2rem; color: white; font-weight: 900; }
+
+/* 세로 모드 */
+@media (orientation: portrait) {
+  .gdep-main-card { max-width: 100%; }
+  .gdep-step-title { font-size: 3rem; }
+  .gdep-status-msg { font-size: 3rem; }
+  .gdep-result-row { font-size: 2.2rem; }
+  .gdep-result-row .amt { font-size: 3.5rem; }
+  .gdep-primary-btn, .gdep-half-btn { height: 100px; font-size: 3rem; }
+}
