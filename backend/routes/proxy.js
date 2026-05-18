@@ -9,8 +9,8 @@ const jwt = require('jsonwebtoken');
 
 const router = express.Router();
 const upload = multer({ dest: 'uploads/' });
-// const EXTERNAL_API_URL = 'https://fdp.or.kr/api/v1';
-const EXTERNAL_API_URL = 'http://54.116.22.80:8083/api/v1';
+const EXTERNAL_API_URL = 'https://fdp.or.kr/api/v1';
+// const EXTERNAL_API_URL = 'http://54.116.22.80:8083/api/v1';
 const JWT_SECRET = process.env.JWT_SECRET || 'secret_key';
 
 const PARANSAEM_API_KEY = process.env.PARANSAEM_API_KEY;
@@ -234,7 +234,15 @@ router.post('/deposit/return/romg/manual', async (req, res) => {
   }
 });
 
-
-
+// [추가] 자망 반납 완료 (모의 엔드포인트) -------------------------------------
+router.post('/gillnet/return', async (req, res) => {
+  try {
+    console.log("📡 [자망 반납 요청]:", JSON.stringify(req.body));
+    // 무조건 성공(200) 응답 반환하여 /completion으로 넘어가게 함
+    res.status(200).json({ status: 200, message: "SUCCESS", data: { total_deposit: req.body.gears ? req.body.gears.reduce((a,b)=>a+(b.gvbk_amt||0),0) : 0, co2_reduced: 1.5 } });
+  } catch (error) {
+    handleProxyError(res, error, '자망 반납 실패');
+  }
+});
 
 module.exports = router;
