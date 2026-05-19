@@ -209,7 +209,9 @@
 /* 버튼 그룹 (폰트 약간 줄임) */
 .gdep-btn-group { display: flex; gap: 15px; width: 100%; flex-shrink: 0; }
 .gdep-primary-btn, .gdep-half-btn {
-  flex: 1; height: 80px; border-radius: 20px; border: none; font-size: 3.2rem; font-weight: 950; color: white; cursor: pointer; transition: all 0.1s;
+  flex: 1; min-height: 80px; height: auto; border-radius: 20px; border: none; font-size: 3.2rem; font-weight: 950; color: white; cursor: pointer; transition: all 0.1s;
+  padding: 10px 12px; word-break: break-word; white-space: normal; line-height: 1.2;
+  display: flex; align-items: center; justify-content: center; text-align: center;
 }
 .gdep-primary-btn.blue { background: #009CDA; box-shadow: 0 6px 0 #007bb5; }
 .gdep-primary-btn.green { background: #7CC557; box-shadow: 0 6px 0 #5ba337; }
@@ -235,5 +237,5 @@
   .gdep-status-msg { font-size: 3rem; }
   .gdep-result-row { font-size: 2.2rem; }
   .gdep-result-row .amt { font-size: 3.5rem; }
-  .gdep-primary-btn, .gdep-half-btn { height: 100px; font-size: 3rem; }
+  .gdep-primary-btn, .gdep-half-btn { min-height: 100px; height: auto; font-size: 3rem; }
 }

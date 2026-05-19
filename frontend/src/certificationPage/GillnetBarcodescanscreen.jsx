@@ -14,9 +14,32 @@ const BackIcon = () => (
   </svg>
 );
 
+const ScannerHandIcon = () => (
+  <svg width="110" height="110" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M30 20 H70 A10 10 0 0 1 80 30 V50 A5 5 0 0 1 75 55 H40 L35 80 H15 L20 40 Z" fill="#333" stroke="#222" strokeWidth="2" />
+    <path d="M70 20 H85 V50 H75" fill="#444" />
+    <rect x="83" y="25" width="4" height="20" fill="#ff3b3b" />
+    <path d="M40 35 Q45 30 55 35 Q60 40 50 45 L40 40" fill="#f4c2c2" stroke="#d4a2a2" strokeWidth="2" />
+    <path d="M35 45 Q45 45 45 55 Q45 65 35 65 Q25 65 25 55" fill="#f4c2c2" stroke="#d4a2a2" strokeWidth="2" />
+    <path d="M36 55 Q46 55 46 65 Q46 75 36 75" fill="#f4c2c2" stroke="#d4a2a2" strokeWidth="2" />
+    <path d="M37 65 Q47 65 47 75 Q47 85 37 85 L32 80" fill="#f4c2c2" stroke="#d4a2a2" strokeWidth="2" />
+  </svg>
+);
+
 const GillnetBarcodeScanScreen = () => {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
+
+  const GILLNET_NAME_MAP = {
+    '자망(그물)': 'gear_type_gillnet',
+    '자망': 'gear_type_gillnet',
+    '갈망': 'gear_type_gillnet',
+    '인망': 'gear_type_gillnet',
+  };
+  const translateGearName = (name) => {
+    const key = GILLNET_NAME_MAP[name];
+    return key ? t(key) : (name || t('gear_type_gillnet'));
+  };
 
   const sack100 = parseInt(localStorage.getItem('gillnet_sack_100') || '0', 10);
   const sack200 = parseInt(localStorage.getItem('gillnet_sack_200') || '0', 10);
@@ -270,9 +293,28 @@ const GillnetBarcodeScanScreen = () => {
               <div className="scanned-list-wrapper">
                 <div className="list-header-row"><span>번호</span><span>{t('gillnet_dmc_table_code')}</span><span>{t('gillnet_dmc_table_type')}</span><span>{t('gillnet_dmc_table_amt')}</span></div>
                 <ul className="scanned-detail-list" ref={listRef}>
-                  {scannedList.length === 0 ? (<li className="gnt-empty-row">{t('gillnet_dmc_empty')}</li>) : (
+                  {scannedList.length === 0 ? (
+                    <li className="gnt-empty-row">
+                      <div className="gnt-barcode-anim-wrapper">
+                        <div className="gnt-anim-scanner-part">
+                          <ScannerHandIcon />
+                          <div className="gnt-anim-scanner-beam"></div>
+                        </div>
+                        <div className="gnt-anim-barcode-card">
+                          <div className="gnt-anim-barcode-stripes">
+                            {[5,2,4,2,5,3,2,5,2,4,3,5,2,4].map((w, i) => (
+                              <div key={i} className="gnt-anim-stripe" style={{ width: `${w}px` }} />
+                            ))}
+                          </div>
+                          <div className="gnt-anim-barcode-laser"></div>
+                          <div className="gnt-anim-card-label">어구보증금</div>
+                        </div>
+                      </div>
+                      <span className="gnt-empty-text">{t('gillnet_dmc_empty')}</span>
+                    </li>
+                  ) : (
                     scannedList.map((item, i) => (
-                      <li key={i} className="scanned-item-row"><span>{i + 1}</span><span className="code">{item.bacod_nm}</span><span className="type">{item.fsgr_nm || '자망'}</span><span className="amt">{item.gvbk_amt?.toLocaleString()}{t('currency_unit')}</span></li>
+                      <li key={i} className="scanned-item-row"><span>{i + 1}</span><span className="code">{item.bacod_nm}</span><span className="type">{translateGearName(item.fsgr_nm)}</span><span className="amt">{item.gvbk_amt?.toLocaleString()}{t('currency_unit')}</span></li>
                     ))
                   )}
                 </ul>

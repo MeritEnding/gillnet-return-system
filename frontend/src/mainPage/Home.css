@@ -2110,12 +2110,11 @@ body {
   color: #105E7C;
   margin-bottom: 5px;
 
-  /* 긴 단어 줄바꿈 방지 & 말줄임표 처리 */
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal;
+  word-break: break-word;
   max-width: 100%;
   text-align: center;
+  line-height: 1.2;
 }
 
 /* 3. 하단 아이콘 옆 텍스트 (문의/Contact 등) */

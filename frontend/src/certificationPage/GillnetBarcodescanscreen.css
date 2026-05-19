@@ -255,8 +255,13 @@
 .scanned-item-row .amt { text-align: right; color: #d9534f; font-weight: 800; }
 
 .gnt-empty-row {
-  padding: 40px; text-align: center; color: #999; font-size: 1.6rem; font-weight: 700; 
-  height: 100%; display: flex; align-items: center; justify-content: center;
+  padding: 20px; text-align: center; color: #999; font-size: 1.6rem; font-weight: 700;
+  height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+  list-style: none;
+}
+
+.gnt-empty-text {
+  font-size: 1.5rem; font-weight: 800; color: #4a6a8a; word-break: keep-all;
 }
 
 /* 합계 (텍스트 훨씬 크게) */
@@ -310,6 +315,116 @@
   padding: 20px 80px; font-size: 2.5rem; font-weight: 900; cursor: pointer;
 }
 
+/* ========================================= */
+/* 바코드 스캔 애니메이션 */
+/* ========================================= */
+
+.gnt-barcode-anim-wrapper {
+  width: 100%;
+  height: 110px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  flex-shrink: 0;
+}
+
+/* 스캐너 손 */
+.gnt-anim-scanner-part {
+  position: relative;
+  width: 90px;
+  height: 90px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: gntHandMove 2s infinite ease-in-out;
+}
+
+@keyframes gntHandMove {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  50% { transform: translate(5px, -5px) rotate(-5deg); }
+}
+
+/* 스캐너에서 나가는 붉은 빔 */
+.gnt-anim-scanner-beam {
+  position: absolute;
+  top: 30px;
+  left: 84px;
+  width: 0;
+  height: 0;
+  border-top: 18px solid transparent;
+  border-bottom: 18px solid transparent;
+  border-left: 65px solid rgba(255, 0, 0, 0.2);
+  animation: gntBeamFlash 0.5s infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes gntBeamFlash {
+  0% { opacity: 0.3; transform: scaleX(0.9); }
+  100% { opacity: 0.75; transform: scaleX(1.1); }
+}
+
+/* 바코드 카드 */
+.gnt-anim-barcode-card {
+  width: 115px;
+  height: 80px;
+  background-color: white;
+  border: 4px solid #333;
+  border-radius: 10px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 6px 5px 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+  transform: rotate(-3deg);
+  overflow: hidden;
+}
+
+/* 바코드 줄무늬 */
+.gnt-anim-barcode-stripes {
+  display: flex;
+  gap: 2px;
+  align-items: stretch;
+  height: 42px;
+  margin-bottom: 4px;
+}
+
+.gnt-anim-stripe {
+  background-color: #222;
+  border-radius: 1px;
+  flex-shrink: 0;
+}
+
+/* 카드 하단 라벨 */
+.gnt-anim-card-label {
+  font-size: 0.65rem;
+  font-weight: 900;
+  color: #444;
+  letter-spacing: 1.5px;
+  white-space: nowrap;
+}
+
+/* 스캔 레이저 (카드 위를 가로지르는 선) */
+.gnt-anim-barcode-laser {
+  position: absolute;
+  width: 130%;
+  height: 2px;
+  background-color: red;
+  box-shadow: 0 0 6px 1px rgba(255, 0, 0, 0.7);
+  left: -15%;
+  top: 10%;
+  animation: gntLaserScan 1.5s infinite linear;
+}
+
+@keyframes gntLaserScan {
+  0%   { top: 10%; opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { top: 90%; opacity: 0; }
+}
+
 /* 세로 모드 */
 @media (orientation: portrait) {
   .gnt-main-card { max-width: 100%; }
@@ -317,4 +432,37 @@
   .gnt-instruction-text { font-size: 2.2rem; }
   .summary-label { font-size: 2.5rem; }
   .summary-value { font-size: 4rem; }
+
+  .gnt-barcode-anim-wrapper {
+    height: 190px;
+    gap: 35px;
+  }
+  .gnt-anim-scanner-part {
+    width: 130px;
+    height: 130px;
+  }
+  .gnt-anim-scanner-part svg {
+    width: 100%;
+    height: 100%;
+  }
+  .gnt-anim-scanner-beam {
+    top: 45px;
+    left: 122px;
+    border-top-width: 26px;
+    border-bottom-width: 26px;
+    border-left-width: 95px;
+  }
+  .gnt-anim-barcode-card {
+    width: 165px;
+    height: 115px;
+    border-width: 5px;
+    border-radius: 14px;
+    padding: 12px 10px 8px 10px;
+  }
+  .gnt-anim-barcode-stripes {
+    height: 62px;
+    gap: 3px;
+  }
+  .gnt-anim-stripe { transform: scaleX(1.4); }
+  .gnt-anim-card-label { font-size: 1rem; letter-spacing: 2px; }
 }

@@ -26,6 +26,17 @@ const GillnetDepositScreen = () => {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
 
+  const GILLNET_NAME_MAP = {
+    '자망(그물)': 'gear_type_gillnet',
+    '자망': 'gear_type_gillnet',
+    '갈망': 'gear_type_gillnet',
+    '인망': 'gear_type_gillnet',
+  };
+  const translateGearName = (name) => {
+    const key = GILLNET_NAME_MAP[name];
+    return key ? t(key) : (name || t('gear_type_gillnet'));
+  };
+
   const sack100 = parseInt(localStorage.getItem('gillnet_sack_100') || '0', 10);
   const sack200 = parseInt(localStorage.getItem('gillnet_sack_200') || '0', 10);
   const totalSacks = sack100 + sack200;
@@ -96,16 +107,16 @@ const GillnetDepositScreen = () => {
   const startDepositCycle = async (index) => {
     setCurrentSackIndex(index);
     setProcessStep('OPENING');
-    setStatusMessage(`${index}번째 마대를 투입하기 위해\n투입구를 열고 있습니다.`);
-    speak(`${index}번째 마대를 투입해 주세요. 투입구를 열고 있습니다.`);
+    setStatusMessage(t('gillnet_dep_status_opening', { n: index }));
+    speak(t('gillnet_dep_voice_opening', { n: index }));
 
     try {
       const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
       await axios.post(`${API_URL}/api/auth/hw/gillnet-door`, { open: true });
-      
+
       setProcessStep('WAITING');
-      setStatusMessage(`${index}번째 마대를 투입구에 넣고\n[압축] 버튼을 눌러주세요.`);
-      speak(`${index}번째 마대를 투입구에 넣고 압축 버튼을 눌러주세요.`);
+      setStatusMessage(t('gillnet_dep_status_waiting', { n: index }));
+      speak(t('gillnet_dep_voice_waiting', { n: index }));
     } catch (err) {
       console.error('Door Open Error:', err);
       // 에러 시에도 진행 (Bypass)
@@ -118,8 +129,8 @@ const GillnetDepositScreen = () => {
     setProcessStep('COMPRESSING');
     setIsLoading(true);
     setShowSafetyWarning(true);
-    setStatusMessage(`${currentSackIndex}번째 마대를 압축하고 있습니다.`);
-    speak(t('gillnet_msg_safety_voice') || '위험하오니 한 걸음 뒤로 물러서 주세요. 압축기가 작동합니다.');
+    setStatusMessage(t('gillnet_dep_status_compressing', { n: currentSackIndex }));
+    speak(t('gillnet_msg_safety_voice'));
 
     try {
       const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
@@ -134,15 +145,15 @@ const GillnetDepositScreen = () => {
 
       // 압축 완료 후 문 닫기
       setProcessStep('CLOSING');
-      setStatusMessage(`압축 완료. 투입구를 닫고 적재함으로 이동합니다.`);
-      speak(`압축이 완료되었습니다. 투입구를 닫습니다.`);
+      setStatusMessage(t('gillnet_dep_status_closing'));
+      speak(t('gillnet_dep_voice_closing'));
       
       await axios.post(`${API_URL}/api/auth/hw/gillnet-door`, { open: false });
       await new Promise(r => setTimeout(r, 1000));
 
       // 컨베이어 작동
       setProcessStep('CONVEYING');
-      setStatusMessage(`마대를 적재함으로 이동 중입니다.`);
+      setStatusMessage(t('gillnet_dep_status_conveying'));
       await axios.post(`${API_URL}/api/deposit/action/conveyor`);
       await new Promise(r => setTimeout(r, 4000)); // 적재 시간 대기
 
@@ -152,13 +163,13 @@ const GillnetDepositScreen = () => {
       if (currentSackIndex < totalSacks) {
         startDepositCycle(currentSackIndex + 1);
       } else {
-        setStatusMessage('모든 마대 투입이 완료되었습니다.');
-        speak('모든 마대 투입이 완료되었습니다. 내역을 확인해 주세요.');
+        setStatusMessage(t('gillnet_dep_status_complete'));
+        speak(t('gillnet_dep_voice_complete'));
         setViewState('CONFIRMING');
       }
     } catch (err) {
       console.error('Process Error:', err);
-      setStatusMessage(`오류가 발생했습니다: ${err.message}`);
+      setStatusMessage(t('gillnet_dep_status_process_err', { msg: err.message }));
       setShowSafetyWarning(false);
     } finally {
       setIsLoading(false);
@@ -167,7 +178,7 @@ const GillnetDepositScreen = () => {
 
   const handleFinalConfirm = async () => {
     setIsLoading(true);
-    speak(t('STATUS_01') || '반납 내역을 기록하고 있습니다.');
+    speak(t('STATUS_01'));
 
     const formatBrdt = (brdt) => {
       if (!brdt) return "1990-01-01";
@@ -254,14 +265,14 @@ const GillnetDepositScreen = () => {
         };
       }
 
-      speak(t('COMP_02') || '반납이 완료되었습니다.');
+      speak(t('COMP_02'));
       navigate('/completion', { state: resultData });
 
     } catch (err) {
       console.error('❌ 반납 처리 오류:', err);
       const msg = err.response?.data?.message || err.message || '알 수 없는 오류';
-      setStatusMessage(`반납 처리 중 오류가 발생했습니다.\n(${msg})`);
-      speak('오류가 발생했습니다. 관리자에게 문의해 주세요.');
+      setStatusMessage(t('gillnet_dep_status_final_err', { msg }));
+      speak(t('gillnet_dep_voice_error'));
     } finally {
       setIsLoading(false);
     }
@@ -270,7 +281,7 @@ const GillnetDepositScreen = () => {
   const handleCloseDoors = async () => {
     setIsLoading(true);
     setShowSafetyWarning(true);
-    speak(t('deposit_msg_safety_voice') || '위험하오니 한 걸음 뒤로 물러서 주세요. 투입구가 닫힙니다.');
+    speak(t('deposit_msg_safety_voice'));
 
     try {
       await axios.post(`${process.env.REACT_APP_API_URL || 'http://localhost:8080'}/api/auth/hw/barcode-door`, { open: false });
@@ -366,7 +377,7 @@ const GillnetDepositScreen = () => {
                     <div className="gdep-list-header"><span>#</span><span>{t('gillnet_dmc_table_code')}</span><span>{t('gillnet_dmc_table_type')}</span><span>{t('gillnet_dmc_table_amt')}</span></div>
                     <ul className="gdep-list-scroll">
                       {scannedGears.map((g, idx) => (
-                        <li key={idx} className="gdep-list-row"><span>{idx + 1}</span><span className="code">{g.bacod_nm}</span><span className="type">{g.fsgr_nm || '자망'}</span><span className="amt">{g.gvbk_amt?.toLocaleString()}{t('currency_unit')}</span></li>
+                        <li key={idx} className="gdep-list-row"><span>{idx + 1}</span><span className="code">{g.bacod_nm}</span><span className="type">{translateGearName(g.fsgr_nm)}</span><span className="amt">{g.gvbk_amt?.toLocaleString()}{t('currency_unit')}</span></li>
                       ))}
                     </ul>
                   </div>
@@ -389,7 +400,7 @@ const GillnetDepositScreen = () => {
       {isLoading && processStep === 'COMPRESSING' && !showSafetyWarning && (
         <div className="gdep-alert-overlay">
           <div className="gnt-loading-spinner" style={{width: '100px', height: '100px', borderWidth: '10px'}} />
-          <p className="gdep-loading-text" style={{fontSize: '2.5rem'}}>{currentSackIndex}번째 마대 압축 중...</p>
+          <p className="gdep-loading-text" style={{fontSize: '2.5rem'}}>{t('gillnet_dep_compress_label', { n: currentSackIndex })}</p>
         </div>
       )}
 
