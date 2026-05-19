@@ -85,6 +85,7 @@ const PassModal = ({ onClose, onNonMember }) => {
       localStorage.setItem('fisherman_name', userName);
       localStorage.setItem('fisherman_phone', fallbackUser.phone || '');
       localStorage.setItem('birthdate', fallbackUser.birthdate || '19900101');
+      localStorage.setItem('brdt', fallbackUser.birthdate || '19900101'); // ★ brdt 키도 추가
     }
     localStorage.setItem('is_member', 'false');
     localStorage.setItem('fisherman_id', 'NON_MEMBER');
@@ -119,6 +120,7 @@ const PassModal = ({ onClose, onNonMember }) => {
         localStorage.setItem('is_member', 'true');
         localStorage.setItem('mbl_telno', userData.mbl_telno || ''); 
         localStorage.setItem('fisherman_phone', userData.telno || userData.mbl_telno || '');
+        localStorage.setItem('brdt', userData.brdt || ''); // ★ 생년월일 추가 저장
 
         if (userData.actno) {
           localStorage.setItem('bank_cd', userData.bank_cd || '');

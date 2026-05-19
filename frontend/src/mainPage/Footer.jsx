@@ -11,7 +11,7 @@ import FlagPH from '../assets/ph-flag.png';
 import FlagID from '../assets/id-flag.png';
 import FlagMM from '../assets/mm-flag.png';
 
-const Footer = ({ onGuide }) => {
+const Footer = ({ onGuide, onContactClick }) => {
   const { t, i18n } = useTranslation();
   
   // ★ 모달 상태 관리

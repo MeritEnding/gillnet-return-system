@@ -161,6 +161,7 @@ const AuthScreen = () => {
         localStorage.setItem('is_member', 'true');
         localStorage.setItem('mbl_telno', userData.mbl_telno || '');
         localStorage.setItem('fisherman_phone', userData.telno || userData.mbl_telno || '');
+        localStorage.setItem('brdt', userData.brdt || ''); // ★ 생년월일 추가 저장
 
         if (userData.actno && userData.actno !== "") {
           setBankCd(userData.bank_cd || '');
@@ -280,7 +281,7 @@ const AuthScreen = () => {
         setTimeout(() => {
           setKioskAlert({ show: false, message: '', type: 'success', onConfirm: null });
           setShowAccountModal(false);
-          navigate('/select-gear');
+          navigate('/gillnet/type-select');
         }, 1000);
 
       } else {

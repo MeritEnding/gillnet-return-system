@@ -124,7 +124,7 @@ const CompletionScreen = () => {
   // --- 추가 반납 ---
   const handleAddMore = () => {
     window.speechSynthesis.cancel();
-    navigate('/select-gear');
+    navigate('/gillnet/type-select');
   };
 
   if (isLoading) return <LoadingOverlay />;

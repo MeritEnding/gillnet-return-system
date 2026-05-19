@@ -15,7 +15,7 @@ const ContactModal = ({ onClose }) => {
 
   // 연락처 목록 데이터
   const contactList = [
-    { label: t('contact_label_machine') || '기기 장애 문의', phone: '010-6667-1987' },
+    { label: t('contact_label_machine') || '기기 장애 문의', phone: '010-3934-2515' },
     { label: t('contact_label_deposit') || '보증금 문의', phone: '051-718-2452' },
     { label: t('contact_label_general') || '일반 문의', phone: '051-742-3391' } 
   ];
@@ -27,7 +27,7 @@ const ContactModal = ({ onClose }) => {
         <h2 className="modal-title">{t('contact_title')}</h2>
 
         <div className="contact-modal-body">
-          <p className="contact-desc">{t('contact_desc')}</p>
+          <p className="contact-desc">{t('contact_desc') || '이용 중 불편한 점이 있으시면 아래 번호로 연락해 주세요.'}</p>
           
           <div className="contact-list-container">
             {contactList.map((item, index) => (
@@ -46,7 +46,7 @@ const ContactModal = ({ onClose }) => {
         </div>
 
         <button className="modal-close-btn" onClick={onClose}>
-          {t('btn_close')}
+          {t('btn_close') || '닫기'}
         </button>
       </div>
     </div>
