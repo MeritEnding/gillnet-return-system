@@ -80,6 +80,18 @@ const GillnetDepositScreen = () => {
     } catch (e) { console.error("TTS Error:", e); }
   }, [i18n.language]);
 
+  // PLC 하드웨어 API 호출 헬퍼
+  // PLC 연결 시 정상 동작, 미연결 시 4초 timeout 후 3초 대기 뒤 정상 진행
+  const callHW = useCallback(async (endpoint, payload = {}) => {
+    const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
+    try {
+      await axios.post(`${API_URL}${endpoint}`, payload, { timeout: 4000 });
+    } catch (e) {
+      console.warn(`PLC 응답 없음 (${endpoint}), 3초 후 진행합니다.`);
+      await new Promise(r => setTimeout(r, 3000));
+    }
+  }, []);
+
   // 초기 시작
   useEffect(() => {
     const load = () => {
@@ -110,18 +122,11 @@ const GillnetDepositScreen = () => {
     setStatusMessage(t('gillnet_dep_status_opening', { n: index }));
     speak(t('gillnet_dep_voice_opening', { n: index }));
 
-    try {
-      const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
-      await axios.post(`${API_URL}/api/auth/hw/gillnet-door`, { open: true });
+    await callHW('/api/auth/hw/gillnet-door', { open: true });
 
-      setProcessStep('WAITING');
-      setStatusMessage(t('gillnet_dep_status_waiting', { n: index }));
-      speak(t('gillnet_dep_voice_waiting', { n: index }));
-    } catch (err) {
-      console.error('Door Open Error:', err);
-      // 에러 시에도 진행 (Bypass)
-      setProcessStep('WAITING');
-    }
+    setProcessStep('WAITING');
+    setStatusMessage(t('gillnet_dep_status_waiting', { n: index }));
+    speak(t('gillnet_dep_voice_waiting', { n: index }));
   };
 
   // 압축 버튼 클릭
@@ -133,29 +138,21 @@ const GillnetDepositScreen = () => {
     speak(t('gillnet_msg_safety_voice'));
 
     try {
-      const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
-      
-      // 압축 API 호출 (없을 경우 4초 대기 시뮬레이션)
-      try {
-        await axios.post(`${API_URL}/api/auth/hw/gillnet-compress`, {}, { timeout: 3000 });
-      } catch (e) {
-        console.warn('Compress API missing or timeout, using simulation');
-        await new Promise(r => setTimeout(r, 4000));
-      }
+      await callHW('/api/auth/hw/gillnet-compress');
 
       // 압축 완료 후 문 닫기
       setProcessStep('CLOSING');
       setStatusMessage(t('gillnet_dep_status_closing'));
       speak(t('gillnet_dep_voice_closing'));
-      
-      await axios.post(`${API_URL}/api/auth/hw/gillnet-door`, { open: false });
+
+      await callHW('/api/auth/hw/gillnet-door', { open: false });
       await new Promise(r => setTimeout(r, 1000));
 
-      // 컨베이어 작동
-      setProcessStep('CONVEYING');
-      setStatusMessage(t('gillnet_dep_status_conveying'));
-      await axios.post(`${API_URL}/api/deposit/action/conveyor`);
-      await new Promise(r => setTimeout(r, 4000)); // 적재 시간 대기
+      // 컨베이어 작동 (비활성화 - 압축 완료 후 바로 반납 처리)
+      // setProcessStep('CONVEYING');
+      // setStatusMessage(t('gillnet_dep_status_conveying'));
+      // await axios.post(`${API_URL}/api/deposit/action/conveyor`);
+      // await new Promise(r => setTimeout(r, 4000)); // 적재 시간 대기
 
       setShowSafetyWarning(false);
 
@@ -283,18 +280,13 @@ const GillnetDepositScreen = () => {
     setShowSafetyWarning(true);
     speak(t('deposit_msg_safety_voice'));
 
-    try {
-      await axios.post(`${process.env.REACT_APP_API_URL || 'http://localhost:8080'}/api/auth/hw/barcode-door`, { open: false });
-      await new Promise(res => setTimeout(res, 2000)); // 문이 닫히는 시간 동안 대기 및 경고 유지
-      setIsDoorClosed(true);
-      speak(t('deposit_voice_confirm_complete'));
-    } catch (err) {
-      console.warn('문 닫기 실패:', err);
-      setIsDoorClosed(true);
-    } finally {
-      setIsLoading(false);
-      setShowSafetyWarning(false);
-    }
+    await callHW('/api/auth/hw/barcode-door', { open: false });
+    await new Promise(res => setTimeout(res, 1000));
+
+    setIsDoorClosed(true);
+    speak(t('deposit_voice_confirm_complete'));
+    setIsLoading(false);
+    setShowSafetyWarning(false);
   };
 
   const handleGoBack = () => {
