@@ -29,17 +29,27 @@ class PlcController {
   }
 
   async connect() {
+    if (this.client.isOpen) return;
+
+    let timer;
+    const timeoutPromise = new Promise((_, reject) => {
+      timer = setTimeout(() => {
+        try { this.client.close(); } catch(e) {}
+        reject(new Error('PLC Connect Timeout (2s)'));
+      }, 2000);
+    });
+
     try {
-      if (this.client.isOpen) return;
-      await this.client.connectTCP(PLC_IP, { port: PLC_PORT });
+      await Promise.race([
+        this.client.connectTCP(PLC_IP, { port: PLC_PORT }),
+        timeoutPromise
+      ]);
+      clearTimeout(timer);
       this.client.setID(1);
-      
-      // ★ 핵심 1: 300ms는 '통신 안 한 지 0.3초 지나면' 바로 끊어버리라는 뜻이라 너무 가혹합니다.
-      // 1000ms(1초)로 늘려서 즉각 반응은 유지하되 억울하게 끊기는 일은 없도록 수정했습니다.
-      this.client.setTimeout(1000); 
-      
+      this.client.setTimeout(1000);
       console.log("✅ PLC 연결 성공");
     } catch (e) {
+      clearTimeout(timer);
       console.error("❌ PLC 연결 실패:", e.message);
       throw e;
     }

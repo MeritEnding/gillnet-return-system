@@ -61,6 +61,7 @@ const GillnetDepositScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isDoorClosed, setIsDoorClosed] = useState(false);
   const [showSafetyWarning, setShowSafetyWarning] = useState(false);
+  const [showDoorWarning, setShowDoorWarning] = useState(false);
   const [countdown, setCountdown] = useState(0);
 
   const voiceListCache = useRef([]);
@@ -81,15 +82,13 @@ const GillnetDepositScreen = () => {
     } catch (e) { console.error("TTS Error:", e); }
   }, [i18n.language]);
 
-  // PLC 하드웨어 API 호출 헬퍼
-  // timeoutMs: 기본 7초. 압축 요청은 60초 이상으로 호출해야 함.
+  // PLC 하드웨어 API 호출 헬퍼 (타임아웃 내 응답 없으면 즉시 진행)
   const callHW = useCallback(async (endpoint, payload = {}, timeoutMs = 7000) => {
     const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
     try {
       await axios.post(`${API_URL}${endpoint}`, payload, { timeout: timeoutMs });
     } catch (e) {
-      console.warn(`PLC 응답 없음 (${endpoint}), 5초 후 진행합니다.`);
-      await new Promise(r => setTimeout(r, 5000));
+      console.warn(`PLC 응답 없음 (${endpoint}), 진행합니다.`);
     }
   }, []);
 
@@ -132,34 +131,27 @@ const GillnetDepositScreen = () => {
     speak(t('gillnet_dep_voice_waiting', { n: index }));
   };
 
-  // 투입구 닫기 버튼 클릭 → 닫기 → 5초 카운트다운 → 자동 압축 → 다음 마대 or 완료
+  // 투입구 닫기 버튼 클릭 → 닫기 → 즉시 압축 → 다음 마대 or 완료
   const handleCloseDoorAndCompress = async () => {
     setIsLoading(true);
-    setShowSafetyWarning(true);
 
     // 1. 투입구 닫기
     setProcessStep('CLOSING');
+    setShowDoorWarning(true);
     setStatusMessage(t('gillnet_dep_status_closing_door'));
     speak(t('gillnet_dep_voice_close_door'));
     await callHW('/api/auth/hw/gillnet-door', { open: false });
+    setShowDoorWarning(false);
 
-    // 2. 5초 카운트다운
-    setProcessStep('COUNTDOWN');
-    for (let i = 5; i >= 1; i--) {
-      setCountdown(i);
-      setStatusMessage(t('gillnet_dep_status_countdown', { n: i }));
-      await new Promise(r => setTimeout(r, 1000));
-    }
-
-    // 3. 압축 실행
+    // 2. 압축 실행
     setProcessStep('COMPRESSING');
     setShowSafetyWarning(true);
     setStatusMessage(t('gillnet_dep_status_compressing', { n: currentSackIndex }));
     speak(t('gillnet_msg_safety_voice'));
 
     try {
-      // 압축은 완료 신호 대기까지 포함 → 최대 65초 타임아웃
-      await callHW('/api/auth/hw/gillnet-compress', {}, 65000);
+      // PLC 연결 5초 내 안되면 즉시 진행
+      await callHW('/api/auth/hw/gillnet-compress', {}, 5000);
       setShowSafetyWarning(false);
 
       // 4. 다음 마대 or 최종 확인
@@ -283,7 +275,7 @@ const GillnetDepositScreen = () => {
 
   const handleCloseDoors = async () => {
     setIsLoading(true);
-    setShowSafetyWarning(true);
+    setShowDoorWarning(true);
     speak(t('deposit_msg_safety_voice'));
 
     await callHW('/api/auth/hw/barcode-door', { open: false });
@@ -292,7 +284,7 @@ const GillnetDepositScreen = () => {
     setIsDoorClosed(true);
     speak(t('deposit_voice_confirm_complete'));
     setIsLoading(false);
-    setShowSafetyWarning(false);
+    setShowDoorWarning(false);
   };
 
   const handleGoBack = () => {
@@ -359,9 +351,7 @@ const GillnetDepositScreen = () => {
                         {t('gillnet_dep_btn_close') || '투입구 닫기'}
                     </button>
                   ) : processStep === 'COUNTDOWN' ? (
-                    <div style={{textAlign: 'center', width: '100%', padding: '10px 0'}}>
-                        <p style={{fontSize: '2.5rem', fontWeight: '700', color: '#444', marginTop: '10px'}}>{t('gillnet_dep_countdown_label') || '잠시 후 압축을 시작합니다'}</p>
-                    </div>
+                    <div style={{textAlign: 'center', width: '100%', padding: '10px 0'}} />
                   ) : (
                     <div style={{textAlign: 'center', width: '100%'}}>
                         <div className="gnt-loading-spinner" style={{margin: '0 auto 20px'}} />
@@ -399,7 +389,7 @@ const GillnetDepositScreen = () => {
         </div>
       </div>
 
-      {isLoading && processStep === 'COMPRESSING' && !showSafetyWarning && (
+      {isLoading && viewState === 'DEPOSITING' && processStep === 'COMPRESSING' && !showSafetyWarning && (
         <div className="gdep-alert-overlay">
           <div className="gnt-loading-spinner" style={{width: '100px', height: '100px', borderWidth: '10px'}} />
           <p className="gdep-loading-text" style={{fontSize: '2.5rem'}}>{t('gillnet_dep_compress_label', { n: currentSackIndex })}</p>
@@ -414,6 +404,19 @@ const GillnetDepositScreen = () => {
             <p className="safety-warning-text">
               {t('gillnet_warn_desc_1') || '안전을 위해 한 걸음'}<br />
               {t('gillnet_warn_desc_2') || '뒤로 '}<strong>{t('gillnet_warn_desc_3') || '물러서 주세요!'}</strong>
+            </p>
+          </div>
+        </div>
+      )}
+
+      {showDoorWarning && (
+        <div className="safety-warning-overlay">
+          <div className="safety-warning-box">
+            <SafetyWarningIcon />
+            <h1 className="safety-warning-title">{'투입구 닫히는 중'}</h1>
+            <p className="safety-warning-text">
+              {'손이 끼이지 않도록'}<br />
+              {'조심해 주세요!'}
             </p>
           </div>
         </div>
