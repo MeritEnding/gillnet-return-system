@@ -21,10 +21,10 @@ const HeroSection = ({ isVideoPlaying, setIsVideoPlaying, currentVideoSrc, curre
   };
 
   return (
-    <section className="hero-section">
+    <section className="hero-section" data-lang={currentLang}>
       {!isVideoPlaying ? (
         <div className="hero-image-container" onClick={openVideo}>
-          <img src={HeroMainImage} alt="Info" className="hero-main-img" />
+          <img src={HeroMainImage} alt={t('hero_main_alt') || 'Info'} className="hero-main-img" />
         </div>
       ) : (
         <div className="hero-video-expanded" onClick={closeVideo}>

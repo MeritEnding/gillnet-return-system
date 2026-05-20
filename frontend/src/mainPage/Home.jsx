@@ -271,7 +271,7 @@ const Home = () => {
           onGuide={() => setShowGuideModal(true)}
         />
       </section>
-      <Footer/>
+      <Footer onContactClick={() => setShowContactModal(true)} />
       
       {showAuthModal && (
         <AuthChoiceModal

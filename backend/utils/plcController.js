@@ -95,6 +95,57 @@ class PlcController {
     await this.writeCoilWithRetry(101, isOpen);
   }
 
+  // --- [압축기 제어 함수] (260519 PLC Address Map 기준) ---
+
+  /** 유압모드 ON (Coil 160, M00100) - 펄스 제어 */
+  async hydraulicOn() {
+    console.log('[PLC] 유압모드 ON (Coil 160)');
+    await this.sendPulse(160);
+  }
+
+  /** 유압모드 OFF (Coil 161, M00101) - 펄스 제어 */
+  async hydraulicOff() {
+    console.log('[PLC] 유압모드 OFF (Coil 161)');
+    await this.sendPulse(161);
+  }
+
+  /** 압축기 동작명령 (Coil 162, M00102) - 1회 사이클 (실린더 상승 후 하강) */
+  async triggerCompression() {
+    console.log('[PLC] 압축기 동작명령 (Coil 162)');
+    await this.sendPulse(162);
+  }
+
+  /** 압축 완료 대기 (Coil 112, M00070 읽기 - 완료=1, 대기=0) */
+  async waitForCompressionComplete(timeoutMs = 30000) {
+    const deadline = Date.now() + timeoutMs;
+    console.log('[PLC] 압축 완료 신호 대기 중 (Coil 112)...');
+    while (Date.now() < deadline) {
+      try {
+        await this.connect();
+        const res = await this.client.readCoils(112, 1);
+        if (res.data[0] === true) {
+          console.log('[PLC] 압축 완료 확인 (Coil 112 = 1)');
+          return true;
+        }
+      } catch (e) {
+        console.warn('[PLC] 압축 완료 상태 읽기 오류:', e.message);
+      }
+      await new Promise(r => setTimeout(r, 500));
+    }
+    throw new Error('압축 완료 대기 시간 초과 (30초)');
+  }
+
+  /** 전체 압축 사이클: 유압ON → 압축명령 → 완료대기 → 유압OFF */
+  async runCompressionCycle() {
+    console.log('[PLC] === 압축 사이클 시작 ===');
+    await this.hydraulicOn();
+    await new Promise(r => setTimeout(r, 300)); // 유압 안정화 대기
+    await this.triggerCompression();
+    await this.waitForCompressionComplete();
+    await this.hydraulicOff();
+    console.log('[PLC] === 압축 사이클 완료 ===');
+  }
+
   /** * 컨베이어 작동 (펄스 제어)
    * 161번 Pulse -> Start
    * 3초 후

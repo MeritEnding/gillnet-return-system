@@ -19,8 +19,13 @@ import NumberInputScreen from './authPage/NumberInputScreen';
 import AccountScreen from './authPage/AccountScreen';
 import GearTypeSelectScreen from './certificationPage/GearTypeSelectScreen';
 import AdminRemote from './admin/AdminRemote';
+import GillnetTypeSelectScreen from './certificationPage/Gillnettypeselectscreen';
+import GillnetSackSelectScreen from './certificationPage/Gillnetsackselectscreen';
+import GillnetBarcodeScanScreen from './certificationPage/GillnetBarcodescanscreen';
+import GillnetDepositScreen from './deposit/Gillnetdepositscreen';
 
 const router = createBrowserRouter([
+
   {
     id: 0,
     path: '/',
@@ -115,9 +120,27 @@ const router = createBrowserRouter([
     id:20,
     path: '/admin/remote',
     element: <AdminRemote/>
+  },
+  {
+    id:21,
+    path: '/gillnet/type-select',
+    element: <GillnetTypeSelectScreen />
+  },
+  {
+    id:22,
+    path: '/gillnet/sack-select',
+    element: <GillnetSackSelectScreen />
+  },
+  {
+    id:23,
+    path: '/gillnet/scan',
+    element: <GillnetBarcodeScanScreen/>
+  },
+  {
+    id:24,
+    path: '/gillnet/deposit',
+    element: <GillnetDepositScreen />
   }
-  
-
 
 ]);
 export default router;
