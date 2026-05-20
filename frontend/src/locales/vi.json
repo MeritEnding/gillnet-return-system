@@ -582,15 +582,19 @@
   "기존통발(흰색 바코드)": "Bẫy hiện tại (Mã vạch trắng)",
   "이미 반환 처리됨": "Đã được trả lại",
   "gillnet_dep_voice_opening": "Vui lòng bỏ bao số {{n}} vào. Cửa nhận đang mở.",
-  "gillnet_dep_voice_waiting": "Vui lòng bỏ bao số {{n}} vào cửa nhận và nhấn nút Nén.",
+  "gillnet_dep_voice_waiting": "Vui lòng bỏ bao số {{n}} vào cửa nhận và nhấn nút Đóng cửa.",
   "gillnet_dep_voice_closing": "Nén hoàn tất. Đang đóng cửa nhận.",
   "gillnet_dep_voice_complete": "Đã bỏ tất cả các bao vào. Vui lòng kiểm tra chi tiết.",
   "gillnet_dep_voice_error": "Đã xảy ra lỗi. Vui lòng liên hệ quản lý.",
   "gillnet_dep_status_opening": "Đang mở cửa nhận cho bao số {{n}}...",
-  "gillnet_dep_status_waiting": "Bỏ bao số {{n}} vào cửa nhận\nvà nhấn [Nén].",
+  "gillnet_dep_status_waiting": "Bỏ bao số {{n}} vào cửa nhận\nvà nhấn [Đóng cửa].",
   "gillnet_dep_status_compressing": "Đang nén bao số {{n}}...",
   "gillnet_dep_status_closing": "Nén xong. Đang đóng cửa.",
   "gillnet_dep_status_complete": "Tất cả các bao đã được bỏ vào.",
   "gillnet_dep_status_error": "Đã xảy ra lỗi trong quá trình xử lý.",
-  "gillnet_msg_safety_voice": "Nguy hiểm. Vui lòng lùi lại. Máy nén đang hoạt động."
+  "gillnet_msg_safety_voice": "Nguy hiểm. Vui lòng lùi lại. Máy nén đang hoạt động.",
+  "gillnet_dep_status_closing_door": "Đang đóng cửa nhận.\nVui lòng lùi ra sau để đảm bảo an toàn.",
+  "gillnet_dep_voice_close_door": "Đóng cửa nhận. Vui lòng lùi ra sau để đảm bảo an toàn.",
+  "gillnet_dep_status_countdown": "Sắp bắt đầu nén.",
+  "gillnet_dep_countdown_label": "Sắp bắt đầu nén"
 }

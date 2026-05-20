@@ -12,12 +12,12 @@ const JWT_SECRET = process.env.JWT_SECRET;
  * [API] 바코드 투입구 제어
  */
 router.post('/hw/barcode-door', async (req, res) => {
-  const { open } = req.body; 
+  const { open } = req.body;
   try {
-    // 3초 타임아웃 래퍼: PLC가 없어도 3초 후에는 성공으로 응답
+    // 5초 타임아웃 래퍼: PLC가 없어도 5초 후에는 성공으로 응답
     await Promise.race([
       plc.setBarcodeDoor(open),
-      new Promise((_, reject) => setTimeout(() => reject(new Error('PLC Timeout')), 3000))
+      new Promise((_, reject) => setTimeout(() => reject(new Error('PLC Timeout')), 5000))
     ]);
     res.status(200).json({ status: 'SUCCESS', message: `Barcode Door ${open}` });
   } catch (e) {
@@ -31,16 +31,36 @@ router.post('/hw/barcode-door', async (req, res) => {
  * [API] 자망 투입구 제어 (폐어구 투입구 공유)
  */
 router.post('/hw/gillnet-door', async (req, res) => {
-  const { open } = req.body; 
+  const { open } = req.body;
   try {
     await Promise.race([
       plc.setWasteDoor(open),
-      new Promise((_, reject) => setTimeout(() => reject(new Error('PLC Timeout')), 3000))
+      new Promise((_, reject) => setTimeout(() => reject(new Error('PLC Timeout')), 5000))
     ]);
     res.status(200).json({ status: 'SUCCESS', message: `Gillnet Door ${open}` });
   } catch (e) {
     console.warn(`[HW Bypass] Gillnet Door Error/Timeout: ${e.message}`);
     res.status(200).json({ status: 'SUCCESS', message: `Gillnet Door ${open} (Bypassed)` });
+  }
+});
+
+/**
+ * [API] 자망 압축기 1회 사이클 실행
+ * 유압모드 ON (160) → 압축명령 (162) → 완료대기 (112) → 유압모드 OFF (161)
+ */
+router.post('/hw/gillnet-compress', async (req, res) => {
+  try {
+    console.log('-> PLC: 자망 압축 사이클 시작');
+    // 압축 완료 대기 포함 최대 60초 타임아웃
+    await Promise.race([
+      plc.runCompressionCycle(),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('PLC Compress Timeout')), 60000))
+    ]);
+    console.log('-> PLC: 자망 압축 사이클 완료');
+    res.status(200).json({ status: 'SUCCESS', message: 'Compression Cycle Complete' });
+  } catch (e) {
+    console.warn(`[HW Bypass] Compress Error/Timeout: ${e.message}`);
+    res.status(200).json({ status: 'SUCCESS', message: 'Compression (Bypassed)' });
   }
 });
 

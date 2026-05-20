@@ -3,7 +3,9 @@
     "allow": [
       "Bash(Get-Content \"C:\\\\Users\\\\user\\\\Desktop\\\\폐자망\\\\페어구 최신버전7\\\\폐어구_최신버전v4\\\\폐어구_최신버전\\\\fishing_gear_kiosk \\(10\\)\\\\fishing_gear_kiosk \\(3\\)\\\\fishing_gear_kiosk\\\\kiosk\\\\frontend\\\\src\\\\locales\\\\ko.json\")",
       "Bash(Select-Object -Last 10)",
-      "Bash(node *)"
+      "Bash(node *)",
+      "Bash(python -c ' *)",
+      "Bash(pip install *)"
     ]
   }
 }

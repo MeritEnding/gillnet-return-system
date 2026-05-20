@@ -52,15 +52,16 @@ const GillnetDepositScreen = () => {
 
   // DEPOSITING(투입중) -> CONFIRMING(최종확인)
   const [viewState, setViewState] = useState('DEPOSITING');
-  
+
   // 투입 프로세스 상세 상태
-  // IDLE -> OPENING -> WAITING -> COMPRESSING -> CLOSING -> CONVEYING -> NEXT_CHECK
+  // IDLE -> OPENING -> WAITING -> CLOSING -> COUNTDOWN -> COMPRESSING -> (OPENING | CONFIRMING)
   const [processStep, setProcessStep] = useState('IDLE');
   const [currentSackIndex, setCurrentSackIndex] = useState(1);
   const [statusMessage, setStatusMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isDoorClosed, setIsDoorClosed] = useState(false);
   const [showSafetyWarning, setShowSafetyWarning] = useState(false);
+  const [countdown, setCountdown] = useState(0);
 
   const voiceListCache = useRef([]);
 
@@ -81,14 +82,14 @@ const GillnetDepositScreen = () => {
   }, [i18n.language]);
 
   // PLC 하드웨어 API 호출 헬퍼
-  // PLC 연결 시 정상 동작, 미연결 시 4초 timeout 후 3초 대기 뒤 정상 진행
-  const callHW = useCallback(async (endpoint, payload = {}) => {
+  // timeoutMs: 기본 7초. 압축 요청은 60초 이상으로 호출해야 함.
+  const callHW = useCallback(async (endpoint, payload = {}, timeoutMs = 7000) => {
     const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
     try {
-      await axios.post(`${API_URL}${endpoint}`, payload, { timeout: 4000 });
+      await axios.post(`${API_URL}${endpoint}`, payload, { timeout: timeoutMs });
     } catch (e) {
-      console.warn(`PLC 응답 없음 (${endpoint}), 3초 후 진행합니다.`);
-      await new Promise(r => setTimeout(r, 3000));
+      console.warn(`PLC 응답 없음 (${endpoint}), 5초 후 진행합니다.`);
+      await new Promise(r => setTimeout(r, 5000));
     }
   }, []);
 
@@ -115,60 +116,65 @@ const GillnetDepositScreen = () => {
     };
   }, []);
 
-  // 한 마대 투입 사이클 시작
+  // 한 마대 투입 사이클 시작: 투입구 열기 → WAITING 상태
   const startDepositCycle = async (index) => {
     setCurrentSackIndex(index);
+    setIsLoading(true);
     setProcessStep('OPENING');
     setStatusMessage(t('gillnet_dep_status_opening', { n: index }));
     speak(t('gillnet_dep_voice_opening', { n: index }));
 
     await callHW('/api/auth/hw/gillnet-door', { open: true });
 
+    setIsLoading(false);
     setProcessStep('WAITING');
     setStatusMessage(t('gillnet_dep_status_waiting', { n: index }));
     speak(t('gillnet_dep_voice_waiting', { n: index }));
   };
 
-  // 압축 버튼 클릭
-  const handleCompress = async () => {
-    setProcessStep('COMPRESSING');
+  // 투입구 닫기 버튼 클릭 → 닫기 → 5초 카운트다운 → 자동 압축 → 다음 마대 or 완료
+  const handleCloseDoorAndCompress = async () => {
     setIsLoading(true);
+    setShowSafetyWarning(true);
+
+    // 1. 투입구 닫기
+    setProcessStep('CLOSING');
+    setStatusMessage(t('gillnet_dep_status_closing_door'));
+    speak(t('gillnet_dep_voice_close_door'));
+    await callHW('/api/auth/hw/gillnet-door', { open: false });
+
+    // 2. 5초 카운트다운
+    setProcessStep('COUNTDOWN');
+    for (let i = 5; i >= 1; i--) {
+      setCountdown(i);
+      setStatusMessage(t('gillnet_dep_status_countdown', { n: i }));
+      await new Promise(r => setTimeout(r, 1000));
+    }
+
+    // 3. 압축 실행
+    setProcessStep('COMPRESSING');
     setShowSafetyWarning(true);
     setStatusMessage(t('gillnet_dep_status_compressing', { n: currentSackIndex }));
     speak(t('gillnet_msg_safety_voice'));
 
     try {
-      await callHW('/api/auth/hw/gillnet-compress');
-
-      // 압축 완료 후 문 닫기
-      setProcessStep('CLOSING');
-      setStatusMessage(t('gillnet_dep_status_closing'));
-      speak(t('gillnet_dep_voice_closing'));
-
-      await callHW('/api/auth/hw/gillnet-door', { open: false });
-      await new Promise(r => setTimeout(r, 1000));
-
-      // 컨베이어 작동 (비활성화 - 압축 완료 후 바로 반납 처리)
-      // setProcessStep('CONVEYING');
-      // setStatusMessage(t('gillnet_dep_status_conveying'));
-      // await axios.post(`${API_URL}/api/deposit/action/conveyor`);
-      // await new Promise(r => setTimeout(r, 4000)); // 적재 시간 대기
-
+      // 압축은 완료 신호 대기까지 포함 → 최대 65초 타임아웃
+      await callHW('/api/auth/hw/gillnet-compress', {}, 65000);
       setShowSafetyWarning(false);
 
-      // 다음 마대 체크
+      // 4. 다음 마대 or 최종 확인
       if (currentSackIndex < totalSacks) {
         startDepositCycle(currentSackIndex + 1);
       } else {
         setStatusMessage(t('gillnet_dep_status_complete'));
         speak(t('gillnet_dep_voice_complete'));
+        setIsLoading(false);
         setViewState('CONFIRMING');
       }
     } catch (err) {
-      console.error('Process Error:', err);
+      console.error('Compress Error:', err);
       setStatusMessage(t('gillnet_dep_status_process_err', { msg: err.message }));
       setShowSafetyWarning(false);
-    } finally {
       setIsLoading(false);
     }
   };
@@ -344,14 +350,18 @@ const GillnetDepositScreen = () => {
 
                 <div className="gdep-btn-group">
                   {processStep === 'WAITING' ? (
-                    <button 
-                        className="gdep-primary-btn blue" 
-                        onClick={handleCompress} 
+                    <button
+                        className="gdep-primary-btn blue"
+                        onClick={handleCloseDoorAndCompress}
                         disabled={isLoading}
                         style={{fontSize: '3rem', height: '120px'}}
                     >
-                        {t('gillnet_compress_btn') || '압축 시작'}
+                        {t('gillnet_dep_btn_close') || '투입구 닫기'}
                     </button>
+                  ) : processStep === 'COUNTDOWN' ? (
+                    <div style={{textAlign: 'center', width: '100%', padding: '10px 0'}}>
+                        <p style={{fontSize: '2.5rem', fontWeight: '700', color: '#444', marginTop: '10px'}}>{t('gillnet_dep_countdown_label') || '잠시 후 압축을 시작합니다'}</p>
+                    </div>
                   ) : (
                     <div style={{textAlign: 'center', width: '100%'}}>
                         <div className="gnt-loading-spinner" style={{margin: '0 auto 20px'}} />
